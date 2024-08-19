@@ -3,5 +3,5 @@ After finishing Michael Eramo's Udemy Pygame course, I'm excited to be working o
 
 I will be using the same algorithmic concepts from the original game, but adding my own twist to make it even more fun. As such, my project aims to showcase my skills and dive deeper into learning Python. 
 
-**Resources & Documents**: 
-1. [Pac-Man Project Outline.pdf](https://github.com/user-attachments/files/16654737/Pac-Man.Project.Outline.pdf) (last updated 8/18/24) 📜
+**Resources & Documents 📜**: 
+1. [Pac-Man Project Outline.pdf](https://github.com/user-attachments/files/16654737/Pac-Man.Project.Outline.pdf) (last updated 8/18/24) 
