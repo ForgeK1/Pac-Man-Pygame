@@ -19,7 +19,7 @@
         #Check if the player quit the game
 
     
-    #Add a line of code that will constantly update the display surface for any changes in runtime (ex. sounds, blitting of images and text, etc.)
+    #Add a line of code that will constantly update the display surface for any changes in runtime (sounds, blitting of images and text, etc.)
 
 
 #Un-initialize all pygame modules
