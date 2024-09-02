@@ -1,3 +1,6 @@
+'''
+Description: The SplashScene class showcases the splash screen of the game
+'''
 class SplashScene:
     def __init__(self, display_surface, game_state_manager):
         self.display_surface = display_surface

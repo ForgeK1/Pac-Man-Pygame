@@ -1,3 +1,8 @@
+'''
+Description: The Main module serves to run the game through the pygame libraries, GameStateManager,
+             and the dynamically updated scene instances
+'''
+
 #Imports pygame libraries and needed classes from their respective modules
 import pygame
 from GameStateManager import GameStateManager
@@ -36,6 +41,9 @@ gameplay_scene = GameplayScene(display_surface, game_state_manager)
 #A dictionary that matches keys with their respective scenes to help the game state manager switch between screens of the game
 list_of_states = {'Splash Screen':splash_scene, 'Main Menu Screen':main_menu_scene, 'Gameplay Screen':gameplay_scene}
 
+#Runs the scene for the game which is the Splash Screen
+list_of_states[game_state_manager.get_state()].run()
+
 #A game loop to run the game
 running = True
 while running:
@@ -44,8 +52,6 @@ while running:
         #Checks if the player quit the game
         if(event.type == pygame.QUIT):
             running = False
-
-        list_of_states[game_state_manager.get_state()].run()
         
         #Constantly updates the display surface for any changes in runtime (sounds, blitting of images and text, etc.)
         pygame.display.update()
