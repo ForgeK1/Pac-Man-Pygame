@@ -20,7 +20,7 @@ display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('Pac-Man - Keyvan M. Kani Pygame Project')
 
 #Creates surface object image and setting it as the game's icon
-game_icon_image = pygame.image.load('Images/Player/pacman_icon.png')
+game_icon_image = pygame.image.load('Images/Game Icon/pacman_icon.png')
 pygame.display.set_icon(game_icon_image)
 
 #A constant variable and a Clock object to keep track of the FPS
@@ -34,7 +34,7 @@ keeping track of states through keys
 game_state_manager = GameStateManager('Splash Screen')
 
 #Sets up scenes of the game
-splash_scene = SplashScene(display_surface, game_state_manager)
+splash_scene = SplashScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
 main_menu_scene = MainMenuScene(display_surface, game_state_manager)
 gameplay_scene = GameplayScene(display_surface, game_state_manager)
 
@@ -52,7 +52,12 @@ while running:
         #Checks if the player quit the game
         if(event.type == pygame.QUIT):
             running = False
+
+        '''
+            ***Set up the GameStateManager loop here***
+        '''
         
+
         #Constantly updates the display surface for any changes in runtime (sounds, blitting of images and text, etc.)
         pygame.display.update()
 
