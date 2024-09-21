@@ -41,28 +41,27 @@ gameplay_scene = GameplayScene(display_surface, game_state_manager)
 #A dictionary that matches keys with their respective scenes to help the game state manager switch between screens of the game
 list_of_states = {'Splash Screen':splash_scene, 'Main Menu Screen':main_menu_scene, 'Gameplay Screen':gameplay_scene}
 
-#Runs the scene for the game which is the Splash Screen
-list_of_states[game_state_manager.get_state()].run()
-
 #A game loop to run the game
 running = True
 while running:
     #A for loop to catch all events done by the player or during gameplay and stores them in a queue to iterate through
-    for event in pygame.event.get():
+    for event in pygame.event.get():        
         #Checks if the player quit the game
         if(event.type == pygame.QUIT):
             running = False
 
-        '''
-            ***Set up the GameStateManager loop here***
-        '''
-        
+    '''
+    Contionously runs the current scene the game state manager focuses on based on player events Splash Screen
+        Note: Runs the splash screen when opening the game for the first time
+    '''
+    list_of_states[game_state_manager.get_state()].run()
 
-        #Constantly updates the display surface for any changes in runtime (sounds, blitting of images and text, etc.)
-        pygame.display.update()
+    #Constantly updates the display surface for any changes in runtime (sounds, blitting of images and text, etc.)
+    pygame.display.update()
+    pygame.display.flip()
 
-        #Delays the game loop so that all computers can run at 60 frames per second for every iteration of the game loop
-        clock.tick(FPS)
+    #Delays the game loop so that all computers can run at 60 frames per second for every iteration of the game loop
+    clock.tick(FPS)
     
 #Un-initializes all pygame modules
 pygame.quit()

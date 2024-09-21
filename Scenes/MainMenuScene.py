@@ -12,3 +12,10 @@ class MainMenuScene:
     
     def run(self):
         self.display_surface.fill('green')
+
+        #Grabs all possible keys pressed by the player
+        keys = pygame.key.get_pressed()
+
+        #Switches to the splash screen for debugging purposes
+        if(keys[pygame.K_s]):
+            self.game_state_manager.set_state('Splash Screen')
