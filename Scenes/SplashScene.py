@@ -6,7 +6,7 @@ Description: A class to create and showcase the splash scene of the game
 import pygame
 
 class SplashScene:
-    #A Constructor to initialize an instance of Splash Scene class
+    #A constructor to initialize an instance of Splash Scene
     def __init__(self, display_surface, game_state_manager, window_width, window_height):
         #Initializes variables relating to the sisplay surface and game state manager
         self.display_surface = display_surface
@@ -15,39 +15,36 @@ class SplashScene:
         self.WINDOW_HEIGHT = window_height
 
         '''
-        Sets up the the splash scene surface variable to blit onto the display surface
-            Note: pygame.SRCALPHA must be included in order to access the alpha channel in order to change
-                  the transparency of the surface object
+        Sets up the the Splash Scene surface to continiously update and blit onto the display surface
+            Note: pygame.SRCALPHA must be included to access the alpha channel so that the program
+                  can change the transparency of the surface object below during runtime
         '''
         self.splash_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
         #Initializes up variables to keep track of the transparency of the Splash Surface
         self.transparency = 0
         self.fully_transparent = False
-
-        #Initializes a variable 
     
     #A method to run the Splash Scene
     def run(self):
-        #Resets the display surface background to blit the splash surface
+        #Resets the display surface background to blit a dynamically updated Main Menu Scene surface
         self.display_surface.fill('black')
         
-        #A method to set up the splash surfaces
+        #A method to set up the Splash Scene
         self.set_up_splash_surface()
 
         '''
         An if statement to check if the transparency has reached 250 to pause the splash scene (momentarily stops
-        changing the transparency of the splash surface)
+        changing the transparency of the Splash Surface)
         '''
         if self.transparency == 250:
             self.fully_transparent = True
+            pygame.time.delay(3000)
 
             #Debug code
                 #print(str(self.transparency) + " First if statement ran \n")
-
-            pygame.time.delay(3000)
         
-        #An if-else statement to dynamically change the value of the transparency varuable for the splash surface
+        #An if-else statement to dynamically change the value of the transparency variable for the Splash Surface
         if self.fully_transparent == False:
             self.transparency += 10
             pygame.time.delay(50)
@@ -61,11 +58,11 @@ class SplashScene:
             #Debug code
                 #print(str(self.transparency) + " Third if statement ran \n")
             
-        #Sets the alpha of splash surface based on the current transparency value
+        #Sets the alpha of Splash Surface based on the current transparency value during each function call
         self.splash_surface.set_alpha(self.transparency)
 
-        #Blits the fully finished splash surface onto the display surface
-        self.display_surface.blit(self.splash_surface, (0,0))
+        #Continiously blits the Splash Surface onto the display surface
+        self.display_surface.blit(self.splash_surface, (0, 0))
 
         '''
         An if statement that uses the game state manager to re-direct the player to the 
@@ -76,9 +73,6 @@ class SplashScene:
         '''
         if self.transparency == 0:
             self.game_state_manager.set_state('Main Menu Scene')
-
-        #A method to check for player input
-        self.player_input()
 
     #A method to set up and blit the surface objects onto the Splash Surface
     def set_up_splash_surface(self):
@@ -115,12 +109,3 @@ class SplashScene:
         self.splash_surface.blit(game_icon_image, game_icon_rect)
         self.splash_surface.blit(splash_text, splash_text_rect)
         self.splash_surface.blit(scene_text, scene_text_rect)
-
-    #A method to check for player input
-    def player_input(self):
-        #Grabs all the keys pressed by the player
-        keys = pygame.key.get_pressed()
-
-        #Switches to the main menu scene for debugging purposes
-        if(keys[pygame.K_m]):
-            self.game_state_manager.set_state('Main Menu Scene')

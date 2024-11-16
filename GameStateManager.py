@@ -5,11 +5,14 @@ Description: The GameStateManager class manages and switches between different g
              game
 '''
 class GameStateManager:
+    #A constructor to initialize an instance of GameStateManager
     def __init__(self, state):
         self.state = state
     
+    #A method to grab the current state of the game
     def get_state(self):
         return self.state
 
+    #A method to set the current state of the game
     def set_state(self, new_state):
         self.state = new_state

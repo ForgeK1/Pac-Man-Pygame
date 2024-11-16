@@ -28,14 +28,14 @@ FPS = 60
 clock = pygame.time.Clock()
 
 '''
-Sets up the game state manager to keep track of different scenes during gameplay through
-keeping track of states through keys 
+Sets up the game state manager to keep track of different scenes during gameplay by
+keeping track of game states through keys 
 '''
 game_state_manager = GameStateManager('Splash Scene')
 
 #Sets up scenes of the game
 splash_scene = SplashScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
-main_menu_scene = MainMenuScene(display_surface, game_state_manager)
+main_menu_scene = MainMenuScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
 gameplay_scene = GameplayScene(display_surface, game_state_manager)
 
 #A dictionary that matches keys with their respective scenes to help the game state manager switch between scenes of the game
@@ -51,8 +51,8 @@ while running:
             running = False
 
     '''
-    Contionously runs the current scene the game state manager focuses on based on player events Splash Scene
-        Note: Runs the splash scene when opening the game for the first time
+    Continuously runs the current scene the game state manager focuses on based on current player events
+        Note: Runs the Splash Scene when opening the game for the first time
     '''
     list_of_states[game_state_manager.get_state()].run()
 
