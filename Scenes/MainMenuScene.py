@@ -46,4 +46,21 @@ class MainMenuScene:
     #A method to setup and blit surface objects onto the Main Menu Scene
     def set_up_main_menu_surface(self):
         #Fills the background color of the Main Menu Scene
-        self.main_menu_surface.fill("orange")
+        self.main_menu_surface.fill("black")
+
+        #Sets up the color for the scene borders and text
+        DARK_YELLOW = (241, 196, 15)
+
+        #Draws the Main Menu Scene border -> Rectangle(surface, color, (top-left x, top-left y, width, height), border line width [has no fill if you define width])
+        pygame.draw.rect(self.main_menu_surface, DARK_YELLOW, (0, 0, self.WINDOW_WIDTH, self.WINDOW_HEIGHT), 4)
+
+        #Creates the title of the Main Menu Scene by creating a render (surface object) of the text through a custom font
+        pacmania_font = pygame.font.Font('Fonts/Pacmania/Pacmania-Normal.ttf', 96) #Loads the font
+
+        pac_man_text = pacmania_font.render('Pac-Man', True, DARK_YELLOW)
+        pac_man_text_rect = pac_man_text.get_rect()
+        pac_man_text_rect.centerx = self.WINDOW_WIDTH / 2
+        pac_man_text_rect.centery = 100
+
+        #Blits the text and images onto the main menu surface using their positioned rects
+        self.main_menu_surface.blit(pac_man_text, pac_man_text_rect)

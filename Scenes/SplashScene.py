@@ -39,7 +39,7 @@ class SplashScene:
         '''
         if self.transparency == 250:
             self.fully_transparent = True
-            pygame.time.delay(3000)
+            pygame.time.delay(5000)
 
             #Debug code
                 #print(str(self.transparency) + " First if statement ran \n")
@@ -82,30 +82,41 @@ class SplashScene:
         #Sets up color for the splash scene borders and text
         DARK_YELLOW = (241, 196, 15)
 
-        #Sets up Splash Scene border -> Rectangle(surface, color, (top-left x, top-left y, width, height), border line width [has no fill if you define width])
+        #Draws the Splash Scene border -> Rectangle(surface, color, (top-left x, top-left y, width, height), border line width [has no fill if you define width])
         pygame.draw.rect(self.splash_surface, DARK_YELLOW, (0, 0, self.WINDOW_WIDTH, self.WINDOW_HEIGHT), 4)
 
-        #Sets up Pac-Man icon by creating surface image, getting rect of the image, and positioning the rect
-        game_icon_image = pygame.image.load('Images/Splash Scene/pacman_icon.png')
-        game_icon_image = pygame.transform.scale(game_icon_image, (300, 300))
-        game_icon_rect = game_icon_image.get_rect()
-        game_icon_rect.centerx = self.WINDOW_WIDTH / 2
-        game_icon_rect.centery = self.WINDOW_HEIGHT / 2 + 100
+        #Sets up the Splash Scene title by creating a surface image, getting the rect of it, and then positioning the image
+        title_image = pygame.image.load('Images/Splash Scene/title.png')
+        title_image = pygame.transform.scale(title_image, (402, 97))
+        title_image_rect = title_image.get_rect()
+        title_image_rect.centerx = self.WINDOW_WIDTH / 2
+        title_image_rect.centery = 100
 
-        #Sets up Splash Scene text (title) by creating a render (surface object) of the text 
-        pacmania_font = pygame.font.Font('Fonts/Pacmania/Pacmania-Normal.ttf', 96) #Loads the font
+        #Sets up the background image for Splash Scence
+        background_image = pygame.image.load('Images/Splash Scene/background.png')
+        background_image = pygame.transform.scale(background_image, (451, 346))
+        background_image_rect = background_image.get_rect()
+        background_image_rect.centerx = self.WINDOW_WIDTH / 2
+        background_image_rect.centery = self.WINDOW_HEIGHT / 2 + 20
+
+        '''
+        Creates the title and rights reserved texts of the Main Menu Scene by creating a render (surface object) 
+        of the text through a custom font
+        '''
+        pixel_font = pygame.font.Font('Fonts/Pixel/DePixelHalbfett.ttf', 12)
+
+        author_text = pixel_font.render('A Python Pygame Project By Keyvan M. Kani', True, DARK_YELLOW)
+        author_text_rect = author_text.get_rect()
+        author_text_rect.centerx = self.WINDOW_WIDTH / 2
+        author_text_rect.centery = self.WINDOW_HEIGHT / 2 + 220
+
+        rights_reserved_text = pixel_font.render('All Rights Reserved To Bandai Namco Entertainment', True, DARK_YELLOW)
+        rights_reserved_text_rect = rights_reserved_text.get_rect()
+        rights_reserved_text_rect.centerx = self.WINDOW_WIDTH / 2
+        rights_reserved_text_rect.centery = self.WINDOW_HEIGHT / 2 + 250
         
-        splash_text = pacmania_font.render('SPLASH', True, DARK_YELLOW) #(*text*, *anti-aliasing boolean*, *color of text*, *background color of text* [optional])
-        splash_text_rect = splash_text.get_rect()
-        splash_text_rect.centerx = self.WINDOW_WIDTH / 2
-        splash_text_rect.centery = 100
-
-        scene_text = pacmania_font.render('SCREEN', True, DARK_YELLOW)
-        scene_text_rect = scene_text.get_rect()
-        scene_text_rect.centerx = self.WINDOW_WIDTH / 2
-        scene_text_rect.centery = 200
-
-        #Blits game icon and "Splash" and "Text" onto the display surface
-        self.splash_surface.blit(game_icon_image, game_icon_rect)
-        self.splash_surface.blit(splash_text, splash_text_rect)
-        self.splash_surface.blit(scene_text, scene_text_rect)
+        #Blits the text and images onto the splash surface using their positioned rects
+        self.splash_surface.blit(title_image, title_image_rect)
+        self.splash_surface.blit(background_image, background_image_rect)
+        self.splash_surface.blit(author_text, author_text_rect)
+        self.splash_surface.blit(rights_reserved_text, rights_reserved_text_rect)
