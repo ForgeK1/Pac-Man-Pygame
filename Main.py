@@ -19,7 +19,7 @@ WINDOW_HEIGHT = 640
 display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA) 
 
 #Sets the game's icon and caption
-game_icon_image = pygame.image.load('Images/Game Icon/pacman_icon.png')
+game_icon_image = pygame.image.load('Images/Pac Man/icon.png')
 pygame.display.set_icon(game_icon_image)
 pygame.display.set_caption('Pac-Man - Keyvan M. Kani Pygame Project')
 
@@ -31,7 +31,7 @@ clock = pygame.time.Clock()
 Sets up the game state manager to keep track of different scenes during gameplay by
 keeping track of game states through keys 
 '''
-game_state_manager = GameStateManager('Splash Scene')
+game_state_manager = GameStateManager('Main Menu Scene')
 
 #Sets up scenes of the game
 splash_scene = SplashScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)

@@ -86,18 +86,16 @@ class SplashScene:
         pygame.draw.rect(self.splash_surface, DARK_YELLOW, (0, 0, self.WINDOW_WIDTH, self.WINDOW_HEIGHT), 4)
 
         #Sets up the Splash Scene title by creating a surface image, getting the rect of it, and then positioning the image
-        title_image = pygame.image.load('Images/Splash Scene/title.png')
+        title_image = pygame.image.load('Images/Other/title.png')
         title_image = pygame.transform.scale(title_image, (402, 97))
         title_image_rect = title_image.get_rect()
-        title_image_rect.centerx = self.WINDOW_WIDTH / 2
-        title_image_rect.centery = 100
+        title_image_rect.center = (self.WINDOW_WIDTH / 2, 100)
 
         #Sets up the background image for Splash Scence
-        background_image = pygame.image.load('Images/Splash Scene/background.png')
+        background_image = pygame.image.load('Images/Other/background.png')
         background_image = pygame.transform.scale(background_image, (451, 346))
         background_image_rect = background_image.get_rect()
-        background_image_rect.centerx = self.WINDOW_WIDTH / 2
-        background_image_rect.centery = self.WINDOW_HEIGHT / 2 + 20
+        background_image_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 20)
 
         '''
         Creates the title and rights reserved texts of the Main Menu Scene by creating a render (surface object) 
@@ -107,13 +105,11 @@ class SplashScene:
 
         author_text = pixel_font.render('A Python Pygame Project By Keyvan M. Kani', True, DARK_YELLOW)
         author_text_rect = author_text.get_rect()
-        author_text_rect.centerx = self.WINDOW_WIDTH / 2
-        author_text_rect.centery = self.WINDOW_HEIGHT / 2 + 220
+        author_text_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 220)
 
         rights_reserved_text = pixel_font.render('All Rights Reserved To Bandai Namco Entertainment', True, DARK_YELLOW)
         rights_reserved_text_rect = rights_reserved_text.get_rect()
-        rights_reserved_text_rect.centerx = self.WINDOW_WIDTH / 2
-        rights_reserved_text_rect.centery = self.WINDOW_HEIGHT / 2 + 250
+        rights_reserved_text_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 250)
         
         #Blits the text and images onto the splash surface using their positioned rects
         self.splash_surface.blit(title_image, title_image_rect)
