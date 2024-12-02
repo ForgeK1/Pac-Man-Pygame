@@ -2,8 +2,13 @@
 Description: The MainMenuScene class serves to help the player to navigate the game
 '''
 
-#Imports pygame libraries
+#Imports pygame libraries and needed classes from their respective modules
 import pygame
+from Characters.PacMan import PacMan
+from Characters.Blinky import Blinky
+from Characters.Pinky import Pinky
+from Characters.Inky import Inky
+from Characters.Clyde import Clyde
 
 class MainMenuScene:
     #A constructor to initialize an instance of Main Menu Scene
@@ -62,35 +67,25 @@ class MainMenuScene:
         pac_man_text_rect.centerx = self.WINDOW_WIDTH / 2
         pac_man_text_rect.centery = 100
 
-        #Sets up the Blinky ghost image by creating a surface image, getting the rect of it, and then positioning the image
-        blinky_image = pygame.image.load('Images/Ghosts/Blinky (Red)/right_frame_1.png')
-        blinky_image = pygame.transform.scale(blinky_image, (70, 70))
-        blinky_image_rect = blinky_image.get_rect()
-        blinky_image_rect.center = (80, self.WINDOW_HEIGHT / 2 - 100)
+        #Sets up the Blinky ghost object
+        blinky = Blinky()
+        blinky.get_rect().center = (80, self.WINDOW_HEIGHT / 2 - 100)
 
-        #Sets up the Pinky ghost image
-        pinky_image = pygame.image.load('Images/Ghosts/Pinky (Pink)/right_frame_1.png')
-        pinky_image = pygame.transform.scale(pinky_image, (70, 70))
-        pinky_image_rect = pinky_image.get_rect()
-        pinky_image_rect.center = (180, self.WINDOW_HEIGHT / 2 - 100)
+        #Sets up the Pinky ghost object
+        pinky = Pinky()
+        pinky.get_rect().center = (180, self.WINDOW_HEIGHT / 2 - 100)
 
         #Sets up the Inky ghost image
-        inky_image = pygame.image.load('Images/Ghosts/Inky (Cyan)/right_frame_1.png')
-        inky_image = pygame.transform.scale(inky_image, (70, 70))
-        inky_image_rect = inky_image.get_rect()
-        inky_image_rect.center = (80, self.WINDOW_HEIGHT / 2)
+        inky = Inky()
+        inky.get_rect().center = (80, self.WINDOW_HEIGHT / 2)
 
         #Sets up the Clyde ghost image
-        clyde_image = pygame.image.load('Images/Ghosts/Clyde (Orange)/right_frame_1.png')
-        clyde_image = pygame.transform.scale(clyde_image, (70, 70))
-        clyde_image_rect = clyde_image.get_rect()
-        clyde_image_rect.center = (180, self.WINDOW_HEIGHT / 2)
+        clyde = Clyde()
+        clyde.get_rect().center = (180, self.WINDOW_HEIGHT / 2)
 
         #Sets up the Pac-Man image
-        pac_man_image = pygame.image.load('Images/Pac Man/Movement/right_frame_1.png')
-        pac_man_image = pygame.transform.scale(pac_man_image, (70, 70))
-        pac_man_image_rect = pac_man_image.get_rect()
-        pac_man_image_rect.center = (320, self.WINDOW_HEIGHT / 2 - 50)
+        pac_man = PacMan()
+        pac_man.get_rect().center = (320, self.WINDOW_HEIGHT / 2 - 50)
 
         #Sets up the Power Pellet image
         power_pellet_image = pygame.image.load('Images/Dots/power_pellet.png')
@@ -100,9 +95,9 @@ class MainMenuScene:
 
         #Blits the text and images onto the main menu surface using their positioned rects
         self.main_menu_surface.blit(pac_man_text, pac_man_text_rect)
-        self.main_menu_surface.blit(blinky_image, blinky_image_rect)
-        self.main_menu_surface.blit(pinky_image, pinky_image_rect)
-        self.main_menu_surface.blit(inky_image, inky_image_rect)
-        self.main_menu_surface.blit(clyde_image, clyde_image_rect)
-        self.main_menu_surface.blit(pac_man_image, pac_man_image_rect)
+        self.main_menu_surface.blit(blinky.get_image(), blinky.get_rect())
+        self.main_menu_surface.blit(pinky.get_image(), pinky.get_rect())
+        self.main_menu_surface.blit(inky.get_image(), inky.get_rect())
+        self.main_menu_surface.blit(clyde.get_image(), clyde.get_rect())
+        self.main_menu_surface.blit(pac_man.get_image(), pac_man.get_rect())
         self.main_menu_surface.blit(power_pellet_image, power_pellet_image_rect)

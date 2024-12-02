@@ -19,7 +19,7 @@ WINDOW_HEIGHT = 640
 display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA) 
 
 #Sets the game's icon and caption
-game_icon_image = pygame.image.load('Images/Pac Man/icon.png')
+game_icon_image = pygame.image.load('Images/Pac-Man/icon.png')
 pygame.display.set_icon(game_icon_image)
 pygame.display.set_caption('Pac-Man - Keyvan M. Kani Pygame Project')
 
