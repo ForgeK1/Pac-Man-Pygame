@@ -91,7 +91,7 @@ class SplashScene:
         title_image_rect = title_image.get_rect()
         title_image_rect.center = (self.WINDOW_WIDTH / 2, 100)
 
-        #Sets up the background image for Splash Scence
+        #Sets up the background image for Splash Scene
         background_image = pygame.image.load('Images/Other/background.png')
         background_image = pygame.transform.scale(background_image, (451, 346))
         background_image_rect = background_image.get_rect()

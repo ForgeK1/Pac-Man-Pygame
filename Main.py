@@ -31,7 +31,7 @@ clock = pygame.time.Clock()
 Sets up the game state manager to keep track of different scenes during gameplay by
 keeping track of game states through keys 
 '''
-game_state_manager = GameStateManager('Main Menu Scene')
+game_state_manager = GameStateManager('Splash Scene')
 
 #Sets up scenes of the game
 splash_scene = SplashScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -45,7 +45,7 @@ list_of_states = {'Splash Scene':splash_scene, 'Main Menu Scene':main_menu_scene
 running = True
 while running:
     #A for loop to catch all events done by the player or during gameplay and stores them in a queue to iterate through
-    for event in pygame.event.get():        
+    for event in pygame.event.get():       
         #Checks if the player quit the game
         if(event.type == pygame.QUIT):
             running = False
