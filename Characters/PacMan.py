@@ -100,3 +100,19 @@ class PacMan:
         self.image = pygame.image.load('Images/Pac-Man/Movement/down_frame_2.png')
         self.image = pygame.transform.scale(self.image, (70, 70))
         self.rect = self.image.get_rect()
+    
+    #A method to check what movement frame and direction Pac-Man is in
+    def update_frame(self):
+        match self.get_frame(): 
+            case 0:
+                self.set_CF()
+                self.set_frame(1)
+            case 1:
+                self.set_RMF1()
+                self.set_frame(2)
+            case 2:
+                self.set_RMF2()
+                self.set_frame(0)
+        
+        #Debug code for checking frame change speed
+            #print(self.get_frame())

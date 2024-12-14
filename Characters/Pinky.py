@@ -95,3 +95,17 @@ class Pinky:
         self.image = pygame.image.load('Images/Ghosts/Pinky (Pink)/down_frame_2.png')
         self.image = pygame.transform.scale(self.image, (70, 70))
         self.rect = self.image.get_rect()
+    
+    #A method to check what movement frame and direction the ghost is in
+    def update_frame(self):
+        #0: The Ghost is in frame 1
+        if(self.get_frame() < 1):
+            self.set_RMF1()
+            self.set_frame(1)
+        #1: The Ghost is in frame 2
+        else:
+            self.set_RMF2()
+            self.set_frame(0)
+        
+        #Debug code for checking frame change speed
+            #print(self.get_frame())

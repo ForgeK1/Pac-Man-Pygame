@@ -8,7 +8,7 @@ import pygame
 class SplashScene:
     #A constructor to initialize an instance of Splash Scene
     def __init__(self, display_surface, game_state_manager, window_width, window_height):
-        #Initializes variables relating to the sisplay surface and game state manager
+        #Initializes the display surface and game state manager
         self.display_surface = display_surface
         self.game_state_manager = game_state_manager
         self.WINDOW_WIDTH = window_width
@@ -33,31 +33,9 @@ class SplashScene:
         #A method to set up the Splash Scene
         self.set_up_splash_surface()
 
-        '''
-        An if statement to check if the transparency has reached 250 to pause the splash scene (momentarily stops
-        changing the transparency of the Splash Surface)
-        '''
-        if self.transparency == 250:
-            self.fully_transparent = True
-            pygame.time.delay(5000)
+        #Dynamically updates transparency
+        self.update_transparency()
 
-            #Debug code
-                #print(str(self.transparency) + " First if statement ran \n")
-        
-        #An if-else statement to dynamically change the value of the transparency variable for the Splash Surface
-        if self.fully_transparent == False:
-            self.transparency += 10
-            pygame.time.delay(50)
-
-            #Debug code
-                #print(str(self.transparency) + " Second if statement ran \n")
-        elif(self.fully_transparent and self.transparency > 0):
-            self.transparency -= 10
-            pygame.time.delay(50)
-
-            #Debug code
-                #print(str(self.transparency) + " Third if statement ran \n")
-            
         #Sets the alpha of Splash Surface based on the current transparency value during each function call
         self.splash_surface.set_alpha(self.transparency)
 
@@ -116,3 +94,30 @@ class SplashScene:
         self.splash_surface.blit(background_image, background_image_rect)
         self.splash_surface.blit(author_text, author_text_rect)
         self.splash_surface.blit(rights_reserved_text, rights_reserved_text_rect)
+
+    #A method to dynamically update the transparency of the Splash Scene
+    def update_transparency(self):
+        '''
+        An if statement to check if the transparency has reached 250 to pause the splash scene (momentarily stops
+        changing the transparency of the Splash Surface)
+        '''
+        if self.transparency == 250:
+            self.fully_transparent = True
+            pygame.time.delay(5000)
+
+            #Debug code
+                #print(str(self.transparency) + " First if statement ran \n")
+        
+        #An if-else statement to dynamically change the value of the transparency variable for the Splash Surface
+        if self.fully_transparent == False:
+            self.transparency += 10
+            pygame.time.delay(50)
+
+            #Debug code
+                #print(str(self.transparency) + " Second if statement ran \n")
+        elif(self.fully_transparent and self.transparency > 0):
+            self.transparency -= 10
+            pygame.time.delay(50)
+
+            #Debug code
+                #print(str(self.transparency) + " Third if statement ran \n")
