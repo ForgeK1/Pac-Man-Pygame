@@ -78,7 +78,7 @@ class MainMenuScene:
         DARK_YELLOW = (241, 196, 15)
 
         #Draws the Main Menu Scene border -> Rectangle(surface, color, (top-left x, top-left y, width, height), border line width [has no fill if you define width])
-        pygame.draw.rect(self.main_menu_surface, DARK_YELLOW, (0, 0, self.WINDOW_WIDTH, self.WINDOW_HEIGHT), 4)
+        #pygame.draw.rect(self.main_menu_surface, DARK_YELLOW, (0, 0, self.WINDOW_WIDTH, self.WINDOW_HEIGHT), 4)
 
         #Creates the title of the Main Menu Scene by creating a render (surface object) of the text through a custom font
         pacmania_font = pygame.font.Font('Fonts/Pacmania/Pacmania-Normal.ttf', 86) #Loads the font
@@ -142,7 +142,7 @@ class MainMenuScene:
     
     #A method to check what movement frames Pac-Man is in
     def update_frame_pac_man(self):
-        match self.pac_man.get_frame():
+        match self.pac_man.get_frame(): 
             case 0:
                 self.pac_man.set_CF()
                 self.pac_man.set_frame(1)

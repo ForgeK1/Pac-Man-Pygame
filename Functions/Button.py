@@ -58,4 +58,5 @@ class Button:
     #A method to set a new rect for button's text
     def set_text_rect(self, new_text_rect):
         self.text_rect = new_text_rect
-    
+
+        

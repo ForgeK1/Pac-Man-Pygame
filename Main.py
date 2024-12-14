@@ -58,7 +58,7 @@ while running:
 
     #Constantly updates the display surface for any changes in runtime (sounds, blitting of images and text, etc.)
     pygame.display.update()
-
+    
     #Delays the game loop so that all computers can run at 60 frames per second for every iteration of the game loop
     clock.tick(FPS)
     

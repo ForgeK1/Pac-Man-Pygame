@@ -83,7 +83,7 @@ class SplashScene:
         DARK_YELLOW = (241, 196, 15)
 
         #Draws the Splash Scene border -> Rectangle(surface, color, (top-left x, top-left y, width, height), border line width [has no fill if you define width])
-        pygame.draw.rect(self.splash_surface, DARK_YELLOW, (0, 0, self.WINDOW_WIDTH, self.WINDOW_HEIGHT), 4)
+        #pygame.draw.rect(self.splash_surface, DARK_YELLOW, (0, 0, self.WINDOW_WIDTH, self.WINDOW_HEIGHT), 4)
 
         #Sets up the Splash Scene title by creating a surface image, getting the rect of it, and then positioning the image
         title_image = pygame.image.load('Images/Other/title.png')
