@@ -11,5 +11,5 @@ class GameplayScene:
         self.display_surface = display_surface
         self.game_state_manager = game_state_manager
 
-    def run(self):
+    def run(self, event):
         self.display_surface.fill('blue')

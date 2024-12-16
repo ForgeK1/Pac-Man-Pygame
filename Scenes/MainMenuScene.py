@@ -42,7 +42,7 @@ class MainMenuScene:
         self.main_menu_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
     
     #A method to run MainMenuScene
-    def run(self):
+    def run(self, event):
         #Resets the display surface background to blit a dynamically updated Main Menu Scene surface
         self.display_surface.fill('blue')
 
@@ -52,20 +52,11 @@ class MainMenuScene:
         #Blits the updated Main Menu Surface onto the display surface
         self.display_surface.blit(self.main_menu_surface, (0, 0))
 
-        #Checks for player input
-        self.player_input()
+        #Checks and handles player events for the Main Menu Scene
+        self.event_handler(event)
 
         #Delayes the game by 100 miliseconds so that the animations do not update too fast
-        pygame.time.delay(100)
-    
-    #A method to check for player input
-    def player_input(self):
-        #Grabs all the keys pressed by the player
-        keys = pygame.key.get_pressed()
-
-        #Switches to the Main Menu Scene for debugging purposes
-        if(keys[pygame.K_s]):
-            self.game_state_manager.set_state('Splash Scene')
+        #pygame.time.delay(100)
 
     #A method to setup and blit surface objects onto the Main Menu Scene
     def set_up_main_menu_surface(self):
@@ -91,6 +82,44 @@ class MainMenuScene:
 
         #Sets up interactable buttons
         self.set_up_buttons()
+    
+    #A method to check and handle player events for the Main Menu Scene
+    def event_handler(self, event):
+        #Default values for the following variables
+        mouse_pos = (0, 0)
+        mouse_click = False
+        mouse_let_go = False
+        
+        '''
+        Uses the event dictionary (Ex. 'pos', 'buttons', 'touch', 'window') to grab mouse position 
+        (checks if 'pos' exists in the dictionary before grabbing the value)
+        '''
+        if('pos' in event.dict):
+            mouse_pos = event.dict.get('pos') #Returns a tuple
+
+        #Uses the event type to check if the player has clicked or let go of the *left* mouse button
+        if('button' in event.dict and                 #Checks if there is a button categrory in dict
+            event.type == pygame.MOUSEBUTTONDOWN and  #Checks if we're clicking down on a mouse button  
+            event.dict.get('button') == 1):           #Checks if its the left mouse that were clicking
+            mouse_click = True
+            mouse_let_go = False
+        elif('button' in event.dict and                 
+             event.type == pygame.MOUSEBUTTONUP and   
+             event.dict.get('button') == 1):           
+             mouse_click = False
+             mouse_let_go = True
+        
+        #After clicking and letting go of the play button, the player is directed to the Gameplay Scene
+        if(self.play_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
+            self.game_state_manager.set_state('Gameplay Scene')
+
+        #After clicking and letting go of the quit button, the program quits
+        if(self.quit_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
+            pygame.quit()
+        
+        #Debug code to ensure that the function contains all the events done by the player 
+            #print(event.dict)
+            #print(mouse_pos)
 
     #A method to set up the characters and pellet for Main Menu Scene background
     def set_up_characters(self):

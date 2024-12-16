@@ -7,13 +7,14 @@ import pygame
 
 class Button:
     #A constructor to create an instance of a Button
-    def __init__(self, not_highlighted_file_path, highlighted_file_path, pressed_file_path, 
+    def __init__(self, not_highlighted_file_path, highlighted_file_path, pressed_image_file_path, 
                  text_input, non_hover_text_color, hover_text_color, pressed_text_color, 
                  font_path, font_size):
         #Sets up parameter variables
         self.non_hover_image_file_path = not_highlighted_file_path
         self.hover_image_file_path = highlighted_file_path
-        self.pressed_file_path = pressed_file_path
+        self.pressed_image_file_path = pressed_image_file_path
+
         self.text_input = text_input
         self.non_hover_text_color = non_hover_text_color
         self.hover_text_color = hover_text_color
@@ -85,5 +86,59 @@ class Button:
         self.text = self.font.render(self.text_input, True, self.non_hover_text_color)
         self.text_rect = self.text.get_rect()
 
-    #A method to update image after a change has been applied
-    #def update_image():
+    '''
+    A method to check player's input
+        Returns True if the player has fully clicked and let go of the button
+        Returns False if otherwise
+    '''
+    def check_input(self, mouse_pos, mouse_click, mouse_let_go): 
+        #Checks if the player pressing down the button
+        if(mouse_pos[0] in range(self.image_rect.left, self.image_rect.right) and
+           mouse_pos[1] in range(self.image_rect.top, self.image_rect.bottom) and
+           mouse_click == True and mouse_let_go == False):
+            self.image = pygame.image.load(self.pressed_image_file_path)
+            self.image_rect = self.image.get_rect()
+
+            self.text = self.font.render(self.text_input, True, self.pressed_text_color)
+            self.text_rect = self.text.get_rect()
+
+            #Debug code
+                #print("First statement ran")
+        #Checks if the player let go of clicking the button after pressing it
+        elif(mouse_pos[0] in range(self.image_rect.left, self.image_rect.right) and
+             mouse_pos[1] in range(self.image_rect.top, self.image_rect.bottom) and
+             mouse_click == False and mouse_let_go == True):
+            self.image = pygame.image.load(self.non_hover_image_file_path)
+            self.image_rect = self.image.get_rect()
+
+            self.text = self.font.render(self.text_input, True, self.non_hover_text_color)
+            self.text_rect = self.text.get_rect()
+
+            #Debug code
+                #print("Second statement ran")
+
+            return True
+        #Checks if the player is hovering over the button
+        elif(mouse_pos[0] in range(self.image_rect.left, self.image_rect.right) and
+             mouse_pos[1] in range(self.image_rect.top, self.image_rect.bottom) and
+             mouse_click == False and mouse_let_go == False):
+            self.image = pygame.image.load(self.hover_image_file_path)
+            self.image_rect = self.image.get_rect()
+
+            self.text = self.font.render(self.text_input, True, self.hover_text_color)
+            self.text_rect = self.text.get_rect()
+
+            #Debug code
+                #print("Third statement ran")
+        #Converts button to its normal state if the player is not hovering and/or pressing the button
+        else:
+            self.image = pygame.image.load(self.non_hover_image_file_path)
+            self.image_rect = self.image.get_rect()
+
+            self.text = self.font.render(self.text_input, True, self.non_hover_text_color)
+            self.text_rect = self.text.get_rect()
+
+            #Debug code
+                #print("Fourth statement ran")
+        
+        return False

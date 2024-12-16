@@ -26,7 +26,7 @@ class SplashScene:
         self.fully_transparent = False
     
     #A method to run the Splash Scene
-    def run(self):
+    def run(self, event):
         #Resets the display surface background to blit a dynamically updated Main Menu Scene surface
         self.display_surface.fill('black')
         
