@@ -50,12 +50,16 @@ class SplashScene:
                   reaching this if statement
         '''
         if self.transparency == 0:
-            self.game_state_manager.set_state('Main Menu Scene')
+            #Loads and plays the Pac-Man theme music when switching for the Main Menu Scene
+            pygame.mixer_music.load('Audio/Music/Pac-Man Theme Remix.wav')
+            pygame.mixer_music.play(-1)
+            
+            self.game_state_manager.set_scene_state('Main Menu Scene')
 
     #A method to set up and blit the surface objects onto the Splash Surface
     def set_up_splash_surface(self):
         #Fills the background color of the Splash Surface
-        self.splash_surface.fill('black')
+        #self.splash_surface.fill('black')
         
         #Sets up color for the splash scene borders and text
         DARK_YELLOW = (241, 196, 15)
@@ -65,7 +69,7 @@ class SplashScene:
 
         #Sets up the Splash Scene title by creating a surface image, getting the rect of it, and then positioning the image
         title_image = pygame.image.load('Images/Other/title.png')
-        title_image = pygame.transform.scale(title_image, (402, 97))
+        title_image = pygame.transform.scale(title_image, (384, 216))
         title_image_rect = title_image.get_rect()
         title_image_rect.center = (self.WINDOW_WIDTH / 2, 100)
 
@@ -76,7 +80,7 @@ class SplashScene:
         background_image_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 20)
 
         '''
-        Creates the title and rights reserved texts of the Main Menu Scene by creating a render (surface object) 
+        Creates the title and rights reserved texts by creating a render (surface object) 
         of the text through a custom font
         '''
         pixel_font = pygame.font.Font('Fonts/Pixel/DePixelHalbfett.ttf', 12)

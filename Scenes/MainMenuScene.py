@@ -1,5 +1,5 @@
 '''
-Description: The MainMenuScene class serves to help the player to navigate the game
+Description: The Main Menu Scene class serves to help the player to navigate the game
 '''
 
 #Imports pygame libraries and needed classes from their respective modules
@@ -28,6 +28,10 @@ class MainMenuScene:
         self.pac_man = PacMan()
         self.power_pellet_image = pygame.image.load('Images/Dots/power_pellet.png')
 
+        #Initializes variables to control character animation (speed)
+        self.character_animation_speed = 100 #In miliseconds
+        self.last_updated_time = 0 #In miliseconds
+
         #Initializes the interactable buttons
         self.play_button = Button('Images/Button/non_highlighted.png', 'Images/Button/highlighted.png', 'Images/Button/pressed.png', 
                                   'Play', "black", "black", "black", 'Fonts/Pixel/DePixelHalbfett.ttf', 24)
@@ -41,10 +45,10 @@ class MainMenuScene:
         '''
         self.main_menu_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
     
-    #A method to run MainMenuScene
-    def run(self, event):
+    #A method to run Main Menu Scene
+    def run(self, event):        
         #Resets the display surface background to blit a dynamically updated Main Menu Scene surface
-        self.display_surface.fill('blue')
+        self.display_surface.fill('black')
 
         #A method to set up the Main Menu Surface
         self.set_up_main_menu_surface()
@@ -55,13 +59,10 @@ class MainMenuScene:
         #Checks and handles player events for the Main Menu Scene
         self.event_handler(event)
 
-        #Delayes the game by 100 miliseconds so that the animations do not update too fast
-        #pygame.time.delay(100)
-
     #A method to setup and blit surface objects onto the Main Menu Scene
     def set_up_main_menu_surface(self):
         #Fills the background color of the Main Menu Scene
-        self.main_menu_surface.fill("black")
+        #self.main_menu_surface.fill("black")
 
         #Sets up the color for the scene borders and text
         DARK_YELLOW = (241, 196, 15)
@@ -77,8 +78,8 @@ class MainMenuScene:
         #Blits the text onto the main menu surface using text's positioned rect
         self.main_menu_surface.blit(pac_man_text, pac_man_text_rect)
 
-        #Sets up the characters for the background
-        self.set_up_characters()
+        #Updates character animation based on the character_animation_speed variable
+        self.character_animation()
 
         #Sets up interactable buttons
         self.set_up_buttons()
@@ -111,17 +112,44 @@ class MainMenuScene:
         
         #After clicking and letting go of the play button, the player is directed to the Gameplay Scene
         if(self.play_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
-            self.game_state_manager.set_state('Gameplay Scene')
+            #Stops playing and unloads the Pac-Man theme music from the mixer
+            pygame.mixer_music.stop()
+            pygame.mixer_music.unload()
+            
+            self.game_state_manager.set_scene_state('Gameplay Scene')
 
-        #After clicking and letting go of the quit button, the program quits
+        #After clicking and letting go of the quit button, the program convert running to False to stop the game loop in the Game class
         if(self.quit_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
-            pygame.quit()
+            self.game_state_manager.set_running_state(False)
         
         #Debug code to ensure that the function contains all the events done by the player 
             #print(event.dict)
             #print(mouse_pos)
+    
+    #A method to handle character animation speed
+    def character_animation(self):
+        #Gets the current time in miliseconds
+        curr_time = pygame.time.get_ticks()
 
-    #A method to set up the characters and pellet for Main Menu Scene background
+        '''
+        Updates the animation frame of each character if enough time has passed
+            Ex) 0 - 0 > 200     False
+                100 - 0 > 200   False
+                201 - 0 > 200   True  --> 
+                201 - 201 > 200 False
+                ...
+                402 - 201 > 200 True -->
+                402 - 402 > 200 
+                ... and so on
+        '''
+        if curr_time - self.last_updated_time > self.character_animation_speed:
+            #Updates character frames
+            self.set_up_characters()
+
+            #Sets up a new time
+            self.last_updated_time = curr_time
+
+    #A method to update frames of the characters and pellet for Main Menu Scene background
     def set_up_characters(self):
         #Sets up the Blinky ghost object and updates it's movement frame in runtime
         self.blinky.update_frame()
