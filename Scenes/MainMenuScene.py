@@ -20,6 +20,13 @@ class MainMenuScene:
         self.WINDOW_WIDTH = WINDOW_WIDTH
         self.WINDOW_HEIGHT = WINDOW_HEIGHT
 
+        '''
+        Sets up the Main Menu Scene surface to continiously update and blit it onto the display surface
+            Note: pygame.SRCALPHA must be included to access the alpha channel so that the program
+                  can change the transparency of the surface object below during runtime
+        '''
+        self.main_menu_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
+
         #Initializes the character objects
         self.blinky = Blinky()
         self.pinky = Pinky()
@@ -37,13 +44,6 @@ class MainMenuScene:
                                   'Play', "black", "black", "black", 'Fonts/Pixel/DePixelHalbfett.ttf', 24)
         self.quit_button = Button('Images/Button/non_highlighted.png', 'Images/Button/highlighted.png', 'Images/Button/pressed.png', 
                                   'Quit', "black", "black", "black", 'Fonts/Pixel/DePixelHalbfett.ttf', 24)
-
-        '''
-        Sets up the Main Menu Scene surface to continiously update and blit onto the display surface
-            Note: pygame.SRCALPHA must be included to access the alpha channel so that the program
-                  can change the transparency of the surface object below during runtime
-        '''
-        self.main_menu_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
     
     #A method to run Main Menu Scene
     def run(self, event):        

@@ -15,7 +15,7 @@ class SplashScene:
         self.WINDOW_HEIGHT = window_height
 
         '''
-        Sets up the the Splash Scene surface to continiously update and blit onto the display surface
+        Sets up the the Splash Scene surface to continiously update and blit it onto the display surface
             Note: pygame.SRCALPHA must be included to access the alpha channel so that the program
                   can change the transparency of the surface object below during runtime
         '''
