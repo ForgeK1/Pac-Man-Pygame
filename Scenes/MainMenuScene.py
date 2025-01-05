@@ -28,11 +28,11 @@ class MainMenuScene:
         self.main_menu_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
         #Initializes the character objects
-        self.blinky = Blinky()
-        self.pinky = Pinky()
-        self.inky = Inky()
-        self.clyde = Clyde()
-        self.pac_man = PacMan()
+        self.blinky = Blinky(70, 70, "Right", 80, self.WINDOW_HEIGHT / 2 - 100)
+        self.pinky = Pinky(70, 70, "Right", 180, self.WINDOW_HEIGHT / 2 - 100)
+        self.inky = Inky(70, 70, "Right", 80,self.WINDOW_HEIGHT / 2)
+        self.clyde = Clyde(70, 70, "Right", 180, self.WINDOW_HEIGHT / 2)
+        self.pac_man = PacMan(70, 70, "Right", 320, self.WINDOW_HEIGHT / 2 - 50, True, 100)
         self.power_pellet_image = pygame.image.load('Images/Dots/power_pellet.png')
 
         #Initializes variables to control character animation (speed)
@@ -78,11 +78,80 @@ class MainMenuScene:
         #Blits the text onto the main menu surface using text's positioned rect
         self.main_menu_surface.blit(pac_man_text, pac_man_text_rect)
 
-        #Updates character animation based on the character_animation_speed variable
-        self.character_animation()
+        #Updates all character animation based on the character_animation_speed variable
+        self.pac_man.animation_update()
+        self.character_animation_update()
+        
+        self.main_menu_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
 
         #Sets up interactable buttons
         self.set_up_buttons()
+    
+    #A method to update the animation speed of all characters in the Main Menu Scene
+    def character_animation_update(self):
+        #Gets the current time in miliseconds
+        curr_time = pygame.time.get_ticks()
+
+        #A variable to keep track of changing frame of characters
+        change_frame = False
+
+        '''
+        Updates the animation frame of each character if enough time has passed
+            Ex) 0 - 0 > 200     False
+                100 - 0 > 200   False
+                201 - 0 > 200   True  --> 
+                201 - 201 > 200 False
+                ...
+                402 - 201 > 200 True -->
+                402 - 402 > 200 
+                ... and so on
+        '''
+        if curr_time - self.last_updated_time > self.character_animation_speed:
+            #Sets change frame to True 
+            change_frame = True
+
+            #Sets up a new time
+            self.last_updated_time = curr_time
+        
+        #Updates character frames
+        self.character_frame_update(change_frame)
+
+    #A method to update the frame of all characters in the Main Menu Scene
+    def character_frame_update(self, change_frame):
+        #Updates frames and movement positions of each character
+        if(change_frame):
+            self.blinky.update_frame()
+            self.pinky.update_frame()
+            self.inky.update_frame()
+            self.clyde.update_frame()
+
+        #Sets up the Power Pellet image
+        self.power_pellet_image = pygame.transform.scale(self.power_pellet_image, (40, 40))
+        self.power_pellet_image_rect = self.power_pellet_image.get_rect()
+        self.power_pellet_image_rect.center = (415, self.WINDOW_HEIGHT / 2 - 50)
+
+        #Blits the images onto the main menu surface after the updates frames
+        self.main_menu_surface.blit(self.blinky.get_image(), self.blinky.get_rect())
+        self.main_menu_surface.blit(self.pinky.get_image(), self.pinky.get_rect())
+        self.main_menu_surface.blit(self.inky.get_image(), self.inky.get_rect())
+        self.main_menu_surface.blit(self.clyde.get_image(), self.clyde.get_rect())
+        self.main_menu_surface.blit(self.power_pellet_image, self.power_pellet_image_rect)
+    
+    #A method to set up interactable buttons
+    def set_up_buttons(self):
+        self.play_button.scale_button(260, 74, 30)
+        self.play_button.get_image_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 120)
+        self.play_button.get_text_rect().center= (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 120)
+        
+        self.main_menu_surface.blit(self.play_button.get_image(), self.play_button.get_image_rect())
+        self.main_menu_surface.blit(self.play_button.get_text(), self.play_button.get_text_rect())
+
+        self.quit_button.scale_button(260, 74, 30)
+        self.quit_button.get_image_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 220)
+        self.quit_button.get_text_rect().center= (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 220)
+        
+        self.main_menu_surface.blit(self.quit_button.get_image(), self.quit_button.get_image_rect())
+        self.main_menu_surface.blit(self.quit_button.get_text(), self.quit_button.get_text_rect())
     
     #A method to check and handle player events for the Main Menu Scene
     def event_handler(self, event):
@@ -125,77 +194,3 @@ class MainMenuScene:
         #Debug code to ensure that the function contains all the events done by the player 
             #print(event.dict)
             #print(mouse_pos)
-    
-    #A method to handle character animation speed
-    def character_animation(self):
-        #Gets the current time in miliseconds
-        curr_time = pygame.time.get_ticks()
-
-        '''
-        Updates the animation frame of each character if enough time has passed
-            Ex) 0 - 0 > 200     False
-                100 - 0 > 200   False
-                201 - 0 > 200   True  --> 
-                201 - 201 > 200 False
-                ...
-                402 - 201 > 200 True -->
-                402 - 402 > 200 
-                ... and so on
-        '''
-        if curr_time - self.last_updated_time > self.character_animation_speed:
-            #Updates character frames
-            self.set_up_characters()
-
-            #Sets up a new time
-            self.last_updated_time = curr_time
-
-    #A method to update frames of the characters and pellet for Main Menu Scene background
-    def set_up_characters(self):
-        #Sets up the Blinky ghost object and updates it's movement frame in runtime
-        self.blinky.update_frame()
-        self.blinky.get_rect().center = (80, self.WINDOW_HEIGHT / 2 - 100)
-
-        #Sets up the Pinky ghost object and updates it's movement frame in runtime
-        self.pinky.update_frame()
-        self.pinky.get_rect().center = (180, self.WINDOW_HEIGHT / 2 - 100)
-
-        #Sets up the Inky ghost image and updates it's movement frame in runtime
-        self.inky.update_frame()
-        self.inky.get_rect().center = (80, self.WINDOW_HEIGHT / 2)
-
-        #Sets up the Clyde ghost image and updates it's movement frame in runtime
-        self.clyde.update_frame()
-        self.clyde.get_rect().center = (180, self.WINDOW_HEIGHT / 2)
-
-        #Sets up the Pac-Man image and updates it's movement frame in runtime
-        self.pac_man.update_frame()
-        self.pac_man.get_rect().center = (320, self.WINDOW_HEIGHT / 2 - 50)
-
-        #Sets up the Power Pellet image
-        self.power_pellet_image = pygame.transform.scale(self.power_pellet_image, (40, 40))
-        self.power_pellet_image_rect = self.power_pellet_image.get_rect()
-        self.power_pellet_image_rect.center = (415, self.WINDOW_HEIGHT / 2 - 50)
-
-        #Blits the images onto the main menu surface using their positioned rects
-        self.main_menu_surface.blit(self.blinky.get_image(), self.blinky.get_rect())
-        self.main_menu_surface.blit(self.pinky.get_image(), self.pinky.get_rect())
-        self.main_menu_surface.blit(self.inky.get_image(), self.inky.get_rect())
-        self.main_menu_surface.blit(self.clyde.get_image(), self.clyde.get_rect())
-        self.main_menu_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
-        self.main_menu_surface.blit(self.power_pellet_image, self.power_pellet_image_rect)
-    
-    #A method to set up interactable buttons
-    def set_up_buttons(self):
-        self.play_button.scale_button(260, 74, 30)
-        self.play_button.get_image_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 120)
-        self.play_button.get_text_rect().center= (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 120)
-        
-        self.main_menu_surface.blit(self.play_button.get_image(), self.play_button.get_image_rect())
-        self.main_menu_surface.blit(self.play_button.get_text(), self.play_button.get_text_rect())
-
-        self.quit_button.scale_button(260, 74, 30)
-        self.quit_button.get_image_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 220)
-        self.quit_button.get_text_rect().center= (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 220)
-        
-        self.main_menu_surface.blit(self.quit_button.get_image(), self.quit_button.get_image_rect())
-        self.main_menu_surface.blit(self.quit_button.get_text(), self.quit_button.get_text_rect())

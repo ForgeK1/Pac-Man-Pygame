@@ -6,6 +6,7 @@ Description: The GameplayScene class helps run the levels of the game. For every
 #Imports pygame and other libraries
 import pygame
 import os
+from Characters.PacMan import PacMan
 
 class GameplayScene:
     #A constructor to initialize an instance of Gameplay Scene
@@ -16,9 +17,6 @@ class GameplayScene:
         self.WINDOW_WIDTH = WINDOW_WIDTH
         self.WINDOW_HEIGHT = WINDOW_HEIGHT
 
-        #Initializes
-        self.list_obstacles = self.load_obstacles()
-
         '''
         Sets up the Gameplay Scene surface to continiously update and blit it onto the display surface
             Note: pygame.SRCALPHA must be included to access the alpha channel so that the program
@@ -26,21 +24,40 @@ class GameplayScene:
         '''
         self.gameplay_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
+        #Initializes the list of obstacles for the game map
+        self.list_obstacles = self.load_obstacles()
+
+        #Initializes the character objects
+        self.pac_man = PacMan(25, 25, 'Right', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 135, True, 50)
+
     #A method to run the Gameplay Scene
     def run(self, event):
+        #Resets the display surface background to blit a dynamically updated Gameplay Scene surface
         self.display_surface.fill('black')
 
+        #A method to check and handle player events for the Gameplay Scene
+        self.event_handler(event)
+
+        #A method to set up the Gameplay Scene surface
         self.set_up_gameplay_surface()
 
+        #Blits the updated Gameplay Surface onto the display surface
         self.display_surface.blit(self.gameplay_surface, (0, 0))
     
     #A method to setup and blit surface objects onto the Gameplay Scene
     def set_up_gameplay_surface(self):
+        #Resets the Gameplay Scene surface background
+        self.gameplay_surface.fill('black')
+        
         #Sets up the obstacles on the Gameplay Scene
         for i in range(len(self.list_obstacles[0])): 
             self.gameplay_surface.blit(self.list_obstacles[1][i], self.list_obstacles[2][i])
+        
+        #Updates animation speed and frame of the characters
+        self.pac_man.animation_update()
 
-        #self.gameplay_surface.blit(map_image, map_image_rect)
+        #Blits the character's image and rect onto the main menu surface
+        self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
     
     #A method to load obstacles into images and rects, and store then in a list
     def load_obstacles(self):
@@ -77,3 +94,11 @@ class GameplayScene:
             list_obstacles[2].append(image_rect)
 
         return list_obstacles
+
+    #A method to check and handle player events for the Gameplay Scene
+    def event_handler(self, event):
+        '''
+        A section to handle player events for Pac-Man
+        '''
+
+        self.pac_man.movement_update(event, self.list_obstacles)

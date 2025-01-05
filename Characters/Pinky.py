@@ -8,18 +8,19 @@ import pygame
 
 class Pinky:
     #A constructor to initialize an instance of Pinky
-    def __init__(self):
+    def __init__(self, horizontal_scale, vertical_scale, direction, x_position, y_position):
         self.image = pygame.image.load('Images/Ghosts/Pinky (Pink)/right_frame_1.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image = pygame.transform.scale(self.image, (horizontal_scale, vertical_scale))
         self.rect = self.image.get_rect()
+        self.rect.center = (x_position, y_position)
 
-        '''
-        Variables to keep track of current movement frame and direction of the ghost
-            Ex) ghost_frame has 2 movement frames and pac_man_frame has 3 movement frames for 
-                any direction of movement
-        '''
+        #Variables to keep track of current frame, direction, movement coordinates, and scale of the ghost
         self.frame = 0
-        self.direction = 'right'
+        self.direction = direction
+        self.x_position = x_position
+        self.y_position = y_position
+        self.horizontal_scale = horizontal_scale
+        self.vertical_scale = vertical_scale
 
     #A method to return Pinky's image
     def get_image(self):
@@ -52,49 +53,90 @@ class Pinky:
     #A method to set a new direction for Pinky
     def set_direction(self, new_direction):
         self.direction = new_direction
+    
+    #A method to return Pinky's x_position
+    def get_x_position(self):
+        return self.x_position
+
+    #A method to set a new x_position for Pinky
+    def set_x_position(self, new_x_position):
+        self.x_position = new_x_position
+    
+    #A method to return Pinky's y_position
+    def get_y_position(self):
+        return self.y_position
+
+    #A method to set a new y_position for Pinky
+    def set_y_position(self, new_y_position):
+        self.y_position = new_y_position
+    
+    #A method to return Pinky's horizontal_scale
+    def get_horizontal_scale(self):
+        return self.horizontal_scale
+
+    #A method to set a new horizontal_scale for Pinky
+    def set_horizontal_scale(self, new_horizontal_scale):
+        self.horizontal_scale = new_horizontal_scale
+    
+    #A method to return Pinky's vertical_scale
+    def get_vertical_scale(self):
+        return self.vertical_scale
+
+    #A method to set a new vertical_scale for Pinky
+    def set_vertical_scale(self, new_vertical_scale):
+        self.vertical_scale = new_vertical_scale
 
     '''
-    A series of methods to set the movement frame of the character (Ex. RMF1 means Right Movement Frame 1)
+    A series of methods to set the current frame and movement position of the character 
+    (Ex. RMF1 means Right Movement Frame 1)
     '''
     def set_RMF1(self):
         self.image = pygame.image.load('Images/Ghosts/Pinky (Pink)/right_frame_1.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
         self.rect = self.image.get_rect()
+        self.rect.center = (self.x_position, self.y_position)
     
     def set_RMF2(self):
         self.image = pygame.image.load('Images/Ghosts/Pinky (Pink)/right_frame_2.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
         self.rect = self.image.get_rect()
+        self.rect.center = (self.x_position, self.y_position)
 
     def set_LMF1(self):
         self.image = pygame.image.load('Images/Ghosts/Pinky (Pink)/left_frame_1.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
         self.rect = self.image.get_rect()
+        self.rect.center = (self.x_position, self.y_position)
     
     def set_LMF2(self):
         self.image = pygame.image.load('Images/Ghosts/Pinky (Pink)/left_frame_2.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
         self.rect = self.image.get_rect()
+        self.rect.center = (self.x_position, self.y_position)
     
     def set_UMF1(self):
         self.image = pygame.image.load('Images/Ghosts/Pinky (Pink)/up_frame_1.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
         self.rect = self.image.get_rect()
+        self.rect.center = (self.x_position, self.y_position)
     
     def set_UMF2(self):
         self.image = pygame.image.load('Images/Ghosts/Pinky (Pink)/up_frame_2.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
         self.rect = self.image.get_rect()
+        self.rect.center = (self.x_position, self.y_position)
     
     def set_DMF1(self):
         self.image = pygame.image.load('Images/Ghosts/Pinky (Pink)/down_frame_1.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
         self.rect = self.image.get_rect()
+        self.rect.center = (self.x_position, self.y_position)
     
     def set_DMF2(self):
         self.image = pygame.image.load('Images/Ghosts/Pinky (Pink)/down_frame_2.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
         self.rect = self.image.get_rect()
+        self.rect.center = (self.x_position, self.y_position)
     
     #A method to check what movement frame and direction the ghost is in
     def update_frame(self):

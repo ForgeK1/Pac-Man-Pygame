@@ -31,7 +31,7 @@ clock = pygame.time.Clock()
 Sets up the game state manager to keep track of different scenes and running state during gameplay
     Note: Runs the Splash Scene when opening the game for the first time
 '''
-game_state_manager = GameStateManager('Splash Scene', True)
+game_state_manager = GameStateManager('Gameplay Scene', True)
 
 #Sets up scenes of the game
 splash_scene = SplashScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -48,7 +48,7 @@ while game_state_manager.get_running_state():
         #Checks if the player quit the game
         if(event.type == pygame.QUIT):
             game_state_manager.set_running_state(False)
-
+    
     '''
     Continuously runs the current scene the game state manager focuses on based on current player events
         Note: We pass in the event so that the run method can handle any events done by the player
