@@ -17,8 +17,6 @@ class PacMan:
         #Variables to keep track of current frame, direction, movement coordinates, and scale of Pac-Man
         self.frame = 0
         self.direction = direction
-        self.x_position = x_position
-        self.y_position = y_position
         self.horizontal_scale = horizontal_scale
         self.vertical_scale = vertical_scale
         
@@ -102,62 +100,44 @@ class PacMan:
         self.movement = new_movement
 
     '''
-    A series of methods to set the current frame and movement position of the character 
+    A series of methods to set the current frame of the character 
     (Ex. CF means circle frame and RMF1 means Right Movement Frame 1)
     '''
     def set_CF(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/circle.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x_position, self.y_position)
     
     def set_RMF1(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/right_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x_position, self.y_position)
     
     def set_RMF2(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/right_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x_position, self.y_position)
 
     def set_LMF1(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/left_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x_position, self.y_position)
     
     def set_LMF2(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/left_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x_position, self.y_position)
     
     def set_UMF1(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/up_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x_position, self.y_position)
     
     def set_UMF2(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/up_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x_position, self.y_position)
     
     def set_DMF1(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/down_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x_position, self.y_position)
     
     def set_DMF2(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/down_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x_position, self.y_position)
     
     #A method to check what movement frame and direction Pac-Man is in
     def frame_update(self):
@@ -192,7 +172,7 @@ class PacMan:
         #Debug code for checking frame change speed
             #print(self.get_frame())
     
-    #A method to update the animation speed for a specific character in the Gameplay Scene
+    #A method to update the animation speed for Pac-Man
     def animation_update(self):
         #Gets the current time in miliseconds
         curr_time = pygame.time.get_ticks()
@@ -222,14 +202,17 @@ class PacMan:
         if(change_frame and self.get_movement()):
             self.frame_update()
     
-    #A method for the player to control Pac-Man's movement in the Gameplay Scene
+    #A method for the player to control Pac-Man's movement position in the Gameplay Scene
     def movement_update(self, event, list_obstacles):
-        #Grabs the old direction of Pac-Man if the player didn't change directions
+        #Creates directions variables to Pac-Man's new and ongoing (old) directions
         new_direction = self.direction
+        old_direction = self.direction
         
         '''
-        Grabs the new direction (what arrow key the player pressed). Note that, if the player 
-        didn't press any arrow keys it uses the previous direction that Pac-Man is on
+        Applies a value to new direction (what arrow key the player pressed) if the player 
+        any arrow keys. 
+            Note: If the player didn't press any arrow keys, new & old direction will have 
+                  same value
         '''
         if('key' in event.dict):
             direction_key = event.dict.get('key')
@@ -246,33 +229,41 @@ class PacMan:
             elif(direction_key == 1073741906):
                 new_direction = 'Up'
         
-        #Creates a Pac-Man object to predict the future position the play wants to prgress in
-        next_position = PacMan(self.get_horizontal_scale(), self.get_vertical_scale(), new_direction,
-                               self.get_x_position(), self.get_y_position(), self.get_movement(), 
-                               50)
+        #Creates two rect objects to predict the future position the play wants to progress in
+        new_direction_next_position_rect = pygame.Rect.copy(self.rect)
+        old_direction_next_position_rect = pygame.Rect.copy(self.rect)
         
-        #A set of if else statements to update the future movement position for next_position
+        #A set of if else statements to update the future movement position for Pac-Man's new direction
         if(new_direction == 'Right'):
-            next_position.get_rect().centerx = next_position.get_x_position() + 2
+            new_direction_next_position_rect.centerx = new_direction_next_position_rect.centerx + 3
         elif(new_direction == 'Left'):
-            next_position.get_rect().centerx = next_position.get_x_position() - 2
+            new_direction_next_position_rect.centerx = new_direction_next_position_rect.centerx - 3
         elif(new_direction == 'Down'):
-            next_position.get_rect().centery = next_position.get_y_position() + 2
+            new_direction_next_position_rect.centery = new_direction_next_position_rect.centery + 3
         elif(new_direction == 'Up'):
-            next_position.get_rect().centery = next_position.get_y_position() - 2
+            new_direction_next_position_rect.centery = new_direction_next_position_rect.centery - 3
         
-        #Debug code to see the rect of next_position before checking collision
-            #print(next_position.get_rect().center)
+        #A set of if else statements to update the future movement position for Pac-Man's old direction
+        if(old_direction == 'Right'):
+            old_direction_next_position_rect.centerx = old_direction_next_position_rect.centerx + 3
+        elif(old_direction == 'Left'):
+            old_direction_next_position_rect.centerx = old_direction_next_position_rect.centerx - 3
+        elif(old_direction == 'Down'):
+            old_direction_next_position_rect.centery = old_direction_next_position_rect.centery + 3
+        elif(old_direction == 'Up'):
+            old_direction_next_position_rect.centery = old_direction_next_position_rect.centery - 3
         
         '''
-        If next_position's future direction & position is not colliding with any walls, then those new values 
-        are set for current Pac-Man object
+        If Pac-Man's new direction and position do not result in a collision with any walls,  
+        the new values are applied to the current Pac-Man object. Otherwise, the original direction 
+        is checked under the same conditions. If neither condition allows movement, Pac-Man remains stationary
         '''
-        if(next_position.get_rect().collidelist(list_obstacles[2]) == -1):            
-            #self.movement = True
-            self.set_direction(next_position.get_direction())
-            self.set_x_position(next_position.get_rect().centerx)
-            self.set_y_position(next_position.get_rect().centery)
-        
-        #Debug code to see the rect of Pac-Man after checking collision
-            #print(self.get_rect().center)
+        if(new_direction_next_position_rect.collidelist(list_obstacles[2]) == -1):            
+            self.direction = new_direction
+            self.rect.center = new_direction_next_position_rect.center
+            self.movement = True
+        elif(old_direction_next_position_rect.collidelist(list_obstacles[2]) == -1):
+            self.rect.center = old_direction_next_position_rect.center
+            self.movement = True
+        else:
+            self.movement = False

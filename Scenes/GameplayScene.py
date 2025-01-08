@@ -28,7 +28,7 @@ class GameplayScene:
         self.list_obstacles = self.load_obstacles()
 
         #Initializes the character objects
-        self.pac_man = PacMan(25, 25, 'Right', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 135, True, 50)
+        self.pac_man = PacMan(30, 30, 'Right', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138, True, 50)
 
     #A method to run the Gameplay Scene
     def run(self, event):
@@ -101,4 +101,5 @@ class GameplayScene:
         A section to handle player events for Pac-Man
         '''
 
+        #A method to update Pac-Man's movement
         self.pac_man.movement_update(event, self.list_obstacles)
