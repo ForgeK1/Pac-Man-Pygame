@@ -21,33 +21,32 @@ class SplashScene:
         '''
         self.splash_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
-        #Initializes up variables to keep track of the transparency of the Splash Surface
+        #Initializes variables to keep track of the transparency of the Splash Scene
         self.transparency = 0
         self.fully_transparent = False
     
     #A method to run the Splash Scene
     def run(self, event):
-        #Resets the display surface background to blit a dynamically updated Main Menu Scene surface
         self.display_surface.fill('black')
         
-        #A method to set up the Splash Scene
+        #A method to set up the updated Splash Scene surface
         self.set_up_splash_surface()
 
-        #Dynamically updates transparency
+        #A method to dynamically update the transparency variable
         self.update_transparency()
 
-        #Sets the alpha of Splash Surface based on the current transparency value during each function call
+        #Sets the alpha of Splash Scene surface to the transparency value
         self.splash_surface.set_alpha(self.transparency)
 
-        #Continiously blits the Splash Surface onto the display surface
+        #Continiously blits the Splash Scene surface onto the display surface
         self.display_surface.blit(self.splash_surface, (0, 0))
 
         '''
         An if statement that uses the game state manager to re-direct the player to the 
-        main menu scene after the splash scene dissapears
-            Note: Although the value of transparency is 0 in the beginning, the game 
-                  doesn't switch scenes because the variable gets incremented before
-                  reaching this if statement
+        main menu scene after the splash scene disappears
+            Note: Although the initialized value of transparency is 0, the game doesn't 
+                  switch scenes because the variable gets incremented before reaching
+                  this if statement
         '''
         if self.transparency == 0:
             #Loads and plays the Pac-Man theme music when switching for the Main Menu Scene
@@ -56,16 +55,13 @@ class SplashScene:
             
             self.game_state_manager.set_scene_state('Main Menu Scene')
 
-    #A method to set up and blit the surface objects onto the Splash Surface
+    #A method to set up and blit the surface objects onto the Splash Scene
     def set_up_splash_surface(self):
-        #Fills the background color of the Splash Surface
-        #self.splash_surface.fill('black')
+        #Fills the background color of the Splash Scene
+        self.splash_surface.fill('black')
         
-        #Sets up color for the splash scene borders and text
+        #Sets up color for the Splash Scene text
         DARK_YELLOW = (241, 196, 15)
-
-        #Draws the Splash Scene border -> Rectangle(surface, color, (top-left x, top-left y, width, height), border line width [has no fill if you define width])
-        #pygame.draw.rect(self.splash_surface, DARK_YELLOW, (0, 0, self.WINDOW_WIDTH, self.WINDOW_HEIGHT), 4)
 
         #Sets up the Splash Scene title by creating a surface image, getting the rect of it, and then positioning the image
         title_image = pygame.image.load('Images/Other/title.png')
@@ -93,7 +89,7 @@ class SplashScene:
         rights_reserved_text_rect = rights_reserved_text.get_rect()
         rights_reserved_text_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 250)
         
-        #Blits the text and images onto the splash surface using their positioned rects
+        #Blits the text and images onto the Splash Scene surface using their positioned rects
         self.splash_surface.blit(title_image, title_image_rect)
         self.splash_surface.blit(background_image, background_image_rect)
         self.splash_surface.blit(author_text, author_text_rect)
@@ -103,25 +99,26 @@ class SplashScene:
     def update_transparency(self):
         '''
         An if statement to check if the transparency has reached 250 to pause the splash scene (momentarily stops
-        changing the transparency of the Splash Surface)
+        changing the transparency of the Splash Scene)
         '''
         if self.transparency == 250:
             self.fully_transparent = True
             pygame.time.delay(5000)
 
             #Debug code
-                #print(str(self.transparency) + " First if statement ran \n")
+            print(str(self.transparency) + " First if statement ran \n")
         
-        #An if-else statement to dynamically change the value of the transparency variable for the Splash Surface
+        #An if-else statement to dynamically change the value of the transparency variable for the Splash Scene
         if self.fully_transparent == False:
             self.transparency += 10
             pygame.time.delay(50)
 
             #Debug code
-                #print(str(self.transparency) + " Second if statement ran \n")
+            print(str(self.transparency) + " Second if statement ran \n")
+
         elif(self.fully_transparent and self.transparency > 0):
             self.transparency -= 10
             pygame.time.delay(50)
 
             #Debug code
-                #print(str(self.transparency) + " Third if statement ran \n")
+            print(str(self.transparency) + " Third if statement ran \n")

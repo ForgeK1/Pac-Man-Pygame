@@ -32,34 +32,33 @@ class GameplayScene:
 
     #A method to run the Gameplay Scene
     def run(self, event):
-        #Resets the display surface background to blit a dynamically updated Gameplay Scene surface
         self.display_surface.fill('black')
-
+        
         #A method to check and handle player events for the Gameplay Scene
         self.event_handler(event)
 
-        #A method to set up the Gameplay Scene surface
+        #A method to set up the updated Gameplay Scene surface
         self.set_up_gameplay_surface()
 
-        #Blits the updated Gameplay Surface onto the display surface
+        #Blits the Gameplay Scene surface onto the display surface
         self.display_surface.blit(self.gameplay_surface, (0, 0))
     
     #A method to setup and blit surface objects onto the Gameplay Scene
     def set_up_gameplay_surface(self):
-        #Resets the Gameplay Scene surface background
+        #Resets the Gameplay Scene background
         self.gameplay_surface.fill('black')
         
         #Sets up the obstacles on the Gameplay Scene
         for i in range(len(self.list_obstacles[0])): 
             self.gameplay_surface.blit(self.list_obstacles[1][i], self.list_obstacles[2][i])
         
-        #Updates animation speed and frame of the characters
+        #Updates all character animation based on the character_animation_speed variable
         self.pac_man.animation_update()
 
-        #Blits the character's image and rect onto the main menu surface
+        #Blits all character images and rects onto the Gameplay Scene
         self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
     
-    #A method to load obstacles into images and rects, and store then in a list
+    #A method to load obstacles into images and rects, and store them in a list
     def load_obstacles(self):
         '''
         First parameter:  [X, Y] coordinates of the image
@@ -68,7 +67,7 @@ class GameplayScene:
         '''
         list_obstacles = ([], [], [])
 
-        #A for loop to iterate through all files in the obstacles folder
+        #A for loop to iterate through all image files in the obstacles folder
         for filename in os.listdir('Images/Obstacles'):
             '''
             A section to grab the top left X & Y coordinate of each file as an array 
@@ -84,7 +83,9 @@ class GameplayScene:
             #Appends the coordinates in the first list
             list_obstacles[0].append(coordinates)
 
-            #A section to grab the image and rect
+            '''
+            A section to grab the image and rect of the file
+            '''
             image = pygame.image.load('Images/Obstacles/' + filename)
             image_rect = image.get_rect()
             image_rect.topleft = (coordinates[0], coordinates[1])
@@ -95,7 +96,7 @@ class GameplayScene:
 
         return list_obstacles
 
-    #A method to check and handle player events for the Gameplay Scene
+    #A method to check and handle events for the Gameplay Scene
     def event_handler(self, event):
         '''
         A section to handle player events for Pac-Man
