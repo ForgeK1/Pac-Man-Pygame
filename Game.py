@@ -36,7 +36,7 @@ game_state_manager = GameStateManager('Splash Scene', True)
 #Sets up scenes of the game
 splash_scene = SplashScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
 main_menu_scene = MainMenuScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
-gameplay_scene = GameplayScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
+gameplay_scene = GameplayScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT, True)
 
 #A dictionary that matches keys with their respective scenes to help the game state manager switch between scenes of the game
 list_of_states = {'Splash Scene':splash_scene, 'Main Menu Scene':main_menu_scene, 'Gameplay Scene':gameplay_scene}

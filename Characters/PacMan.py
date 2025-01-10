@@ -217,23 +217,23 @@ class PacMan:
         
         #A set of if else statements to update the future position for Pac-Man's new direction
         if(new_direction == 'Right'):
-            new_direction_rect.centerx = new_direction_rect.centerx + 3
+            new_direction_rect.centerx = new_direction_rect.centerx + 2
         elif(new_direction == 'Left'):
-            new_direction_rect.centerx = new_direction_rect.centerx - 3
+            new_direction_rect.centerx = new_direction_rect.centerx - 2
         elif(new_direction == 'Down'):
-            new_direction_rect.centery = new_direction_rect.centery + 3
+            new_direction_rect.centery = new_direction_rect.centery + 2
         elif(new_direction == 'Up'):
-            new_direction_rect.centery = new_direction_rect.centery - 3
+            new_direction_rect.centery = new_direction_rect.centery - 2
         
         #A set of if else statements to update the future position for Pac-Man's old direction
         if(old_direction == 'Right'):
-            old_direction_rect.centerx = old_direction_rect.centerx + 3
+            old_direction_rect.centerx = old_direction_rect.centerx + 2
         elif(old_direction == 'Left'):
-            old_direction_rect.centerx = old_direction_rect.centerx - 3
+            old_direction_rect.centerx = old_direction_rect.centerx - 2
         elif(old_direction == 'Down'):
-            old_direction_rect.centery = old_direction_rect.centery + 3
+            old_direction_rect.centery = old_direction_rect.centery + 2
         elif(old_direction == 'Up'):
-            old_direction_rect.centery = old_direction_rect.centery - 3
+            old_direction_rect.centery = old_direction_rect.centery - 2
         
         '''
         If Pac-Man's new direction and position do not result in a collision with any walls,  
@@ -242,10 +242,10 @@ class PacMan:
         '''
         if(new_direction_rect.collidelist(list_obstacles[2]) == -1):            
             self.direction = new_direction
-            self.rect.center = new_direction_rect.center
+            self.rect.center = (new_direction_rect.centerx, new_direction_rect.centery)
             self.movement = True
         elif(old_direction_rect.collidelist(list_obstacles[2]) == -1):
-            self.rect.center = old_direction_rect.center
+            self.rect.center = (old_direction_rect.centerx, old_direction_rect.centery)
             self.movement = True
         else:
             self.movement = False

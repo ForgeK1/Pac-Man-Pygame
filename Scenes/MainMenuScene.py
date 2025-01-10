@@ -13,7 +13,7 @@ from Functions.Button import Button
 
 class MainMenuScene:
     #A constructor to initialize an instance of Main Menu Scene
-    def __init__(self, display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT):
+    def __init__(self, display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT):        
         #Initializes the display surface and game state manager
         self.display_surface = display_surface
         self.game_state_manager = game_state_manager
@@ -30,7 +30,7 @@ class MainMenuScene:
         #Initializes the character objects
         self.blinky = Blinky(70, 70, "Right", 80, self.WINDOW_HEIGHT / 2 - 100, True, 100)
         self.pinky = Pinky(70, 70, "Right", 180, self.WINDOW_HEIGHT / 2 - 100, True, 100)
-        self.inky = Inky(70, 70, "Right", 80,self.WINDOW_HEIGHT / 2, True, 100)
+        self.inky = Inky(70, 70, "Right", 80, self.WINDOW_HEIGHT / 2, True, 100)
         self.clyde = Clyde(70, 70, "Right", 180, self.WINDOW_HEIGHT / 2, True, 100)
         self.pac_man = PacMan(70, 70, "Right", 320, self.WINDOW_HEIGHT / 2 - 50, True, 100)
         self.power_pellet_image = pygame.image.load('Images/Dots/power_pellet.png')
@@ -43,6 +43,7 @@ class MainMenuScene:
     
     #A method to run Main Menu Scene
     def run(self, event): 
+        #Fills the background of the display surface
         self.display_surface.fill('black')
         
         #Checks and handles player events for the Main Menu Scene
@@ -148,6 +149,10 @@ class MainMenuScene:
             #Stops playing and unloads the Pac-Man theme music from the mixer
             pygame.mixer_music.stop()
             pygame.mixer_music.unload()
+
+            #Loads and plays the Pac-Man start theme music when switching to the Gameplay Scene
+            pygame.mixer_music.load('Audio/Music/Pac-Man Start Theme.wav')
+            pygame.mixer_music.play()
             
             self.game_state_manager.set_scene_state('Gameplay Scene')
 

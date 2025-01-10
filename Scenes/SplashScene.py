@@ -27,6 +27,7 @@ class SplashScene:
     
     #A method to run the Splash Scene
     def run(self, event):
+        #Fills the background of the display surface
         self.display_surface.fill('black')
         
         #A method to set up the updated Splash Scene surface
@@ -49,7 +50,7 @@ class SplashScene:
                   this if statement
         '''
         if self.transparency == 0:
-            #Loads and plays the Pac-Man theme music when switching for the Main Menu Scene
+            #Loads and plays the Pac-Man theme music when switching to the Main Menu Scene
             pygame.mixer_music.load('Audio/Music/Pac-Man Theme Remix.wav')
             pygame.mixer_music.play(-1)
             
@@ -106,7 +107,7 @@ class SplashScene:
             pygame.time.delay(5000)
 
             #Debug code
-            print(str(self.transparency) + " First if statement ran \n")
+                #print(str(self.transparency) + " First if statement ran \n")
         
         #An if-else statement to dynamically change the value of the transparency variable for the Splash Scene
         if self.fully_transparent == False:
@@ -114,11 +115,11 @@ class SplashScene:
             pygame.time.delay(50)
 
             #Debug code
-            print(str(self.transparency) + " Second if statement ran \n")
+                #print(str(self.transparency) + " Second if statement ran \n")
 
         elif(self.fully_transparent and self.transparency > 0):
             self.transparency -= 10
             pygame.time.delay(50)
 
             #Debug code
-            print(str(self.transparency) + " Third if statement ran \n")
+                #print(str(self.transparency) + " Third if statement ran \n")

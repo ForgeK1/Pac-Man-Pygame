@@ -7,10 +7,14 @@ Description: The GameplayScene class helps run the levels of the game. For every
 import pygame
 import os
 from Characters.PacMan import PacMan
+from Characters.Blinky import Blinky
+from Characters.Pinky import Pinky
+from Characters.Inky import Inky
+from Characters.Clyde import Clyde
 
 class GameplayScene:
     #A constructor to initialize an instance of Gameplay Scene
-    def __init__(self, display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT):
+    def __init__(self, display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT, start):
         #Initializes the display surface and game state manager
         self.display_surface = display_surface
         self.game_state_manager = game_state_manager
@@ -28,20 +32,32 @@ class GameplayScene:
         self.list_obstacles = self.load_obstacles()
 
         #Initializes the character objects
-        self.pac_man = PacMan(30, 30, 'Right', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138, True, 50)
+        self.pac_man = PacMan(30, 30, 'Left', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138, False, 50)
+        self.blinky = Blinky(30, 30, "Left", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68, False, 100)
+        self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20, True, 100)
+        self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20, True, 100)
+        self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20, True, 100)
+
+        #A variable to check if the player is starting a new round in the Gameplay Scene for the very first time
+        self.start = start
 
     #A method to run the Gameplay Scene
     def run(self, event):
-        self.display_surface.fill('black')
-        
-        #A method to check and handle player events for the Gameplay Scene
-        self.event_handler(event)
+        #An if statement to check if the player is seeing the Gameplay Scene for the first time
+        if(self.start):
+            self.start_round()
+        else:
+            #Fills the background of the display surface
+            self.display_surface.fill('black')
+            
+            #A method to check and handle player events for the Gameplay Scene
+            self.event_handler(event)
 
-        #A method to set up the updated Gameplay Scene surface
-        self.set_up_gameplay_surface()
+            #A method to set up the updated Gameplay Scene surface
+            self.set_up_gameplay_surface()
 
-        #Blits the Gameplay Scene surface onto the display surface
-        self.display_surface.blit(self.gameplay_surface, (0, 0))
+            #Blits the Gameplay Scene surface onto the display surface
+            self.display_surface.blit(self.gameplay_surface, (0, 0))
     
     #A method to setup and blit surface objects onto the Gameplay Scene
     def set_up_gameplay_surface(self):
@@ -57,6 +73,10 @@ class GameplayScene:
 
         #Blits all character images and rects onto the Gameplay Scene
         self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
+        self.gameplay_surface.blit(self.blinky.get_image(), self.blinky.get_rect())
+        self.gameplay_surface.blit(self.pinky.get_image(), self.pinky.get_rect())
+        self.gameplay_surface.blit(self.inky.get_image(), self.inky.get_rect())
+        self.gameplay_surface.blit(self.clyde.get_image(), self.clyde.get_rect())
     
     #A method to load obstacles into images and rects, and store them in a list
     def load_obstacles(self):
@@ -95,6 +115,51 @@ class GameplayScene:
             list_obstacles[2].append(image_rect)
 
         return list_obstacles
+
+    #A method to showcase the start of the round to the player
+    def start_round(self):
+        #Checks if the Pac-Man start theme is still playing
+        if(pygame.mixer_music.get_busy() is False):
+            self.start = False
+            pygame.mixer_music.unload()
+        
+        #Resets the Gameplay Scene background
+        self.gameplay_surface.fill('black')
+        
+        #Sets up the obstacles on the Gameplay Scene
+        for i in range(len(self.list_obstacles[0])): 
+            self.gameplay_surface.blit(self.list_obstacles[1][i], self.list_obstacles[2][i])
+        
+        '''
+        A section to dynamically showcase text based on the number of seconds left in the Pac-Man start theme
+        '''
+
+        pixel_font = pygame.font.Font('Fonts/Pixel/DePixelHalbfett.ttf', 18)
+
+        #Displays the "READY!" text throughout the entire theme
+        ready_text = pixel_font.render('READY!', True, 'Yellow')
+        ready_text_rect = ready_text.get_rect()
+        ready_text_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 35)
+
+        self.gameplay_surface.blit(ready_text, ready_text_rect)
+
+        #Displays the "PLAYER ONE" text up to 3 seconds of the theme
+        if(pygame.mixer_music.get_pos() / 1000 >= 0.01 and pygame.mixer_music.get_pos() / 1000 <= 2.5):
+            player_one_text = pixel_font.render('PLAYER ONE', True, 'Cyan')
+            player_one_text_rect = player_one_text.get_rect()
+            player_one_text_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
+
+            self.gameplay_surface.blit(player_one_text, player_one_text_rect)
+        #Else, the program displays the characters and their positions before the theme ends
+        else:
+            self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
+            self.gameplay_surface.blit(self.blinky.get_image(), self.blinky.get_rect())
+            self.gameplay_surface.blit(self.pinky.get_image(), self.pinky.get_rect())
+            self.gameplay_surface.blit(self.inky.get_image(), self.inky.get_rect())
+            self.gameplay_surface.blit(self.clyde.get_image(), self.clyde.get_rect())
+
+        #Blits the Gameplay Scene surface onto the display surface
+        self.display_surface.blit(self.gameplay_surface, (0, 0))
 
     #A method to check and handle events for the Gameplay Scene
     def event_handler(self, event):
