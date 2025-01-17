@@ -44,13 +44,13 @@ class SplashScene:
 
         '''
         An if statement that uses the game state manager to re-direct the player to the 
-        main menu scene after the splash scene disappears
+        Main Menu Scene after the splash scene disappears
             Note: Although the initialized value of transparency is 0, the game doesn't 
                   switch scenes because the variable gets incremented before reaching
                   this if statement
         '''
         if self.transparency == 0:
-            #Loads and plays the Pac-Man theme music when switching to the Main Menu Scene
+            #Loads and plays the Pac-Man Theme Remix when switching to the Main Menu Scene
             pygame.mixer_music.load('Audio/Music/Pac-Man Theme Remix.wav')
             pygame.mixer_music.play(-1)
             

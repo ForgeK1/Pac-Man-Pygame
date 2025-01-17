@@ -15,6 +15,11 @@ class PacMan:
         self.rect = self.image.get_rect()
         self.rect.center = (x_position, y_position)
 
+        #Variables to lower hitbox detection for eating pellets
+        self.minimized_image = pygame.transform.scale(self.image, (25, 25))
+        self.minimized_rect = self.minimized_image.get_rect()
+        self.minimized_rect.center = self.rect.center
+
         #Variables to keep track of the scale, direction, movement boolean, and frame of Pac-Man
         self.horizontal_scale = horizontal_scale
         self.vertical_scale = vertical_scale
@@ -25,6 +30,9 @@ class PacMan:
         #Variables to control character animation speed
         self.character_animation_speed = character_animation_speed #In miliseconds
         self.last_updated_time = 0 #In miliseconds
+
+        #A boolean variable to check if Pac-Man ate a power pellet and can eat ghosts
+        self.eat_ghosts = False
 
     #A method to return Pac-Man's image
     def get_image(self):
@@ -41,6 +49,22 @@ class PacMan:
     #A method to set a new rect for Pac-Man
     def set_rect(self, new_rect):
         self.rect = new_rect
+    
+    #A method to return Pac-Man's image
+    def get_minimized_image(self):
+        return self.minimized_image
+
+    #A method to set a new image for Pac-Man
+    def set_minimized_image(self, new_minimized_image):
+        self.minimized_image = new_minimized_image
+
+    #A method to return the rect of Pac-Man's image
+    def get_minimized_rect(self):
+        return self.minimized_rect
+    
+    #A method to set a new rect for Pac-Man
+    def set_minimized_rect(self, new_minimized_rect):
+        self.minimized_rect = new_minimized_rect
     
     #A method to return Pac-Man's horizontal_scale
     def get_horizontal_scale(self):
@@ -81,6 +105,14 @@ class PacMan:
     #A method to set a new frame for Pac-Man
     def set_frame(self, new_frame):
         self.frame = new_frame
+    
+    #A method to return a boolean for Pac-Man's eat_ghosts
+    def get_eat_ghosts(self):
+        return self.eat_ghosts
+    
+    #A method to set a new boolean for Pac-Man's eat_ghosts
+    def set_eat_ghosts(self, eat_ghosts):
+        self.eat_ghosts = eat_ghosts
 
     '''
     A series of methods to set the current frame of the character 
@@ -185,7 +217,7 @@ class PacMan:
         if(change_frame and self.movement):
             self.frame_update()
     
-    #A method for the player to control Pac-Man's movement position
+    #A method for the player to control Pac-Man's movement position in the Gameplay Scene
     def movement_update(self, event, list_obstacles):
         #Creates direction variables for Pac-Man's new and ongoing (old) directions
         new_direction = self.direction
@@ -236,7 +268,7 @@ class PacMan:
             old_direction_rect.centery = old_direction_rect.centery - 2
         
         '''
-        If Pac-Man's new direction and position do not result in a collision with any walls,  
+        If Pac-Man's new direction and position does result in a collision with any walls,  
         the new values are applied to the current Pac-Man object. Otherwise, the original direction 
         is checked under the same conditions. If neither condition allows movement, Pac-Man remains stationary
         '''
@@ -249,3 +281,77 @@ class PacMan:
             self.movement = True
         else:
             self.movement = False
+    
+    #A method for the player to eat pellets in the Gameplay Scene
+    def eat_pellets(self, list_pellets, list_power_pellets, pac_man_channel, ghost_channel, pac_man_pellet_sound, pac_man_power_pellet_sound): 
+        '''
+        Checks if the player's minimized hitbox is interacting with a pellet
+        '''
+
+        #Updates the position of the minimized rect hitbox
+        self.minimized_rect.center = self.rect.center
+
+        #Grabs the index of the pellet that collided with Pac-Man's minimized rect
+        pellet_index = self.minimized_rect.collidelist(list_pellets[3])
+
+        '''
+        If the index is -1, then Pac-Man did not collide with any pellets. Otherwise, the program
+        calculates the X & Y range percentage between the pellet's center and Pac-Man's minimized
+        rect center 
+        '''
+        if(pellet_index != -1):
+            if(self.minimized_rect.centerx > list_pellets[3][pellet_index].centerx):
+                range_x = list_pellets[3][pellet_index].centerx / self.minimized_rect.centerx
+            else:
+                range_x = self.minimized_rect.centerx / list_pellets[3][pellet_index].centerx
+            
+            if(self.minimized_rect.centery > list_pellets[3][pellet_index].centery):
+                range_y = list_pellets[3][pellet_index].centery / self.minimized_rect.centery
+            else: 
+                range_y = self.minimized_rect.centery / list_pellets[3][pellet_index].centery
+
+            #Debug code
+                #print('\n--')
+                #print('range_x: ' + str(range_x * 100) + ' %')
+                #print('range_y: ' + str(range_y * 100) + ' %')
+                #print('--')
+
+            '''
+            If the X & Y range between the pellet and Pac-man's minimized rect is 98 % (or 2 % apart),
+            then Pac-Man "eats" the pellet
+            '''
+            if(range_x >= 0.98 or range_y >= 0.98): 
+                if(pac_man_channel.get_busy() is False):
+                    pac_man_channel.play(pac_man_pellet_sound)
+                
+                list_pellets[1][pellet_index] = False
+                list_pellets[3][pellet_index].center = (-100, -100)
+        
+        '''
+        Checks if the player's minimized hitbox is interacting with a power pellet
+        '''
+
+        power_pellet_index = self.minimized_rect.collidelist(list_power_pellets[3])
+
+        if(power_pellet_index != -1):
+            if(self.minimized_rect.centerx > list_power_pellets[3][power_pellet_index].centerx):
+                range_x = list_power_pellets[3][power_pellet_index].centerx / self.minimized_rect.centerx
+            else:
+                range_x = self.minimized_rect.centerx / list_power_pellets[3][power_pellet_index].centerx
+            
+            if(self.minimized_rect.centery > list_power_pellets[3][power_pellet_index].centery):
+                range_y = list_power_pellets[3][power_pellet_index].centery / self.minimized_rect.centery
+            else: 
+                range_y = self.minimized_rect.centery / list_power_pellets[3][power_pellet_index].centery
+
+            if(range_x > 0.95 and range_y > 0.95):
+                ghost_channel.play(pac_man_power_pellet_sound)
+
+                list_power_pellets[1][power_pellet_index] = False
+                list_power_pellets[3][power_pellet_index].center = (-100, -100)
+
+                '''
+                Sets the eat_ghosts variable to True so the event handler method in the Gameplay Scene 
+                can set the ghosts to scatter mode
+                '''
+                self.eat_ghosts = True
