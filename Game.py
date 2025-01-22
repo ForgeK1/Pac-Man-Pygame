@@ -4,7 +4,7 @@ Description: The Game module serves to run the game through the pygame libraries
 '''
 
 #Imports pygame libraries and needed classes from their respective modules
-import pygame
+import pygame # type: ignore
 from GameStateManager import GameStateManager
 from Scenes.SplashScene import SplashScene
 from Scenes.MainMenuScene import MainMenuScene
