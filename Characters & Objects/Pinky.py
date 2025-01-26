@@ -9,7 +9,7 @@ import pygame
 class Pinky:
     #A constructor to initialize an instance of Pinky
     def __init__(self, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed):
-        #Variables to keep track the image and rect
+        #Variables to keep track of the image and rect
         self.image = pygame.image.load('Images/Ghosts/Pinky (Pink)/down_frame_1.png')
         self.image = pygame.transform.scale(self.image, (horizontal_scale, vertical_scale))
         self.rect = self.image.get_rect()

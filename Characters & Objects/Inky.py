@@ -1,21 +1,21 @@
 '''
 Description: This class contains methods for animations and interactable events for the 
-             Clyde (Orange) ghost object
+             Inky (Cyan) ghost object
 '''
 
 #Imports pygame libraries
 import pygame
 
-class Clyde:
-    #A constructor to initialize an instance of Clyde
+class Inky:
+    #A constructor to initialize an instance of Inky
     def __init__(self, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed):
-        #Variables to keep track the image and rect
-        self.image = pygame.image.load('Images/Ghosts/Clyde (Orange)/up_frame_1.png')
+        #Variables to keep track of the image and rect
+        self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/up_frame_1.png')
         self.image = pygame.transform.scale(self.image, (horizontal_scale, vertical_scale))
         self.rect = self.image.get_rect()
         self.rect.center = (x_position, y_position)
 
-        #Variables to keep track of the scale, direction, movement boolean, and frame of Clyde
+        #Variables to keep track of the scale, direction, movement boolean, and frame of Inky
         self.horizontal_scale = horizontal_scale
         self.vertical_scale = vertical_scale
         self.direction = direction
@@ -26,59 +26,59 @@ class Clyde:
         self.character_animation_speed = character_animation_speed #In miliseconds
         self.last_updated_time = 0 #In miliseconds
 
-    #A method to return Clyde's image
+    #A method to return Inky's image
     def get_image(self):
         return self.image
 
-    #A method to set a new image for Clyde
+    #A method to set a new image for Inky
     def set_image(self, new_image):
         self.image = new_image
 
-    #A method to return the rect of Clyde's image
+    #A method to return the rect of Inky's image
     def get_rect(self):
         return self.rect
     
-    #A method to set a new rect for Clyde
+    #A method to set a new rect for Inky
     def set_rect(self, new_rect):
         self.rect = new_rect
     
-    #A method to return Clyde's horizontal_scale
+    #A method to return Inky's horizontal_scale
     def get_horizontal_scale(self):
         return self.horizontal_scale
 
-    #A method to set a new horizontal_scale for Clyde
+    #A method to set a new horizontal_scale for Inky
     def set_horizontal_scale(self, new_horizontal_scale):
         self.horizontal_scale = new_horizontal_scale
     
-    #A method to return Clyde's vertical_scale
+    #A method to return Inky's vertical_scale
     def get_vertical_scale(self):
         return self.vertical_scale
 
-    #A method to set a new vertical_scale for Clyde
+    #A method to set a new vertical_scale for Inky
     def set_vertical_scale(self, new_vertical_scale):
         self.vertical_scale = new_vertical_scale
     
-    #A method to return Clyde's current direction
+    #A method to return Inky's current direction
     def get_direction(self):
         return self.direction
     
-    #A method to set a new direction for Clyde
+    #A method to set a new direction for Inky
     def set_direction(self, new_direction):
         self.direction = new_direction
     
-    #A method to return a boolean for Clyde's movement
+    #A method to return a boolean for Inky's movement
     def get_movement(self):
         return self.movement
 
-    #A method to set a new boolean for Clyde's movement
+    #A method to set a new boolean for Inky's movement
     def set_movement(self, new_movement):
         self.movement = new_movement
 
-    #A method to return Clyde's current frame
+    #A method to return Inky's current frame
     def get_frame(self):
         return self.frame
     
-    #A method to set a new frame for Clyde
+    #A method to set a new frame for Inky
     def set_frame(self, new_frame):
         self.frame = new_frame
 
@@ -87,35 +87,35 @@ class Clyde:
     (Ex. CF means circle frame and RMF1 means Right Movement Frame 1)
     '''
     def set_RMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Clyde (Orange)/right_frame_1.png')
+        self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/right_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     def set_RMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Clyde (Orange)/right_frame_2.png')
+        self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/right_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
     def set_LMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Clyde (Orange)/left_frame_1.png')
+        self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/left_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     def set_LMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Clyde (Orange)/left_frame_2.png')
+        self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/left_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     def set_UMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Clyde (Orange)/up_frame_1.png')
+        self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/up_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     def set_UMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Clyde (Orange)/up_frame_2.png')
+        self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/up_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     def set_DMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Clyde (Orange)/down_frame_1.png')
+        self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/down_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     def set_DMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Clyde (Orange)/down_frame_2.png')
+        self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/down_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #A method to check what movement frame and direction the ghost is in
@@ -148,7 +148,7 @@ class Clyde:
         #Debug code for checking frame change speed
             #print(self.get_frame())
         
-    #A method to update the animation speed for Clyde
+    #A method to update the animation speed for Inky
     def animation_update(self):
         #Gets the current time in miliseconds
         curr_time = pygame.time.get_ticks()
@@ -178,7 +178,7 @@ class Clyde:
         if(change_frame and self.movement):
             self.frame_update()
         
-    #A method for the player to control Clyde's movement position
+    #A method for the player to control Inky's movement position
     def movement_update(self, event, list_obstacles):
         #Empty for now
         return None
