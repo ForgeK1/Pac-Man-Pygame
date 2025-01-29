@@ -4,11 +4,11 @@ Description: The Main Menu Scene class serves to help the player to navigate the
 
 #Imports pygame libraries and needed classes from their respective modules
 import pygame
-from Characters.PacMan import PacMan
-from Characters.Blinky import Blinky
-from Characters.Pinky import Pinky
-from Characters.Inky import Inky
-from Characters.Clyde import Clyde
+from Objects.PacMan import PacMan
+from Objects.Blinky import Blinky
+from Objects.Pinky import Pinky
+from Objects.Inky import Inky
+from Objects.Clyde import Clyde
 from Functions.Button import Button
 
 class MainMenuScene:

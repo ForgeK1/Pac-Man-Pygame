@@ -6,12 +6,13 @@ Description: The GameplayScene class helps run the levels of the game. For every
 #Imports pygame and other libraries
 import pygame
 import os
-from Characters.PacMan import PacMan
-from Characters.Blinky import Blinky
-from Characters.Pinky import Pinky
-from Characters.Inky import Inky
-from Characters.Clyde import Clyde
-import csv
+from Objects.PacMan import PacMan
+from Objects.Blinky import Blinky
+from Objects.Pinky import Pinky
+from Objects.Inky import Inky
+from Objects.Clyde import Clyde
+from Objects.Pellet import Pellet
+from Objects.PowerPellet import PowerPellet
 
 class GameplayScene:
     #A constructor to initialize an instance of Gameplay Scene
@@ -32,16 +33,20 @@ class GameplayScene:
         #Initializes the list of obstacles for the game map
         self.list_obstacles = self.load_obstacles()
 
-        #Initializes the list of pellets for the game map
-        self.list_power_pellets = self.load_power_pellets()
-        self.list_pellets = self.load_pellets()
-
         #Initializes the character objects
         self.pac_man = PacMan(30, 30, 'Left', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138, True, 50)
         self.blinky = Blinky(30, 30, "Left", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68, True, 100)
         self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20, True, 100)
         self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20, True, 100)
         self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20, True, 100)
+
+        #Initializes the pellet objects
+        self.pellet = Pellet('Images/Pellets/pellet.png')
+        self.power_pellet = PowerPellet(200)
+
+        #Initializes the list of pellets for the game map
+        self.list_pellets = self.pellet.load_pellets()
+        self.list_power_pellets = self.power_pellet.load_power_pellets()
 
         #Initializes pygame mixer channels for utilizing music or sound effects
         self.pac_man_channel = pygame.mixer.Channel(0)
@@ -93,19 +98,24 @@ class GameplayScene:
         self.gameplay_surface.blit(self.inky.get_image(), self.inky.get_rect())
         self.gameplay_surface.blit(self.clyde.get_image(), self.clyde.get_rect())
     
-        #Sets up the obstacles on the Gameplay Scene
+        #Blits the obstacles on the Gameplay Scene
         for i in range(len(self.list_obstacles[0])): 
             self.gameplay_surface.blit(self.list_obstacles[1][i], self.list_obstacles[2][i])
 
-        #Sets up the power pellets on the Gameplay Scene
-        for i in range(len(self.list_power_pellets[0])):
-            if(self.list_power_pellets[1][i]):
-                self.gameplay_surface.blit(self.list_power_pellets[2], self.list_power_pellets[3][i])            
-        
-        #Sets up the pellets on the Gameplay Scene
+        #Blits the pellets on the Gameplay Scene
         for i in range(len(self.list_pellets[0])):
+            #Checks if the pellet hasn't been eaten by Pac-Man
             if(self.list_pellets[1][i]):
                 self.gameplay_surface.blit(self.list_pellets[2], self.list_pellets[3][i])
+
+        #Blits the power pellets on the Gameplay Scene
+        for i in range(len(self.list_power_pellets[0])):
+            #Checks if the power pellet hasn't been eaten by Pac-Man
+            if(self.list_power_pellets[1][i]):
+                #Updates the animation of the power pellet
+                self.list_power_pellets[2] = self.power_pellet.animation_update(self.list_power_pellets[2])
+
+                self.gameplay_surface.blit(self.list_power_pellets[2], self.list_power_pellets[3][i])
     
     #A method to load obstacles' coordinates, images, and rects to store each respectivly in their lists
     def load_obstacles(self):
@@ -144,80 +154,6 @@ class GameplayScene:
             list_obstacles[2].append(image_rect)
 
         return list_obstacles
-    
-    #A method to load power pellets' coordinates, hidden boolean, images, and rects to store each respectivly in their lists
-    def load_power_pellets(self):
-        power_pellet_image = pygame.transform.scale(pygame.image.load('Images/Pellets/power_pellet.png'), (16, 16))
-        
-        '''
-        First parameter:  [X, Y] coordinates of the image
-        Second parameter: Boolean of whether the pellet should be hidden or shown on the map
-        Third parameter:  Surface object of the image
-        Fourth parameter: Rect of the image
-        '''
-        list_power_pellets = ([], [], power_pellet_image, [])
-
-        #Opens the Power Pellets CSV file 
-        with open('Images/Pellets/power_pellets_coordinates.csv') as fileObject:
-            #next() is used so that we skip the header row. Ex) ['X', 'Y', 'Hidden']
-            next(fileObject)
-            
-            #Creates a reader object by passing in the file
-            reader = csv.reader(fileObject)
-
-            #A for loop to iterate through each row
-            for row in reader:
-                '''
-                A section to grab and record the coordinates in the first list
-                '''
-                coordinates = [int(row[0]), int(row[1])]
-                list_power_pellets[0].append(coordinates)
-
-                '''
-                A section to grab and record the boolean in the second list
-                '''
-                list_power_pellets[1].append(row[2])
-
-                '''
-                A section to grab and record the updated rect position in the fourth list
-                    Note: Since all power pellets share the same image, then the third parameter is not a list
-                '''
-                power_pellet_image_rect = power_pellet_image.get_rect()
-                power_pellet_image_rect.topleft = coordinates
-                list_power_pellets[3].append(power_pellet_image_rect)
-
-                #Debug code
-                    #print(row)
-            
-            return list_power_pellets
-        
-    #A method to load pellets' coordinates, hidden boolean, images, and rects to store each respectivly in their lists
-    def load_pellets(self):
-        pellet_image = pygame.transform.scale(pygame.image.load('Images/Pellets/pellet.png'), (4, 4)) 
-
-        '''
-        First parameter:  [X, Y] coordinates of the image
-        Second parameter: Boolean of whether the pellet should be hidden or shown on the map
-        Third parameter:  Surface object of the image
-        Fourth parameter: Rect of the image
-        '''
-        list_pellets = ([], [], pellet_image, [])
-            
-        with open('Images/Pellets/pellets_coordinates.csv') as fileObject:
-            next(fileObject)
-            reader = csv.reader(fileObject)
-
-            for row in reader:
-                coordinates = [int(row[0]), int(row[1])]
-                list_pellets[0].append(coordinates)
-
-                list_pellets[1].append(row[2])
-
-                pellet_image_rect = pellet_image.get_rect()
-                pellet_image_rect.topleft = coordinates
-                list_pellets[3].append(pellet_image_rect)
-        
-        return list_pellets
 
     #A method to showcase the start of the round to the player
     def start_round(self):
@@ -233,15 +169,15 @@ class GameplayScene:
         for i in range(len(self.list_obstacles[0])): 
             self.gameplay_surface.blit(self.list_obstacles[1][i], self.list_obstacles[2][i])
         
-        #Sets up the power pellets on the Gameplay Scene
-        for i in range(len(self.list_power_pellets[0])):
-            if(self.list_power_pellets[1][i]):
-                self.gameplay_surface.blit(self.list_power_pellets[2], self.list_power_pellets[3][i])
-        
         #Sets up the pellets on the Gameplay Scene
         for i in range(len(self.list_pellets[0])):
             if(self.list_pellets[1][i]):
                 self.gameplay_surface.blit(self.list_pellets[2], self.list_pellets[3][i])
+
+        #Sets up the power pellets on the Gameplay Scene
+        for i in range(len(self.list_power_pellets[0])):
+            if(self.list_power_pellets[1][i]):
+                self.gameplay_surface.blit(self.list_power_pellets[2], self.list_power_pellets[3][i])
         
         '''
         A section to dynamically showcase text based on the number of seconds left in the Pac-Man start theme
