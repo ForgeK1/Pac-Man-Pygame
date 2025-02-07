@@ -8,7 +8,7 @@ import pygame
 
 class Clyde:
     #A constructor to initialize an instance of Clyde
-    def __init__(self, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed):
+    def __init__(self, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, vulnerable_state, eaten_state, character_animation_speed):
         #Variables to keep track of the image and rect
         self.image = pygame.image.load('Images/Ghosts/Clyde (Orange)/up_frame_1.png')
         self.image = pygame.transform.scale(self.image, (horizontal_scale, vertical_scale))
@@ -21,6 +21,10 @@ class Clyde:
         self.direction = direction
         self.movement = movement
         self.frame = 0
+
+        #Variables to check what state the ghost is in (if both of these are False then the ghost is in a normal state)
+        self.vulnerable_state = vulnerable_state
+        self.eaten_state = eaten_state
 
         #Variables to control character animation speed
         self.character_animation_speed = character_animation_speed #In miliseconds
@@ -73,6 +77,22 @@ class Clyde:
     #A method to set a new boolean for Clyde's movement
     def set_movement(self, new_movement):
         self.movement = new_movement
+    
+    #A method to return a boolean for Clyde's vulnerable state
+    def get_vulnerable_state(self):
+        return self.vulnerable_state
+
+    #A method to set a new boolean for Clyde's  vulnerable state
+    def set_vulnerable_state(self, new_vulnerable_state):
+        self.vulnerable_state = new_vulnerable_state
+    
+    #A method to return a boolean for Clyde's eaten state
+    def get_eaten_state(self):
+        return self.eaten_state
+
+    #A method to set a new boolean for Clyde's  vulnerable state
+    def set_eaten_state(self, new_eaten_state):
+        self.eaten_state = new_eaten_state
 
     #A method to return Clyde's current frame
     def get_frame(self):
@@ -120,33 +140,93 @@ class Clyde:
     
     #A method to check what movement frame and direction the ghost is in
     def frame_update(self):
-        match self.frame:
-            case 0:
-                if(self.direction == 'Right'):
-                    self.set_RMF1()
-                elif(self.direction == 'Left'):
-                    self.set_LMF1()
-                elif(self.direction == 'Down'):
-                    self.set_DMF1()
-                elif(self.direction == 'Up'):
-                    self.set_UMF1()
-                
-                self.frame = 1
+        if(self.vulnerable_state):
+            #Debug code
+                #print('Clyde is in a vulnerable state')
 
-            case 1:
-                if(self.direction == 'Right'):
-                    self.set_RMF2()
-                elif(self.direction == 'Left'):
-                    self.set_LMF2()
-                elif(self.direction == 'Down'):
-                    self.set_DMF2()
-                elif(self.direction == 'Up'):
-                    self.set_UMF2()
-                
-                self.frame = 0
-        
-        #Debug code for checking frame change speed
-            #print(self.get_frame())
+            match self.frame:
+                case 0:
+                    if(self.direction == 'Right'):
+                        self.set_RMF1()
+                    elif(self.direction == 'Left'):
+                        self.set_LMF1()
+                    elif(self.direction == 'Down'):
+                        self.set_DMF1()
+                    elif(self.direction == 'Up'):
+                        self.set_UMF1()
+                    
+                    self.frame = 1
+
+                case 1:
+                    if(self.direction == 'Right'):
+                        self.set_RMF2()
+                    elif(self.direction == 'Left'):
+                        self.set_LMF2()
+                    elif(self.direction == 'Down'):
+                        self.set_DMF2()
+                    elif(self.direction == 'Up'):
+                        self.set_UMF2()
+                    
+                    self.frame = 0
+
+            #Debug code for checking frame change speed
+                #print(self.get_frame())
+        elif(self.eaten_state):
+            #Debug code
+                #print('Clyde is in a eaten state')
+
+            match self.frame:
+                case 0:
+                    if(self.direction == 'Right'):
+                        self.set_RMF1()
+                    elif(self.direction == 'Left'):
+                        self.set_LMF1()
+                    elif(self.direction == 'Down'):
+                        self.set_DMF1()
+                    elif(self.direction == 'Up'):
+                        self.set_UMF1()
+                    
+                    self.frame = 1
+
+                case 1:
+                    if(self.direction == 'Right'):
+                        self.set_RMF2()
+                    elif(self.direction == 'Left'):
+                        self.set_LMF2()
+                    elif(self.direction == 'Down'):
+                        self.set_DMF2()
+                    elif(self.direction == 'Up'):
+                        self.set_UMF2()
+                    
+                    self.frame = 0
+        else:
+            #Debug code
+                #print('Clyde is in a normal state')
+
+            match self.frame:
+                case 0:
+                    if(self.direction == 'Right'):
+                        self.set_RMF1()
+                    elif(self.direction == 'Left'):
+                        self.set_LMF1()
+                    elif(self.direction == 'Down'):
+                        self.set_DMF1()
+                    elif(self.direction == 'Up'):
+                        self.set_UMF1()
+                    
+                    self.frame = 1
+
+                case 1:
+                    if(self.direction == 'Right'):
+                        self.set_RMF2()
+                    elif(self.direction == 'Left'):
+                        self.set_LMF2()
+                    elif(self.direction == 'Down'):
+                        self.set_DMF2()
+                    elif(self.direction == 'Up'):
+                        self.set_UMF2()
+                    
+                    self.frame = 0
         
     #A method to update the animation speed for Clyde
     def animation_update(self):

@@ -27,12 +27,17 @@ class PacMan:
         self.movement = movement
         self.frame = 0
 
+        #Variables to keep track of Pac-Man's list of lives and high score
+        self.list_of_lives = 3
+        self.high_score = 0
+
+        #Variables to check if Pac-Man ate a power pellet to can eat ghosts or is caught by a ghost
+        self.eat_ghosts = False
+        self.is_caught = False
+
         #Variables to control character animation speed
         self.character_animation_speed = character_animation_speed #In miliseconds
         self.last_updated_time = 0 #In miliseconds
-
-        #A boolean variable to check if Pac-Man ate a power pellet and can eat ghosts
-        self.eat_ghosts = False
 
     #A method to return Pac-Man's image
     def get_image(self):
@@ -106,6 +111,22 @@ class PacMan:
     def set_frame(self, new_frame):
         self.frame = new_frame
     
+    #A method to get Pac-Man's list of lives
+    def get_list_of_lives(self):
+        return self.list_of_lives
+
+    #A method to set Pac-Man's list of lives
+    def set_list_of_lives(self, new_list_of_lives):
+        self.list_of_lives = new_list_of_lives
+    
+    #A method to get Pac-Man's high score
+    def get_high_score(self):
+        return self.high_score
+    
+    #A method to set Pac-Man's high score
+    def set_high_score(self, new_high_score):
+        self.high_score = new_high_score
+    
     #A method to return a boolean for Pac-Man's eat_ghosts
     def get_eat_ghosts(self):
         return self.eat_ghosts
@@ -113,6 +134,14 @@ class PacMan:
     #A method to set a new boolean for Pac-Man's eat_ghosts
     def set_eat_ghosts(self, eat_ghosts):
         self.eat_ghosts = eat_ghosts
+
+    #A method to return a boolean for Pac-Man's is_caught
+    def get_is_caught(self):
+        return self.is_caught
+    
+    #A method to set a new boolean for Pac-Man's is_caught
+    def set_is_caught(self, new_is_caught):
+        self.is_caught = new_is_caught
 
     '''
     A series of methods to set the current frame of the character 
@@ -283,7 +312,7 @@ class PacMan:
             self.movement = False
     
     #A method for the player to eat pellets in the Gameplay Scene
-    def eat_pellets(self, list_pellets, list_power_pellets, pac_man_channel, ghost_channel, pac_man_pellet_sound, pac_man_power_pellet_sound): 
+    def eat_pellets(self, list_pellets, list_power_pellets, pellet_channel, power_pellet_channel, pellet_sound, power_pellet_sound): 
         '''
         Checks if the player's minimized hitbox is interacting with a pellet
         '''
@@ -321,8 +350,8 @@ class PacMan:
             then Pac-Man "eats" the pellet
             '''
             if(range_x >= 0.98 or range_y >= 0.98): 
-                if(pac_man_channel.get_busy() is False):
-                    pac_man_channel.play(pac_man_pellet_sound)
+                if(pellet_channel.get_busy() is False):
+                    pellet_channel.play(pellet_sound)
                 
                 list_pellets[1][pellet_index] = False
                 list_pellets[3][pellet_index].center = (-100, -100)
@@ -345,7 +374,7 @@ class PacMan:
                 range_y = self.minimized_rect.centery / list_power_pellets[3][power_pellet_index].centery
 
             if(range_x > 0.95 and range_y > 0.95):
-                ghost_channel.play(pac_man_power_pellet_sound)
+                power_pellet_channel.play(power_pellet_sound)
 
                 list_power_pellets[1][power_pellet_index] = False
                 list_power_pellets[3][power_pellet_index].center = (-100, -100)
