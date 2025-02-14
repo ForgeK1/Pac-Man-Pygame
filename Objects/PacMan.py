@@ -39,6 +39,9 @@ class PacMan:
         self.character_animation_speed = character_animation_speed #In miliseconds
         self.last_updated_time = 0 #In miliseconds
 
+        #Variables to create a timer for playing Pac-Man's death animation
+        self.death_animation_timer = 0
+
     #A method to return Pac-Man's image
     def get_image(self):
         return self.image
@@ -102,6 +105,14 @@ class PacMan:
     #A method to set a new boolean for Pac-Man's movement
     def set_movement(self, new_movement):
         self.movement = new_movement
+    
+    #A method to return Pac-Man's animation speed
+    def get_character_animation_speed(self):
+        return self.character_animation_speed
+
+    #A method to update Pac-Man's animation speed
+    def set_character_animation_speed(self, new_character_animation_speed):
+        self.character_animation_speed = new_character_animation_speed
 
     #A method to return Pac-Man's current frame
     def get_frame(self):
@@ -144,8 +155,7 @@ class PacMan:
         self.is_caught = new_is_caught
 
     '''
-    A series of methods to set the current frame of the character 
-    (Ex. CF means circle frame and RMF1 means Right Movement Frame 1)
+    A series of methods to set the current movement frame of the character 
     '''
     def set_CF(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/circle.png')
@@ -183,41 +193,149 @@ class PacMan:
         self.image = pygame.image.load('Images/Pac-Man/Movement/down_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    '''
+    A series of methods to set the current death frame of the character 
+    '''
+    def set_DF1(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_1.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+
+    def set_DF2(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_2.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    def set_DF3(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_3.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    def set_DF4(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_4.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+
+    def set_DF5(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_5.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+
+    def set_DF6(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_6.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+
+    def set_DF7(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_7.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    def set_DF8(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_8.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    def set_DF9(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_9.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    def set_DF10(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_10.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    def set_DF11(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_11.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    def set_DF12(self):
+        self.image = pygame.image.load('Images/Pac-Man/Death/frame_12.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
     #A method to check what frame Pac-Man is in
     def frame_update(self):
-        match self.frame:
-            case 0:
-                self.set_CF()
+        #If Pac-Man is not caught, the program uses the movement frames
+        if(self.is_caught is False):
+            match self.frame:
+                case 0:
+                    self.set_CF()
 
-                self.frame = 1
-            case 1:
-                if(self.direction == 'Right'):
-                    self.set_RMF1()
-                elif(self.direction == 'Left'):
-                    self.set_LMF1()
-                elif(self.direction == 'Down'):
-                    self.set_DMF1()
-                elif(self.direction == 'Up'):
-                    self.set_UMF1()
-                
-                self.frame = 2
-            case 2:
-                if(self.direction == 'Right'):
-                    self.set_RMF2()
-                elif(self.direction == 'Left'):
-                    self.set_LMF2()
-                elif(self.direction == 'Down'):
-                    self.set_DMF2()
-                elif(self.direction == 'Up'):
-                    self.set_UMF2()
-                
-                self.frame = 0
+                    self.frame = 1
+                case 1:
+                    if(self.direction == 'Right'):
+                        self.set_RMF1()
+                    elif(self.direction == 'Left'):
+                        self.set_LMF1()
+                    elif(self.direction == 'Down'):
+                        self.set_DMF1()
+                    elif(self.direction == 'Up'):
+                        self.set_UMF1()
+                    
+                    self.frame = 2
+                case 2:
+                    if(self.direction == 'Right'):
+                        self.set_RMF2()
+                    elif(self.direction == 'Left'):
+                        self.set_LMF2()
+                    elif(self.direction == 'Down'):
+                        self.set_DMF2()
+                    elif(self.direction == 'Up'):
+                        self.set_UMF2()
+                    
+                    self.frame = 0
+        #Else, the program uses the death frames
+        else: 
+            match self.frame:
+                case 0:
+                    self.set_DF1()
+
+                    self.frame = 1
+                case 1:
+                    self.set_DF2()
+
+                    self.frame = 2
+                case 2:
+                    self.set_DF3()
+
+                    self.frame = 3
+                case 3:
+                    self.set_DF4()
+
+                    self.frame = 4
+                case 4:
+                    self.set_DF5()
+
+                    self.frame = 5
+                case 5:
+                    self.set_DF6()
+
+                    self.frame = 6
+                case 6:
+                    self.set_DF7()
+
+                    self.frame = 7
+                case 7:
+                    self.set_DF8()
+
+                    self.frame = 8
+                case 8:
+                    self.set_DF9()
+
+                    self.frame = 9
+                case 9:
+                    self.set_DF10()
+
+                    self.frame = 10
+                case 10:
+                    self.set_DF11()
+
+                    self.frame = 11
+                case 11:
+                    self.set_DF12()
+
+                    self.frame = 11
         
-        #Debug code for checking frame change speed
-            #print(self.get_frame())
+        #Debug code for checking frame change
+            #print(self.frame)
     
     #A method to update the animation speed for Pac-Man
     def animation_update(self):
+        '''
+        A section to update Pac-Man's movement animation
+        '''
+        
         #Gets the current time in miliseconds
         curr_time = pygame.time.get_ticks()
         
@@ -245,6 +363,16 @@ class PacMan:
         #If True, then the program updates the frame of the character. If False, then the program uses the old frame in runtime
         if(change_frame and self.movement):
             self.frame_update()
+        
+        '''
+        A section to update Pac-Man's death animation
+        '''
+        
+        # if(self.is_caught):
+        #     if(self.death_animation_timer % 5 and self.death_animation_timer <= 55):
+        #         self.frame_update()
+        #     else:
+        #         self.death_animation_timer += 0.5
     
     #A method for the player to control Pac-Man's movement position in the Gameplay Scene
     def movement_update(self, event, list_obstacles):
