@@ -281,9 +281,9 @@ class GameplayScene:
             self.display_surface.fill('black')
             
             '''
-            Sets a timer to pause for a 50 iterations before showcasing all of the obstacles, pellets, and characters
-            when starting the next round
-                Note: This is a diffrent type of timer compared to the timer used to change the frames
+            Sets a timer to pause for a 50 iterations before showcasing all of the obstacles, pellets, 
+            and characters when starting the next round
+                Note: This is a diffrent type of timer compared to the timer used to change the movement frames
                       of the characters
             '''
             if(self.next_round_timer >= 50):
@@ -328,10 +328,11 @@ class GameplayScene:
                     self.pac_man_life_deduct = False
 
                 #Sets Pac-Man's variables back to normal
-                self.pac_man.set_CF()
                 self.pac_man.set_direction('Left')
                 self.pac_man.set_frame(0)
-                #self.pac_man.set_character_animation_speed(100)
+                self.pac_man.set_CF()
+                self.pac_man.set_death_animation(False)
+                self.pac_man.set_death_animation_timer(0)
 
                 #Resets the positions of all characters
                 self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
@@ -388,7 +389,7 @@ class GameplayScene:
 
             '''
             Sets a timer to pause for a 50 iterations before continuing with the end of the round
-                Note: This is a diffrent type of timer compared to the timer used to change the frames
+                Note: This is a diffrent type of timer compared to the timer used to change the movement frames
                       of the characters
             '''
             if(self.ghost_disappear_timer == 50):
@@ -398,27 +399,24 @@ class GameplayScene:
                 self.inky.get_rect().center = (-100, -100)
                 self.clyde.get_rect().center = (-100, -100)
 
-                #Starts Pac-Man's death animations
+                #Starts Pac-Man's death animation
                 if(self.pac_man_death_sound_has_played is False):
                     self.end_round_channel.play(self.pac_man_death_sound)
                     self.pac_man_death_sound_has_played = True
 
-                    #Sets Pac-Man's frame & animation speed as setup for his death animation
+                    #Sets Pac-Man's frame and animation boolean as setup for his death animation
                     self.pac_man.set_frame(0)
+                    self.pac_man.set_death_animation(True)
                     #self.pac_man.set_character_animation_speed(10)
 
-                #print(self.pac_man.get_movement())
-
                 #Plays Pac-Man's death animation until the death sound stops
-                if(self.end_round_channel.get_busy() is True):
-                    print('Pac-Man death animation')
-                else:
-                    #Sets up variables to start another round
+                if(self.end_round_channel.get_busy() is False):
+                    #Sets up variables to start a new round
                     self.round_intro = True
                     self.pac_man_life_deduct = True
                     self.pac_man.set_is_caught(False)
 
-                    #Rests ghost disappear timer & death sound boolean when Pac-Man gets caught again
+                    #Sets ghost disappear timer & death sound boolean when Pac-Man gets caught again
                     self.ghost_disappear_timer = 0
                     self.pac_man_death_sound_has_played = False
             else:

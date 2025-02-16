@@ -40,6 +40,7 @@ class PacMan:
         self.last_updated_time = 0 #In miliseconds
 
         #Variables to create a timer for playing Pac-Man's death animation
+        self.death_animation = False
         self.death_animation_timer = 0
 
     #A method to return Pac-Man's image
@@ -153,6 +154,22 @@ class PacMan:
     #A method to set a new boolean for Pac-Man's is_caught
     def set_is_caught(self, new_is_caught):
         self.is_caught = new_is_caught
+    
+    #A method to return a boolean for Pac-Man's death_animation
+    def get_death_animation(self):
+        return self.death_animation
+    
+    #A method to set a new boolean for Pac-Man's death_animation
+    def set_death_animation(self, new_death_animation):
+        self.death_animation = new_death_animation
+    
+    #A method to return a boolean for Pac-Man's death_animation_timer
+    def get_death_animation_timer(self):
+        return self.death_animation_timer
+    
+    #A method to set a new boolean for Pac-Man's death_animation_timer
+    def set_death_animation_timer(self, new_death_animation_timer):
+        self.death_animation_timer = new_death_animation_timer
 
     '''
     A series of methods to set the current movement frame of the character 
@@ -331,11 +348,7 @@ class PacMan:
             #print(self.frame)
     
     #A method to update the animation speed for Pac-Man
-    def animation_update(self):
-        '''
-        A section to update Pac-Man's movement animation
-        '''
-        
+    def animation_update(self):        
         #Gets the current time in miliseconds
         curr_time = pygame.time.get_ticks()
         
@@ -360,19 +373,26 @@ class PacMan:
             #Sets up a new time
             self.last_updated_time = curr_time
         
-        #If True, then the program updates the frame of the character. If False, then the program uses the old frame in runtime
+        '''
+        A section to update Pac-Man's movement animation
+            Note: If True, then the program updates the frame of the character. 
+                  If False, then the program uses the old frame in runtime
+        '''
         if(change_frame and self.movement):
             self.frame_update()
         
+        print(self.death_animation_timer)
+
         '''
-        A section to update Pac-Man's death animation
+        A section to update Pac-Man's death animation through an iteration timer
+            Note: This is a diffrent type of timer compared to the timer used to change the movement frames
+                  of the characters 
         '''
-        
-        # if(self.is_caught):
-        #     if(self.death_animation_timer % 5 and self.death_animation_timer <= 55):
-        #         self.frame_update()
-        #     else:
-        #         self.death_animation_timer += 0.5
+        if(self.death_animation):  
+            if(self.death_animation_timer % 7 == 0):                
+                self.frame_update()
+            
+            self.death_animation_timer += 1
     
     #A method for the player to control Pac-Man's movement position in the Gameplay Scene
     def movement_update(self, event, list_obstacles):
