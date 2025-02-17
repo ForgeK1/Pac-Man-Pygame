@@ -297,7 +297,7 @@ class PacMan:
             match self.frame:
                 case 0:
                     self.set_DF1()
-
+                    
                     self.frame = 1
                 case 1:
                     self.set_DF2()
@@ -380,8 +380,6 @@ class PacMan:
         '''
         if(change_frame and self.movement):
             self.frame_update()
-        
-        print(self.death_animation_timer)
 
         '''
         A section to update Pac-Man's death animation through an iteration timer
@@ -393,6 +391,9 @@ class PacMan:
                 self.frame_update()
             
             self.death_animation_timer += 1
+
+            #Debug code
+                #print(self.death_animation_timer)
     
     #A method for the player to control Pac-Man's movement position in the Gameplay Scene
     def movement_update(self, event, list_obstacles):
