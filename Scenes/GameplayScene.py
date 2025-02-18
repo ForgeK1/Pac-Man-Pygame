@@ -64,39 +64,43 @@ class GameplayScene:
         #Initializes variables to check if the player is starting a new round
         self.round_intro = True
         self.fresh_start = True
-        self.start_theme = True
         self.pac_man_life_deduct = True
-        self.next_round_timer = 0
+        self.transition_to_next_round_timer = 0
 
         #Initializes variables to end the round
         self.ghost_disappear_timer = 0
+        self.game_over_text_timer = 0
+        self.transition_to_main_menu_timer = 0
+        self.round_end = False
+        self.ate_all_pellets = False
         self.pac_man_death_sound_has_played = False
+        self.transition_to_main_menu = False
 
     #A method to run the Gameplay Scene
-    def run(self, event):
-        #print('Round intro: ' + str(self.round_intro))
-        #print('Fresh start: ' + str(self.fresh_start))
-        
-        '''
-        An if statement to check if the player is starting a new round, if so the player will
-        get an introduction to the round
-        '''
+    def run(self, event):        
+        #print(self.transition_to_next_round_timer)
+
+        #Fills the background of the display surface
+        self.display_surface.fill('black')
+
+        #Checks if the player is starting a new round
         if(self.round_intro):
             self.start_round()
-        else:
-            #Fills the background of the display surface
-            self.display_surface.fill('black')
-            
+        #Checks if the the game is ending the round
+        elif(self.round_end):
+            self.end_round()
+        #Else, the player is playing the game
+        else:            
             #A method to check and handle player events for the Gameplay Scene
             self.event_handler(event)
 
-            #A method to set up the updated Gameplay Scene surface
+            #A method to set up the updated Gameplay Scene surface during when the player controls Pac-Man
             self.set_up_gameplay_surface()
 
             #Blits the Gameplay Scene surface onto the display surface
             self.display_surface.blit(self.gameplay_surface, (0, 0))
     
-    #A method to setup and blit surface objects onto the Gameplay Scene
+    #A method to setup and blit surface objects onto the Gameplay Scene during gameplay 
     def set_up_gameplay_surface(self):        
         #Resets the Gameplay Scene background
         self.gameplay_surface.fill('black')
@@ -202,18 +206,21 @@ class GameplayScene:
         return list_obstacles
 
     #A method to showcase the start of the round to the player
-    def start_round(self):
+    def start_round(self):        
+        #Resets the Gameplay Scene background
+        self.gameplay_surface.fill('black')
+
         #Checks if the player is starting the game for the first time
-        if(self.fresh_start == True):
+        if(self.fresh_start):
             #Checks if the Pac-Man start theme is still playing. If the theme ends, then the Pac-Man & the ghosts start moving
             if(pygame.mixer_music.get_busy() is False):
                 self.round_intro = False
                 self.fresh_start = False
-                self.start_theme = False
                 pygame.mixer_music.unload()
             
-            #Resets the Gameplay Scene background
-            self.gameplay_surface.fill('black')
+            '''
+            A section to set up the obstacles and pellets
+            '''
             
             #Sets up the obstacles on the Gameplay Scene
             for i in range(len(self.list_obstacles[0])): 
@@ -260,6 +267,7 @@ class GameplayScene:
 
                     self.pac_man_life_deduct = False
 
+                #Blits the characters onto the Gameplay Scene
                 self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
                 self.gameplay_surface.blit(self.blinky.get_image(), self.blinky.get_rect())
                 self.gameplay_surface.blit(self.pinky.get_image(), self.pinky.get_rect())
@@ -275,10 +283,7 @@ class GameplayScene:
         else:
             #Debug code
                 #print('The outer else statement of the start_round() method is running')
-                #print('next_round_timer: ' + str(self.next_round_timer))
-            
-            #Resets the display scene background to showcase the black screen for transition
-            self.display_surface.fill('black')
+                #print('transition_to_next_round_timer: ' + str(self.transition_to_next_round_timer))
             
             '''
             Sets a timer to pause for a 50 iterations before showcasing all of the obstacles, pellets, 
@@ -286,10 +291,7 @@ class GameplayScene:
                 Note: This is a diffrent type of timer compared to the timer used to change the movement frames
                       of the characters
             '''
-            if(self.next_round_timer >= 50):
-                #Resets the Gameplay Scene background
-                self.gameplay_surface.fill('black')
-                
+            if(self.transition_to_next_round_timer >= 50):
                 '''
                 A section to set showcase 'READY' text 
                 '''
@@ -304,7 +306,7 @@ class GameplayScene:
                 self.gameplay_surface.blit(ready_text, ready_text_rect)
 
                 '''
-                A section to set up the obstacles, pellets, and obstacles
+                A section to set up the obstacles, pellets, and characters
                 '''
 
                 #Sets up the obstacles on the Gameplay Scene
@@ -334,7 +336,7 @@ class GameplayScene:
                 self.pac_man.set_death_animation(False)
                 self.pac_man.set_death_animation_timer(0)
 
-                #Resets the positions of all characters
+                #Resets the position of all characters
                 self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
                 self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
                 self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20)
@@ -355,24 +357,92 @@ class GameplayScene:
                 self.display_surface.blit(self.gameplay_surface, (0, 0))
 
                 #After another 150 iterations, the gameplay for the play will resume
-                if(self.next_round_timer == 200):
+                if(self.transition_to_next_round_timer == 200):
                     #Ensures that the methods in the else statement of the run() method can start
                     self.round_intro = False
 
                     #Resets the timer when Pac-Man goes to the next round
-                    self.next_round_timer = 0
+                    self.transition_to_next_round_timer = 0
                 else:
-                    self.next_round_timer += 1
+                    self.transition_to_next_round_timer += 1
             else:
-                    self.next_round_timer += 1
-                
+                    self.transition_to_next_round_timer += 1
+            
+        #Debug code
+            #print(self.fresh_start)
+
     #A method to end the round based on various events
     def end_round(self):
+        #Resets the Gameplay Scene background
+        self.gameplay_surface.fill('black')
+        
         #An if statement to check if Pac-Man ate all the pellets to move to the next round
+        if(self.ate_all_pellets):
+            #Sets up and blits all objects onto the display surface
+            self.set_up_gameplay_surface()
+            self.display_surface.blit(self.gameplay_surface, (0, 0))
 
+            #Debug code
+            print('Pac-Man ate all of the pellets!')
+        #An else-if statement to check if Pac-Man got caught by a ghost but still have lives to continue
+        elif(self.pac_man.get_list_of_lives() > 0):            
+            #Stops the all relative sound channels
+            self.siren_channel.stop()
+            self.power_pellet_channel.stop()
+            self.pellet_channel.stop()
+            
+            #Stops Pac-Man from frame change and movement
+            self.pac_man.set_movement(False)
 
-        #An if statement to check if Pac-Man got caught by a ghost but still have lives to continue
-        if(self.pac_man.get_list_of_lives() > 0):
+            #Stops the ghosts from moving
+            self.blinky.set_movement(False)
+            self.pinky.set_movement(False)
+            self.inky.set_movement(False)
+            self.clyde.set_movement(False)
+
+            '''
+            Sets a timer to pause for a 50 iterations before continuing with the end of the round
+                Note: This is a diffrent type of timer compared to the timer used to change the movement frames
+                      of the characters
+            '''
+            if(self.ghost_disappear_timer == 50):
+                #Makes the ghosts disappear
+                self.blinky.get_rect().center = (-100, -100)
+                self.pinky.get_rect().center = (-100, -100)
+                self.inky.get_rect().center = (-100, -100)
+                self.clyde.get_rect().center = (-100, -100)
+
+                #Starts Pac-Man's death animation
+                if(self.pac_man_death_sound_has_played is False):
+                    self.end_round_channel.play(self.pac_man_death_sound)
+                    self.pac_man_death_sound_has_played = True
+
+                    #Sets Pac-Man's frame and animation boolean as setup for his death animation
+                    self.pac_man.set_frame(0)
+                    self.pac_man.set_death_animation(True)
+
+                #Plays Pac-Man's death animation until the death sound stops
+                if(self.end_round_channel.get_busy() is False):
+                    #Sets up variables to start a new round
+                    self.round_intro = True
+                    self.round_end = False
+                    self.pac_man_life_deduct = True
+                    self.pac_man.set_is_caught(False)
+
+                    #Sets ghost disappear timer & death sound boolean when Pac-Man gets caught again
+                    self.ghost_disappear_timer = 0
+                    self.pac_man_death_sound_has_played = False
+            else:
+                self.ghost_disappear_timer += 1
+            
+            #Sets up and blits all objects onto the display surface
+            self.set_up_gameplay_surface()
+            self.display_surface.blit(self.gameplay_surface, (0, 0))
+            
+            #Debug code
+                #print(self.ghost_disappear_timer)
+        #An else statement for when Pac-Man gets caught and has no more lives
+        else:
             #Stops the all relative sound channels
             self.siren_channel.stop()
             self.power_pellet_channel.stop()
@@ -411,25 +481,137 @@ class GameplayScene:
 
                 #Plays Pac-Man's death animation until the death sound stops
                 if(self.end_round_channel.get_busy() is False):
-                    #Sets up variables to start a new round
-                    self.round_intro = True
-                    self.pac_man_life_deduct = True
-                    self.pac_man.set_is_caught(False)
-
-                    #Sets ghost disappear timer & death sound boolean when Pac-Man gets caught again
-                    self.ghost_disappear_timer = 0
-                    self.pac_man_death_sound_has_played = False
+                    #Sets a boolean to have the player transition to the Main Menu Scene
+                    self.transition_to_main_menu = True
             else:
                 self.ghost_disappear_timer += 1
+
+            #Transitions the player to the Main Menu Scene
+            if(self.transition_to_main_menu):
+                #Sets a timer to pause for a 100 iterations to showcase the game over text
+                if(self.game_over_text_timer != 100):
+                    pixel_font = pygame.font.Font('Fonts/Pixel/DePixelHalbfett.ttf', 18)
+
+                    #Displays the "GAME OVER" text
+                    game_text = pixel_font.render('GAME', True, 'Red')
+                    game_text_rect = game_text.get_rect()
+                    game_text_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 35)
+
+                    over_text = pixel_font.render('OVER', True, 'Red')
+                    over_text_rect = over_text.get_rect()
+                    over_text_rect.center = (self.WINDOW_WIDTH / 2 - 35, self.WINDOW_HEIGHT / 2 + 35)
+                    
+                    self.gameplay_surface.blit(game_text, game_text_rect)
+                    self.gameplay_surface.blit(over_text, over_text_rect)
+
+                    #Sets up all objects for the Gameplay Scene
+                    self.set_up_gameplay_surface()
+
+                    #Blits the 'GAME OVER' text on the Gameplay Scene
+                    self.gameplay_surface.blit(game_text, game_text_rect)
+                    self.gameplay_surface.blit(over_text, over_text_rect)
+
+                    #Blits Gameplay Scene onto the display surface
+                    self.display_surface.blit(self.gameplay_surface, (0, 0))
+
+                    #Increments the timer
+                    self.game_over_text_timer += 1
+
+                    #Debug code
+                        #print('Display Game Over Text')
+                else:
+                    '''
+                    Sets an iteration timer to pause for another 50 iterations before continuing from 
+                    a black screen to the Main Menu Scene
+                    '''
+                    if(self.transition_to_main_menu_timer == 50):
+                        #Sets up variables to start a new round from the Main Menu Scene
+                        self.round_intro = True
+                        self.fresh_start = True
+                        self.round_end = False
+                        self.pac_man_life_deduct = True
+                        self.pac_man.set_is_caught(False)
+
+                        #Resets the game over text timer for when Pac-Man loses all of his lives again
+                        self.game_over_text_timer = 0
+
+                        #Sets ghost disappear timer & death sound boolean for when Pac-Man gets caught again
+                        self.ghost_disappear_timer = 0
+                        self.pac_man_death_sound_has_played = False
+
+                        #A for loop to have all eaten pellets visible again and set back to their original positions
+                        for i in range(len(self.list_pellets[0])):
+                            #Enables visibility of pellet
+                            self.list_pellets[1][i] = True
+                            
+                            #Updates position of pellet
+                            coordinates = self.list_pellets[0][i]
+                            self.list_pellets[3][i].topleft = coordinates
+                        
+                        #A for loop to have all eaten power pellets visible again and set back to their original positions
+                        for i in range(len(self.list_power_pellets[0])):
+                            #Enables visibility of power pellet
+                            self.list_power_pellets[1][i] = True
+
+                            #Updates position of power pellet
+                            coordinates = self.list_power_pellets[0][i]
+                            self.list_power_pellets[3][i].topleft = coordinates
+
+                        #Sets Pac-Man's variables back to normal
+                        self.pac_man.set_list_of_lives(3)
+                        self.pac_man.set_direction('Left')
+                        self.pac_man.set_frame(0)
+                        self.pac_man.set_CF()
+                        self.pac_man.set_death_animation(False)
+                        self.pac_man.set_death_animation_timer(0)
+
+                        #Resets the position of all characters
+                        self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
+                        self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
+                        self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20)
+                        self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
+                        self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
+
+                        #Resets the transition boolean and black screen timer
+                        self.transition_to_main_menu = False
+                        self.transition_to_main_menu_timer = 0
+
+                        #Loads and plays the Pac-Man Theme Remix when switching to the Main Menu Scene
+                        pygame.mixer_music.load('Audio/Music/Pac-Man Theme Remix.wav')
+                        pygame.mixer_music.play(-1)
+
+                        #Transitions the player to the Main Menu Scene
+                        self.game_state_manager.set_scene_state('Main Menu Scene')
+                    else:
+                        self.transition_to_main_menu_timer += 1
             
-            #Debug code
-                #print(self.ghost_disappear_timer)
+            '''
+            Only blits all objects if the black screen to main menu timer has not been started and  
+            the end of the round is still happening before the program changes to the Main Menu Scene
+            '''
+            if(self.transition_to_main_menu_timer == 0 and self.round_end):
+                self.set_up_gameplay_surface()
+                self.display_surface.blit(self.gameplay_surface, (0, 0))
 
-        #An if statement to check if Pac-Man got caught and has no more lives
+    #A method to check if Pac-Man ate all of the pellets in the Gameplay Sceme
+    def check_ate_all_pellets(self):
+        ate_all_small_pellets = True
+        ate_all_power_pellets = True
         
-
+        for exists in self.list_pellets[1]:
+            if(exists):
+                ate_all_small_pellets = False
+                break
+        
+        for exists in self.list_power_pellets[1]:
+            if(exists):
+                ate_all_power_pellets = False
+                break
+        
         #Debug code
-            #print('The end_round() method is running')
+            #print(ate_all_small_pellets and ate_all_power_pellets)
+        
+        return ate_all_small_pellets and ate_all_power_pellets
 
     #A method to check and handle events for the Gameplay Scene
     def event_handler(self, event):
@@ -444,9 +626,12 @@ class GameplayScene:
                                               self.clyde.get_rect().colliderect(self.pac_man.get_rect())):
             self.pac_man.set_is_caught(True)
 
+        #Checks if Pac-Man ate all of the pellets
+        self.ate_all_pellets = self.check_ate_all_pellets() 
+
         #If Pac-Man is caught or eats all of the pellets the round ends. Else, Pac-Man's movement continues to get updated
-        if(self.pac_man.get_is_caught() is True):
-            self.end_round()
+        if(self.pac_man.get_is_caught() or self.ate_all_pellets):
+            self.round_end = True
         else:
             self.pac_man.movement_update(event, self.list_obstacles)
             self.blinky.set_movement(True)
