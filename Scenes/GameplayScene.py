@@ -78,8 +78,6 @@ class GameplayScene:
 
     #A method to run the Gameplay Scene
     def run(self, event):        
-        #print(self.transition_to_next_round_timer)
-
         #Fills the background of the display surface
         self.display_surface.fill('black')
 
@@ -486,8 +484,15 @@ class GameplayScene:
             else:
                 self.ghost_disappear_timer += 1
 
+            '''
+            Sets up all objects onto the gameplay surface
+                Note: This occurs before the transition_to_main_menu if statement so that the "GAME OVER" 
+                      text can overlay the gameplay surface
+            '''
+            self.set_up_gameplay_surface()
+
             #Transitions the player to the Main Menu Scene
-            if(self.transition_to_main_menu):
+            if(self.transition_to_main_menu):                
                 #Sets a timer to pause for a 100 iterations to showcase the game over text
                 if(self.game_over_text_timer != 100):
                     pixel_font = pygame.font.Font('Fonts/Pixel/DePixelHalbfett.ttf', 18)
@@ -495,24 +500,18 @@ class GameplayScene:
                     #Displays the "GAME OVER" text
                     game_text = pixel_font.render('GAME', True, 'Red')
                     game_text_rect = game_text.get_rect()
-                    game_text_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 35)
+                    game_text_rect.center = (self.WINDOW_WIDTH / 2 - 50, self.WINDOW_HEIGHT / 2 + 35)
 
                     over_text = pixel_font.render('OVER', True, 'Red')
                     over_text_rect = over_text.get_rect()
-                    over_text_rect.center = (self.WINDOW_WIDTH / 2 - 35, self.WINDOW_HEIGHT / 2 + 35)
+                    over_text_rect.center = (self.WINDOW_WIDTH / 2 + 58, self.WINDOW_HEIGHT / 2 + 35)
                     
                     self.gameplay_surface.blit(game_text, game_text_rect)
                     self.gameplay_surface.blit(over_text, over_text_rect)
 
-                    #Sets up all objects for the Gameplay Scene
-                    self.set_up_gameplay_surface()
-
                     #Blits the 'GAME OVER' text on the Gameplay Scene
                     self.gameplay_surface.blit(game_text, game_text_rect)
                     self.gameplay_surface.blit(over_text, over_text_rect)
-
-                    #Blits Gameplay Scene onto the display surface
-                    self.display_surface.blit(self.gameplay_surface, (0, 0))
 
                     #Increments the timer
                     self.game_over_text_timer += 1
@@ -584,13 +583,12 @@ class GameplayScene:
                         self.game_state_manager.set_scene_state('Main Menu Scene')
                     else:
                         self.transition_to_main_menu_timer += 1
-            
-            '''
-            Only blits all objects if the black screen to main menu timer has not been started and  
-            the end of the round is still happening before the program changes to the Main Menu Scene
-            '''
-            if(self.transition_to_main_menu_timer == 0 and self.round_end):
-                self.set_up_gameplay_surface()
+
+            #Sets the display surface to black when transitioning from Gameplay Scene to Main Menu Scene
+            if(1 <= self.transition_to_main_menu_timer and self.transition_to_main_menu_timer <= 50):
+                self.display_surface.fill('black')
+            #Else, blits the Gameplay Scene surface onto the display surface
+            elif(self.game_state_manager.get_scene_state() is not 'Main Menu Scene'):
                 self.display_surface.blit(self.gameplay_surface, (0, 0))
 
     #A method to check if Pac-Man ate all of the pellets in the Gameplay Sceme
