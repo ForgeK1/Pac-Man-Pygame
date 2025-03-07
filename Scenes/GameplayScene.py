@@ -618,11 +618,7 @@ class GameplayScene:
         '''
 
         #Checks if a ghost has caught Pac-Man
-        if(self.blinky.get_rect().colliderect(self.pac_man.get_rect()) or 
-                                              self.pinky.get_rect().colliderect(self.pac_man.get_rect()) or 
-                                              self.inky.get_rect().colliderect(self.pac_man.get_rect()) or 
-                                              self.clyde.get_rect().colliderect(self.pac_man.get_rect())):
-            self.pac_man.set_is_caught(True)
+        self.pac_man.check_is_caught(self.blinky, self.pinky, self.inky, self.clyde)
 
         #Checks if Pac-Man ate all of the pellets
         self.ate_all_pellets = self.check_ate_all_pellets() 
