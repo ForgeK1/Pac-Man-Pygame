@@ -77,7 +77,7 @@ class GameplayScene:
         self.transition_to_main_menu = False
 
     #A method to run the Gameplay Scene
-    def run(self, event):        
+    def run(self, event):  
         #Fills the background of the display surface
         self.display_surface.fill('black')
 
@@ -204,7 +204,7 @@ class GameplayScene:
         return list_obstacles
 
     #A method to showcase the start of the round to the player
-    def start_round(self):        
+    def start_round(self):       
         #Resets the Gameplay Scene background
         self.gameplay_surface.fill('black')
 
@@ -220,7 +220,7 @@ class GameplayScene:
             A section to set up the obstacles and pellets
             '''
             
-            #Sets up the obstacles on the Gameplay Scene
+            #Sets up the obstacles on the Gameplay Scene 
             for i in range(len(self.list_obstacles[0])): 
                 self.gameplay_surface.blit(self.list_obstacles[1][i], self.list_obstacles[2][i])
             
@@ -538,23 +538,15 @@ class GameplayScene:
                         self.ghost_disappear_timer = 0
                         self.pac_man_death_sound_has_played = False
 
-                        #A for loop to have all eaten pellets visible again and set back to their original positions
+                        #A for loop to have all eaten pellets visible again
                         for i in range(len(self.list_pellets[0])):
                             #Enables visibility of pellet
                             self.list_pellets[1][i] = True
-                            
-                            #Updates position of pellet
-                            coordinates = self.list_pellets[0][i]
-                            self.list_pellets[3][i].topleft = coordinates
                         
-                        #A for loop to have all eaten power pellets visible again and set back to their original positions
+                        #A for loop to have all eaten power pellets visible again
                         for i in range(len(self.list_power_pellets[0])):
                             #Enables visibility of power pellet
                             self.list_power_pellets[1][i] = True
-
-                            #Updates position of power pellet
-                            coordinates = self.list_power_pellets[0][i]
-                            self.list_power_pellets[3][i].topleft = coordinates
 
                         #Sets Pac-Man's variables back to normal
                         self.pac_man.set_list_of_lives(3)
@@ -588,23 +580,19 @@ class GameplayScene:
             if(1 <= self.transition_to_main_menu_timer and self.transition_to_main_menu_timer <= 50):
                 self.display_surface.fill('black')
             #Else, blits the Gameplay Scene surface onto the display surface
-            elif(self.game_state_manager.get_scene_state() is not 'Main Menu Scene'):
+            elif(self.game_state_manager.get_scene_state() != 'Main Menu Scene'):
                 self.display_surface.blit(self.gameplay_surface, (0, 0))
 
     #A method to check if Pac-Man ate all of the pellets in the Gameplay Sceme
     def check_ate_all_pellets(self):
-        ate_all_small_pellets = True
-        ate_all_power_pellets = True
+        ate_all_small_pellets = False
+        ate_all_power_pellets = False
         
-        for exists in self.list_pellets[1]:
-            if(exists):
-                ate_all_small_pellets = False
-                break
+        if True in self.list_pellets[1] is False:
+            ate_all_small_pellets = True
         
-        for exists in self.list_power_pellets[1]:
-            if(exists):
-                ate_all_power_pellets = False
-                break
+        if True in self.list_power_pellets[1] is False:
+            ate_all_power_pellets = True
         
         #Debug code
             #print(ate_all_small_pellets and ate_all_power_pellets)
@@ -635,8 +623,8 @@ class GameplayScene:
 
             #A method to allow Pac-Man to eat pellets
             self.pac_man.eat_pellets(self.list_pellets, self.list_power_pellets, 
-                                    self.pellet_channel, self.power_pellet_channel,
-                                    self.pellet_sound, self.power_pellet_sound)
+                                     self.pellet_channel, self.power_pellet_channel,
+                                     self.pellet_sound, self.power_pellet_sound)
 
             #Checks if Pac-Man ate a power pellet. If so, the ghosts will scatter
             self.ghosts_scatter_timer()

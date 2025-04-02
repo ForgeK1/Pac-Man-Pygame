@@ -67,7 +67,10 @@ class PowerPellet:
                 '''
                 A section to grab and record the boolean in the second list
                 '''
-                list_power_pellets[1].append(row[2])
+                if(row[2] == 'TRUE'):
+                    list_power_pellets[1].append(True)
+                else:
+                    list_power_pellets[1].append(False)
 
                 '''
                 A section to grab and record the updated rect position in the fourth list

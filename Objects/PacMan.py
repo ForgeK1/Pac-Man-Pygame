@@ -473,11 +473,11 @@ class PacMan:
         pellet_index = self.minimized_rect.collidelist(list_pellets[3])
 
         '''
-        If the index is -1, then Pac-Man did not collide with any pellets. Otherwise, the program
-        calculates the X & Y range percentage between the pellet's center and Pac-Man's minimized
-        rect center 
+        If pellet's index is -1 and the boolean visibility is False, then Pac-Man did not collide 
+        with any pellets. Otherwise, the program calculates the X & Y range percentage between the 
+        pellet's center and Pac-Man's minimized rect center 
         '''
-        if(pellet_index != -1):
+        if(pellet_index != -1 and list_pellets[1][pellet_index]):
             if(self.minimized_rect.centerx > list_pellets[3][pellet_index].centerx):
                 range_x = list_pellets[3][pellet_index].centerx / self.minimized_rect.centerx
             else:
@@ -503,7 +503,7 @@ class PacMan:
                     pellet_channel.play(pellet_sound)
                 
                 list_pellets[1][pellet_index] = False
-                list_pellets[3][pellet_index].center = (-100, -100)
+                #list_pellets[3][pellet_index].center = (0, 0)
         
         '''
         Checks if the player's minimized hitbox is interacting with a power pellet
@@ -511,7 +511,7 @@ class PacMan:
 
         power_pellet_index = self.minimized_rect.collidelist(list_power_pellets[3])
 
-        if(power_pellet_index != -1):
+        if(power_pellet_index != -1 and list_power_pellets[1][power_pellet_index]):
             if(self.minimized_rect.centerx > list_power_pellets[3][power_pellet_index].centerx):
                 range_x = list_power_pellets[3][power_pellet_index].centerx / self.minimized_rect.centerx
             else:
@@ -526,7 +526,6 @@ class PacMan:
                 power_pellet_channel.play(power_pellet_sound)
 
                 list_power_pellets[1][power_pellet_index] = False
-                list_power_pellets[3][power_pellet_index].center = (-100, -100)
 
                 '''
                 Sets the eat_ghosts variable to True so the event handler method in the Gameplay Scene 
