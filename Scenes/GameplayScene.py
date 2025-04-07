@@ -30,8 +30,11 @@ class GameplayScene:
         '''
         self.gameplay_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
-        #Initializes the list of obstacles for the game map
-        self.list_obstacles = self.load_obstacles()
+        #Initializes two lists of obstacles for the game map
+        self.list_blue_obstacles = None
+        self.list_white_obstacles = None
+        self.load_obstacles()
+        self.default_obstacles = True #True = blue obstacles, False = white obstacles
 
         #Initializes the character objects
         self.pac_man = PacMan(30, 30, 'Left', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138, True, 50)
@@ -76,6 +79,9 @@ class GameplayScene:
         self.pac_man_death_sound_has_played = False
         self.transition_to_main_menu = False
 
+        #Initializes variables for the interface
+        self.one_up_text_timer = 0
+
     #A method to run the Gameplay Scene
     def run(self, event):  
         #Fills the background of the display surface
@@ -116,16 +122,16 @@ class GameplayScene:
         self.gameplay_surface.blit(self.pinky.get_image(), self.pinky.get_rect())
         self.gameplay_surface.blit(self.inky.get_image(), self.inky.get_rect())
         self.gameplay_surface.blit(self.clyde.get_image(), self.clyde.get_rect())
-    
-        #Blits the obstacles on the Gameplay Scene
-        for i in range(len(self.list_obstacles[0])): 
-            self.gameplay_surface.blit(self.list_obstacles[1][i], self.list_obstacles[2][i])
+
+        #Blits obstacles on the Gameplay Scene
+        for i in range(len(self.list_blue_obstacles[0])): 
+            self.gameplay_surface.blit(self.list_blue_obstacles[1][i], self.list_blue_obstacles[2][i])
 
         #Blits the pellets on the Gameplay Scene
         for i in range(len(self.list_pellets[0])):
-            #Checks if the pellet hasn't been eaten by Pac-Man
-            if(self.list_pellets[1][i]):
-                self.gameplay_surface.blit(self.list_pellets[2], self.list_pellets[3][i])
+                #Checks if the pellet hasn't been eaten by Pac-Man
+                if(self.list_pellets[1][i]):
+                    self.gameplay_surface.blit(self.list_pellets[2], self.list_pellets[3][i])
 
         #Blits the power pellets on the Gameplay Scene
         for i in range(len(self.list_power_pellets[0])):
@@ -136,46 +142,94 @@ class GameplayScene:
 
                 self.gameplay_surface.blit(self.list_power_pellets[2], self.list_power_pellets[3][i])
         
-        #A method to showcase high score, list of lives, food images, etc. for the Gameplay Scene
+        #A method to showcase list of lives, high score, current score, food images, etc. for the Gameplay Scene
         self.interface_update()
     
-    #A method to load and update the Gameplay Scene interface (high score, list of lives, food images, etc.)
+    #A method to load and update the Gameplay Scene interface (list of lives, high score, current score, food images, etc.)
     def interface_update(self):
         '''
-        A section to set up Pac-Man's current list of lives
+        A section to set up Pac-Man's list of lives
         '''
         
-        #Grabs Pac-Man's current list of lives
-        self.list_of_lives = self.pac_man.get_list_of_lives()
-        self.life_image_offset = 40
+        #Grabs Pac-Man's list of lives
+        list_of_lives = self.pac_man.get_list_of_lives()
+        life_image_offset = 40
 
         #A while loop to blit each life Pac-Man has onto the Gameplay Scene surface
-        while self.list_of_lives > 0:
-            self.life_image = pygame.transform.scale(pygame.image.load('Images/Pac-Man/Movement/left_frame_1.png'), (40, 40))
-            self.life_rect = self.life_image.get_rect()
-            self.life_rect.bottomleft = (self.life_image_offset, 633)
+        while list_of_lives > 0:
+            life_image = pygame.transform.scale(pygame.image.load('Images/Pac-Man/Movement/left_frame_1.png'), (40, 40))
+            life_rect = life_image.get_rect()
+            life_rect.bottomleft = (life_image_offset, 633)
 
-            self.gameplay_surface.blit(self.life_image, self.life_rect)
+            self.gameplay_surface.blit(life_image, life_rect)
 
-            self.life_image_offset += 45
+            life_image_offset += 45
 
-            self.list_of_lives -= 1
+            list_of_lives -= 1
         
         '''
-        A section to set up Pac-Man's current high score
+        A section to set up Pac-Man's high score and score
         '''
 
-    #A method to load obstacles' coordinates, images, and rects to store each respectivly in their lists
+        #Grabs Pac-Man's high score
+        if(self.pac_man.get_high_score() == 0):
+            high_score = '00'
+        else:
+            high_score = self.pac_man.get_high_score()
+        
+        #Grabs Pac-Man's current score
+        if(self.pac_man.get_score() == 0):
+            score = '00'
+        else:
+            score = self.pac_man.get_score()
+
+        pixel_font = pygame.font.Font('Fonts/Pixel/DePixelHalbfett.ttf', 18)
+
+        #Sets up 1UP text
+        one_up_text = pixel_font.render('1UP', True, 'White')
+        one_up_text_rect = one_up_text.get_rect()
+        one_up_text_rect.topright = (100, 5)
+
+        #Sets up Pac-Man's score number text
+        score_num_text = pixel_font.render(str(score), True, 'White')
+        score_num_text_rect = score_num_text.get_rect()
+        score_num_text_rect.topright = (115, 30)
+
+        #Sets up Pac-Man's high score text
+        high_score_text = pixel_font.render('HIGH  SCORE', True, 'White')
+        high_score_text_rect = high_score_text.get_rect()
+        high_score_text_rect.topright = (320, 5)
+        
+        #Sets up Pac-Man's high score number text
+        high_score_num_text = pixel_font.render(str(high_score), True, 'White')
+        high_score_num_text_rect = high_score_num_text.get_rect()
+        high_score_num_text_rect.topright = (290, 30)
+
+        #Blits the 1UP text on the Gameplay Scene via a timer
+        if(self.one_up_text_timer <= 15):
+            self.gameplay_surface.blit(one_up_text, one_up_text_rect)
+            self.one_up_text_timer += 1
+        elif(self.one_up_text_timer > 15 and self.one_up_text_timer <= 30): 
+            self.one_up_text_timer += 1
+        else:
+            self.one_up_text_timer = 0
+
+        #Blits the rest of the texts on the Gameplay Scene
+        self.gameplay_surface.blit(score_num_text, score_num_text_rect)
+        self.gameplay_surface.blit(high_score_text, high_score_text_rect)
+        self.gameplay_surface.blit(high_score_num_text, high_score_num_text_rect)
+
+    #A method to load a list of blue and white that contains an set of coordinates, images, and rects of each image
     def load_obstacles(self):
         '''
         First parameter:  [X, Y] coordinates of the image
         Second parameter: Surface object of the image
         Third parameter:  Rect of the image
         '''
-        list_obstacles = ([], [], [])
+        self.list_blue_obstacles = ([], [], [])
 
         #A for loop to iterate through all image files in the obstacles folder
-        for filename in os.listdir('Images/Obstacles'):
+        for filename in os.listdir('Images/Obstacles/Blue'):
             '''
             A section to grab the top left X & Y coordinate of each file as an array 
                 Note: The coordinates for the file are stored in the file name
@@ -188,20 +242,37 @@ class GameplayScene:
             coordinates[1] = int(coordinates[1])
             
             #Appends the coordinates in the first list
-            list_obstacles[0].append(coordinates)
+            self.list_blue_obstacles[0].append(coordinates)
 
             '''
             A section to grab the image and rect of the file
             '''
-            image = pygame.image.load('Images/Obstacles/' + filename)
+            image = pygame.image.load('Images/Obstacles/Blue/' + filename)
             image_rect = image.get_rect()
             image_rect.topleft = (coordinates[0], coordinates[1])
 
             #Stores image in the second list and the rect in the third list
-            list_obstacles[1].append(image)
-            list_obstacles[2].append(image_rect)
+            self.list_blue_obstacles[1].append(image)
+            self.list_blue_obstacles[2].append(image_rect)
 
-        return list_obstacles
+        self.list_white_obstacles = ([], [], [])
+
+        for filename in os.listdir('Images/Obstacles/White'):
+            coordinates = filename
+            coordinates = coordinates.removeprefix('(')
+            coordinates = coordinates.removesuffix(').png')
+            coordinates = coordinates.split(',')
+            coordinates[0] = int(coordinates[0])
+            coordinates[1] = int(coordinates[1])
+            
+            self.list_white_obstacles[0].append(coordinates)
+
+            image = pygame.image.load('Images/Obstacles/White/' + filename)
+            image_rect = image.get_rect()
+            image_rect.topleft = (coordinates[0], coordinates[1])
+
+            self.list_white_obstacles[1].append(image)
+            self.list_white_obstacles[2].append(image_rect)
 
     #A method to showcase the start of the round to the player
     def start_round(self):       
@@ -221,8 +292,8 @@ class GameplayScene:
             '''
             
             #Sets up the obstacles on the Gameplay Scene 
-            for i in range(len(self.list_obstacles[0])): 
-                self.gameplay_surface.blit(self.list_obstacles[1][i], self.list_obstacles[2][i])
+            for i in range(len(self.list_blue_obstacles[0])): 
+                self.gameplay_surface.blit(self.list_blue_obstacles[1][i], self.list_blue_obstacles[2][i])
             
             #Sets up the pellets on the Gameplay Scene
             for i in range(len(self.list_pellets[0])):
@@ -272,7 +343,7 @@ class GameplayScene:
                 self.gameplay_surface.blit(self.inky.get_image(), self.inky.get_rect())
                 self.gameplay_surface.blit(self.clyde.get_image(), self.clyde.get_rect())
 
-            #A method to showcase high score, list of lives, food images, etc. for the start round
+            #A method to showcase list of lives, high score, current score, food images, etc. for the start round
             self.interface_update()
 
             #Blits the Gameplay Scene surface onto the display surface
@@ -308,8 +379,8 @@ class GameplayScene:
                 '''
 
                 #Sets up the obstacles on the Gameplay Scene
-                for i in range(len(self.list_obstacles[0])): 
-                    self.gameplay_surface.blit(self.list_obstacles[1][i], self.list_obstacles[2][i])
+                for i in range(len(self.list_blue_obstacles[0])): 
+                    self.gameplay_surface.blit(self.list_blue_obstacles[1][i], self.list_blue_obstacles[2][i])
                 
                 #Sets up the pellets on the Gameplay Scene
                 for i in range(len(self.list_pellets[0])):
@@ -348,7 +419,7 @@ class GameplayScene:
                 self.gameplay_surface.blit(self.inky.get_image(), self.inky.get_rect())
                 self.gameplay_surface.blit(self.clyde.get_image(), self.clyde.get_rect())
 
-                #A method to showcase high score, list of lives, food images, etc. for the start round
+                #A method to showcase list of lives, high score, current score, food images, etc. for the start round
                 self.interface_update()
 
                 #Blits the Gameplay Scene surface onto the display surface
@@ -376,12 +447,116 @@ class GameplayScene:
         
         #An if statement to check if Pac-Man ate all the pellets to move to the next round
         if(self.ate_all_pellets):
-            #Sets up and blits all objects onto the display surface
-            self.set_up_gameplay_surface()
-            self.display_surface.blit(self.gameplay_surface, (0, 0))
+            #Stops the all relative sound channels
+            self.siren_channel.stop()
+            self.power_pellet_channel.stop()
+            self.pellet_channel.stop()
+            
+            #Stops Pac-Man from frame change and movement
+            self.pac_man.set_movement(False)
 
-            #Debug code
-            print('Pac-Man ate all of the pellets!')
+            #Stops the ghosts from moving
+            self.blinky.set_movement(False)
+            self.pinky.set_movement(False)
+            self.inky.set_movement(False)
+            self.clyde.set_movement(False)
+
+            '''
+            Sets a timer to pause for a 100 iterations before continuing with the end of the round
+                Note: This is a diffrent type of timer compared to the timer used to change the movement frames
+                      of the characters
+            '''
+            if(self.ghost_disappear_timer >= 100):
+                #Makes the ghosts disappear
+                self.blinky.get_rect().center = (-100, -100)
+                self.pinky.get_rect().center = (-100, -100)
+                self.inky.get_rect().center = (-100, -100)
+                self.clyde.get_rect().center = (-100, -100)
+
+                #A switch statement to switch the obstacle colors between blue and white for every 15 iterations
+                match self.ghost_disappear_timer:
+                    case 115:
+                        self.default_obstacles = False
+                    case 130:
+                        self.default_obstacles = True
+                    case 145:
+                        self.default_obstacles = False
+                    case 160:
+                        self.default_obstacles = True
+                    case 175:
+                        self.default_obstacles = False
+                    case 190:
+                        self.default_obstacles = True
+                    case 205:
+                        self.default_obstacles = False
+                    case 220:
+                        self.default_obstacles = True
+                
+                #Transitions to the next level
+                if(self.ghost_disappear_timer == 235):
+                    #Sets up variables to start a new round
+                    self.round_intro = True
+                    self.round_end = False
+
+                    #Resets ghost disappear timer
+                    self.ghost_disappear_timer = 0
+
+                    #Resets the position of all characters
+                    self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
+                    self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
+                    self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20)
+                    self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
+                    self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
+
+                    #Sets Pac-Man's variables back to normal
+                    self.pac_man.set_direction('Left')
+                    self.pac_man.set_frame(0)
+                    self.pac_man.set_CF()
+
+                    #A for loop to have all eaten pellets visible again
+                    for i in range(len(self.list_pellets[0])):
+                        #Enables visibility of pellet
+                        self.list_pellets[1][i] = True
+                    
+                    #A for loop to have all eaten power pellets visible again
+                    for i in range(len(self.list_power_pellets[0])):
+                        #Enables visibility of power pellet
+                        self.list_power_pellets[1][i] = True
+
+            '''
+            If True, the player sees a black screen when the level resets. Otherwise, changes from previous if statement 
+            are applied to the Gameplay Scene
+            '''
+            if(self.round_intro != True):
+                #Displays the original Gameplay Scene
+                if(self.ghost_disappear_timer < 100):
+                    self.set_up_gameplay_surface()
+                #Otherwise, the program alternates the color of the obstacles to blue and white
+                else:
+                    #Uses the blue obstacles if in a default state
+                    if(self.default_obstacles):
+                        #Blits blue obstacles on the Gameplay Scene
+                        for i in range(len(self.list_blue_obstacles[0])): 
+                            #All obstacles are blit on this scene except for the pink gate image
+                            if(i != 20):
+                                self.gameplay_surface.blit(self.list_blue_obstacles[1][i], self.list_blue_obstacles[2][i])
+                    else:
+                        #Blits white obstacles on the Gameplay Scene
+                        for i in range(len(self.list_white_obstacles[0])): 
+                            self.gameplay_surface.blit(self.list_white_obstacles[1][i], self.list_white_obstacles[2][i])
+                    
+                    #Blits Pac-Man on the Gameplay Scene
+                    self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
+
+                #Conducts an interface update
+                self.interface_update()
+
+                #Blits the gameplay surface onto the display surface
+                self.display_surface.blit(self.gameplay_surface, (0, 0))
+
+                #Iterates ghost dissapear timer for the previous if statement
+                self.ghost_disappear_timer += 1
+
         #An else-if statement to check if Pac-Man got caught by a ghost but still have lives to continue
         elif(self.pac_man.get_list_of_lives() > 0):            
             #Stops the all relative sound channels
@@ -555,6 +730,7 @@ class GameplayScene:
                         self.pac_man.set_CF()
                         self.pac_man.set_death_animation(False)
                         self.pac_man.set_death_animation_timer(0)
+                        self.pac_man.set_score(0)
 
                         #Resets the position of all characters
                         self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
@@ -585,16 +761,17 @@ class GameplayScene:
 
     #A method to check if Pac-Man ate all of the pellets in the Gameplay Sceme
     def check_ate_all_pellets(self):
-        ate_all_small_pellets = False
-        ate_all_power_pellets = False
+        ate_all_small_pellets = True
+        ate_all_power_pellets = True
         
-        if True in self.list_pellets[1] is False:
-            ate_all_small_pellets = True
+        if True in self.list_pellets[1]:
+            ate_all_small_pellets = False
         
-        if True in self.list_power_pellets[1] is False:
-            ate_all_power_pellets = True
+        if True in self.list_power_pellets[1]:
+            ate_all_power_pellets = False
         
         #Debug code
+            #print(str(ate_all_small_pellets) + ' and ' + str(ate_all_power_pellets))
             #print(ate_all_small_pellets and ate_all_power_pellets)
         
         return ate_all_small_pellets and ate_all_power_pellets
@@ -615,7 +792,7 @@ class GameplayScene:
         if(self.pac_man.get_is_caught() or self.ate_all_pellets):
             self.round_end = True
         else:
-            self.pac_man.movement_update(event, self.list_obstacles)
+            self.pac_man.movement_update(event, self.list_blue_obstacles)
             self.blinky.set_movement(True)
             self.pinky.set_movement(True)
             self.inky.set_movement(True)

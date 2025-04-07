@@ -27,9 +27,10 @@ class PacMan:
         self.movement = movement
         self.frame = 0
 
-        #Variables to keep track of Pac-Man's list of lives and high score
-        self.list_of_lives = 3
+        #Variables to keep track of Pac-Man's list of lives, high score, and current score
+        self.list_of_lives = 1
         self.high_score = 0
+        self.score = 0
 
         #Variables to check if Pac-Man ate a power pellet to can eat ghosts or is caught by a ghost
         self.eat_ghosts = False
@@ -138,6 +139,14 @@ class PacMan:
     #A method to set Pac-Man's high score
     def set_high_score(self, new_high_score):
         self.high_score = new_high_score
+
+    #A method to get Pac-Man's current score
+    def get_score(self):
+        return self.score
+    
+    #A method to set Pac-Man's current score
+    def set_score(self, new_score):
+        self.score = new_score
     
     #A method to return a boolean for Pac-Man's eat_ghosts
     def get_eat_ghosts(self):
@@ -397,6 +406,17 @@ class PacMan:
     
     #A method for the player to control Pac-Man's movement position in the Gameplay Scene
     def movement_update(self, event, list_obstacles):
+        '''
+        An if-else statement to teleport Pac-Man when the player travels through the tunnel edge 
+        at the left or right side of the game map
+        ''' 
+        if(self.rect.centerx == -2 and self.rect.centery == 304):
+            self.direction = 'Left'
+            self.rect.center = (482, 304)
+        elif(self.rect.centerx == 482 and self.rect.centery == 304):
+            self.direction = 'Right'
+            self.rect.center = (-2, 304)
+        
         #Creates direction variables for Pac-Man's new and ongoing (old) directions
         new_direction = self.direction
         old_direction = self.direction
@@ -504,6 +524,8 @@ class PacMan:
                 
                 list_pellets[1][pellet_index] = False
                 #list_pellets[3][pellet_index].center = (0, 0)
+
+                self.score += 10
         
         '''
         Checks if the player's minimized hitbox is interacting with a power pellet
@@ -532,6 +554,12 @@ class PacMan:
                 can set the ghosts to scatter mode
                 '''
                 self.eat_ghosts = True
+
+                self.score += 50
+        
+        #If Pac-Man's current score is higher than his high score, the high score value is updated
+        if(self.score > self.high_score):
+            self.high_score = self.score
     
     #A method to check if Pac-Man is caught by a ghost
     def check_is_caught(self, blinky, pinky, inky, clyde):
