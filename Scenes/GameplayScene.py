@@ -225,8 +225,12 @@ class GameplayScene:
         First parameter:  [X, Y] coordinates of the image
         Second parameter: Surface object of the image
         Third parameter:  Rect of the image
+        Fourth parameter: Contains the index for the pink gate image
         '''
-        self.list_blue_obstacles = ([], [], [])
+        self.list_blue_obstacles = [[], [], [], -1]
+
+        #An index to keep track of which file is the gate image in the for loop below
+        gate_index = 0
 
         #A for loop to iterate through all image files in the obstacles folder
         for filename in os.listdir('Images/Obstacles/Blue'):
@@ -255,7 +259,15 @@ class GameplayScene:
             self.list_blue_obstacles[1].append(image)
             self.list_blue_obstacles[2].append(image_rect)
 
-        self.list_white_obstacles = ([], [], [])
+            '''
+            A section to save the index of the pink gate image
+            '''
+            if(filename.removesuffix('.png') == '(223,268)'):
+                self.list_blue_obstacles[3] = gate_index 
+            elif(self.list_blue_obstacles[3] == -1):
+                gate_index += 1
+
+        self.list_white_obstacles = [[], [], []]
 
         for filename in os.listdir('Images/Obstacles/White'):
             coordinates = filename
@@ -537,8 +549,8 @@ class GameplayScene:
                     if(self.default_obstacles):
                         #Blits blue obstacles on the Gameplay Scene
                         for i in range(len(self.list_blue_obstacles[0])): 
-                            #All obstacles are blit on this scene except for the pink gate image
-                            if(i != 20):
+                            #All obstacles are blit on this scene except for the gate image
+                            if(i != self.list_blue_obstacles[3]):
                                 self.gameplay_surface.blit(self.list_blue_obstacles[1][i], self.list_blue_obstacles[2][i])
                     else:
                         #Blits white obstacles on the Gameplay Scene
@@ -548,8 +560,8 @@ class GameplayScene:
                     #Blits Pac-Man on the Gameplay Scene
                     self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
 
-                #Conducts an interface update
-                self.interface_update()
+                    #Conducts an interface update
+                    self.interface_update()
 
                 #Blits the gameplay surface onto the display surface
                 self.display_surface.blit(self.gameplay_surface, (0, 0))
