@@ -41,7 +41,7 @@ class GameplayScene:
         self.blinky = Blinky(30, 30, "Left", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68, True, 100)
         self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20, True, 100)
         self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20, True, 100)
-        self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20, True, 100)
+        self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20, True, False, False, 100)
 
         #Initializes the pellet objects
         self.pellet = Pellet('Images/Pellets/pellet.png')
@@ -79,11 +79,8 @@ class GameplayScene:
         self.pac_man_death_sound_has_played = False
         self.transition_to_main_menu = False
 
-        #Initializes a variable timer for the interface
+        #Initializes variables for the interface
         self.one_up_text_timer = 0
-
-        #Initializes a variable timer to dynamically change ghost state animation after Pac-Man eats a power pellet
-        self.ghost_scatter_timer = 0
 
     #A method to run the Gameplay Scene
     def run(self, event):  
@@ -774,7 +771,7 @@ class GameplayScene:
             elif(self.game_state_manager.get_scene_state() != 'Main Menu Scene'):
                 self.display_surface.blit(self.gameplay_surface, (0, 0))
 
-    #A method to check if Pac-Man ate all of the pellets in the Gameplay Scene
+    #A method to check if Pac-Man ate all of the pellets in the Gameplay Sceme
     def check_ate_all_pellets(self):
         ate_all_small_pellets = True
         ate_all_power_pellets = True
@@ -803,10 +800,7 @@ class GameplayScene:
         #Checks if Pac-Man ate all of the pellets
         self.ate_all_pellets = self.check_ate_all_pellets() 
 
-        '''
-        If Pac-Man is caught or eats all of the pellets the round ends. Else, the event handler updates character movements, 
-        checks if Pac-Man ate all of the pellets, and updates ghost vulnerability state
-        '''
+        #If Pac-Man is caught or eats all of the pellets the round ends. Else, Pac-Man's movement continues to get updated
         if(self.pac_man.get_is_caught() or self.ate_all_pellets):
             self.round_end = True
         else:
@@ -821,45 +815,23 @@ class GameplayScene:
                                      self.pellet_channel, self.power_pellet_channel,
                                      self.pellet_sound, self.power_pellet_sound)
 
-            #If Pac-Man ate a power pellet, the ghosts will scatter. Else, the ghosts continue to chase Pac-Man
-            self.ghost_vulnerability()
+            #Checks if Pac-Man ate a power pellet. If so, the ghosts will scatter
+            self.ghosts_scatter_timer()
         
-    #A method to update ghost vulnerability whhen Pac-Man eats or does not eat a power pellet
-    def ghost_vulnerability(self):
-        #Pac-Man chases ghosts
-        if(self.pac_man.get_eat_ghosts()):
-            self.ghost_scatter_timer += 1
-
-            #Stops the siren channel
+    #A method for ghosts to scatter
+    def ghosts_scatter_timer(self):
+        if(self.pac_man.get_eat_ghosts() is True and self.pac_man.get_is_caught() is False):
             self.siren_channel.stop()
 
-            '''
-            Checks if the power pellet sound effect is still going on. If so, the ghosts will continue to be
-            in a vulnerable state
-            '''
+            #Checks if the power pellet sound effect is still going on
             if(self.power_pellet_channel.get_busy() is True):
-                '''
-                A section to update the skin of each ghost during the ghost scatter timer duration
-                '''
-
-                if(self.ghost_scatter_timer <= 300):
-                    for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                        ghost.set_vulnerable_state_v1(True)
-                else:
-                    for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                        ghost.set_vulnerable_state_v1(False)
-
-                    for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                        ghost.set_vulnerable_state_v2(True)
+                self.clyde.set_vulnerable_state(True)
             else:
-                for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                    ghost.set_vulnerable_state_v1(False)
-                    ghost.set_vulnerable_state_v2(False)
+                self.clyde.set_vulnerable_state(False)
 
                 self.pac_man.set_eat_ghosts(False)
-                self.ghost_scatter_timer = 0
-        #Else, the ghosts chase Pac-Man
-        else:
+        #Else, the ghosts will continue to chase Pac-Man
+        elif(self.pac_man.get_eat_ghosts() is False and self.pac_man.get_is_caught() is False):
             #Loops the siren sound effect
             if(self.siren_channel.get_busy() is False):
                 self.siren_channel.play(self.siren_v1_sound)

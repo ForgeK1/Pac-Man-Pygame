@@ -32,7 +32,7 @@ class MainMenuScene:
         self.blinky = Blinky(70, 70, "Right", 80, self.WINDOW_HEIGHT / 2 - 100, True, 100)
         self.pinky = Pinky(70, 70, "Right", 180, self.WINDOW_HEIGHT / 2 - 100, True, 100)
         self.inky = Inky(70, 70, "Right", 80, self.WINDOW_HEIGHT / 2, True, 100)
-        self.clyde = Clyde(70, 70, "Right", 180, self.WINDOW_HEIGHT / 2, True, False, False, 100)
+        self.clyde = Clyde(70, 70, "Right", 180, self.WINDOW_HEIGHT / 2, True, 100)
         self.power_pellet_image = pygame.image.load('Images/Dots/power_pellet.png')
 
         #Initializes the interactable buttons

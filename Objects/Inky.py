@@ -22,6 +22,11 @@ class Inky:
         self.movement = movement
         self.frame = 0
 
+        #Variables to check what state the ghost is in (if all three variables below are False, then the ghost is in a normal state)
+        self.vulnerable_state_v1 = False #Blue skin
+        self.vulnerable_state_v2 = False #A pattern of repeating blue and white skin
+        self.eaten_state = False #A pair of floating eyes
+
         #Variables to control character animation speed
         self.character_animation_speed = character_animation_speed #In miliseconds
         self.last_updated_time = 0 #In miliseconds
@@ -74,6 +79,30 @@ class Inky:
     def set_movement(self, new_movement):
         self.movement = new_movement
 
+    #A method to return a boolean for Inky's vulnerable state version #1
+    def get_vulnerable_state_v1(self):
+        return self.vulnerable_state_v1
+
+    #A method to set a new boolean for Inky's  vulnerable state version #1
+    def set_vulnerable_state_v1(self, new_vulnerable_state_v1):
+        self.vulnerable_state_v1 = new_vulnerable_state_v1
+
+    #A method to return a boolean for Inky's vulnerable state version #2
+    def get_vulnerable_state_v2(self):
+        return self.vulnerable_state_v2
+
+    #A method to set a new boolean for Inky's  vulnerable state version #2
+    def set_vulnerable_state_v2(self, new_vulnerable_state_v2):
+        self.vulnerable_state_v2 = new_vulnerable_state_v2
+    
+    #A method to return a boolean for Inky's eaten state
+    def get_eaten_state(self):
+        return self.eaten_state
+
+    #A method to set a new boolean for Inky's  vulnerable state
+    def set_eaten_state(self, new_eaten_state):
+        self.eaten_state = new_eaten_state
+
     #A method to return Inky's current frame
     def get_frame(self):
         return self.frame
@@ -83,70 +112,190 @@ class Inky:
         self.frame = new_frame
 
     '''
-    A series of methods to set the current frame of the character 
-    (Ex. CF means circle frame and RMF1 means Right Movement Frame 1)
+    A series of methods to set the current frame of the character in their normal state
     '''
+
+    #Right movement frame 1
     def set_RMF1(self):
         self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/right_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Right movement frame 2
     def set_RMF2(self):
         self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/right_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
+    #Left movement frame 1
     def set_LMF1(self):
         self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/left_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Left movement frame 2
     def set_LMF2(self):
         self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/left_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Up movement frame 1
     def set_UMF1(self):
         self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/up_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Up movement frame 2
     def set_UMF2(self):
         self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/up_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Down movement frame 1
     def set_DMF1(self):
         self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/down_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Down movement frame 2
     def set_DMF2(self):
         self.image = pygame.image.load('Images/Ghosts/Inky (Cyan)/down_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    '''
+    A series of methods to set the current frame of the character in their vulnerable state
+    '''
+
+    #Blue movement frame 1
+    def set_BMF1(self):
+        self.image = pygame.image.load('Images/Ghosts/Vulnerable State/blue_frame_1.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    #Blue movement frame 2
+    def set_BMF2(self):
+        self.image = pygame.image.load('Images/Ghosts/Vulnerable State/blue_frame_2.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    #White movement frame 1
+    def set_WMF1(self):
+        self.image = pygame.image.load('Images/Ghosts/Vulnerable State/white_frame_1.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    #White movement frame 2
+    def set_WMF2(self):
+        self.image = pygame.image.load('Images/Ghosts/Vulnerable State/white_frame_2.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    '''
+    A series of methods to set the current frame of the character in their eaten state
+    '''
+
+    #Right eaten movement frame
+    def set_REMF(self):
+        self.image = pygame.image.load('Images/Ghosts/Eaten State/right.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+
+    #Left eaten movement frame
+    def set_LEMF(self):
+        self.image = pygame.image.load('Images/Ghosts/Eaten State/left.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    #Up eaten movement frame
+    def set_UEMF(self):
+        self.image = pygame.image.load('Images/Ghosts/Eaten State/up.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
+    #Down eaten movement frame
+    def set_DEMF(self):
+        self.image = pygame.image.load('Images/Ghosts/Eaten State/down.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+    
     #A method to check what movement frame and direction the ghost is in
     def frame_update(self):
-        match self.frame:
-            case 0:
-                if(self.direction == 'Right'):
-                    self.set_RMF1()
-                elif(self.direction == 'Left'):
-                    self.set_LMF1()
-                elif(self.direction == 'Down'):
-                    self.set_DMF1()
-                elif(self.direction == 'Up'):
-                    self.set_UMF1()
-                
-                self.frame = 1
+        #Vulnerable state #1 (a blue version of the ghost)
+        if(self.vulnerable_state_v1):
+            #Debug code
+                #print('Inky is in a vulnerable state #1')
 
-            case 1:
-                if(self.direction == 'Right'):
-                    self.set_RMF2()
-                elif(self.direction == 'Left'):
-                    self.set_LMF2()
-                elif(self.direction == 'Down'):
-                    self.set_DMF2()
-                elif(self.direction == 'Up'):
-                    self.set_UMF2()
+            match self.frame:
+                case 0:
+                    self.set_BMF1()                    
+                    self.frame = 1
+
+                case 1:
+                    self.set_BMF2()                    
+                    self.frame = 0
+
+            #Debug code for checking frame change speed
+                #print(self.get_frame())
+        #Vulnerable state #2 (a pattern of repeating blue and white version of the ghost)
+        elif(self.vulnerable_state_v2):
+            #Debug code
+                #print('Inky is in a vulnerable state #2')
+
+            match self.frame:
+                case 0:
+                    self.set_WMF1()
+                    self.frame = 1
+
+                case 1:
+                    self.set_BMF1()
+                    self.frame = 2
+
+                case 2:
+                    self.set_BMF2()
+                    self.frame = 3
+
+                case 3:
+                    self.set_WMF2()
+                    self.frame = 4
                 
+                case 4:
+                    self.set_BMF1()
+                    self.frame = 5
+
+                case 5:
+                    self.set_BMF2()
+                    self.frame = 0
+        #A state where the ghost is a pair of floating eyes
+        elif(self.eaten_state):
+            #Debug code
+                #print('Inky is in an eaten state')
+
+            if(self.direction == 'Right'):
+                self.set_REMF()
+            elif(self.direction == 'Left'):
+                self.set_LEMF()
+            elif(self.direction == 'Down'):
+                self.set_DEMF()
+            elif(self.direction == 'Up'):
+                self.set_UEMF()
+        #Normal state
+        else:
+            #Debug code
+                #print('Inky is in a normal state')
+            
+            #Resets the frame to 0 if the if statements above had the frame higher than 1
+            if(self.frame > 1):
                 self.frame = 0
-        
-        #Debug code for checking frame change speed
-            #print(self.get_frame())
+
+            match self.frame:
+                case 0:
+                    if(self.direction == 'Right'):
+                        self.set_RMF1()
+                    elif(self.direction == 'Left'):
+                        self.set_LMF1()
+                    elif(self.direction == 'Down'):
+                        self.set_DMF1()
+                    elif(self.direction == 'Up'):
+                        self.set_UMF1()
+                    
+                    self.frame = 1
+
+                case 1:
+                    if(self.direction == 'Right'):
+                        self.set_RMF2()
+                    elif(self.direction == 'Left'):
+                        self.set_LMF2()
+                    elif(self.direction == 'Down'):
+                        self.set_DMF2()
+                    elif(self.direction == 'Up'):
+                        self.set_UMF2()
+                    
+                    self.frame = 0
         
     #A method to update the animation speed for Inky
     def animation_update(self):
