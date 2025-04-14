@@ -851,10 +851,21 @@ class GameplayScene:
 
                     for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
                         ghost.set_vulnerable_state_v2(True)
+
+                
+                '''
+                A section to check if Pac-Man ate a ghost during the ghost scatter timer duration
+                '''
+                #if(self.pac_man.check_ate_ghost): 
+            #Else, the ghosts are resetted to their normal state and Pac-Man is no longer chasing the ghosts
             else:
                 for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
                     ghost.set_vulnerable_state_v1(False)
                     ghost.set_vulnerable_state_v2(False)
+
+                    #Resets the frame to 0 so that the ghosts can start with their default frame
+                    if(ghost.get_frame() >= 1):
+                        ghost.set_frame(0)
 
                 self.pac_man.set_eat_ghosts(False)
                 self.ghost_scatter_timer = 0

@@ -267,10 +267,6 @@ class Pinky:
         else:
             #Debug code
                 #print('Pinky is in a normal state')
-            
-            #Resets the frame to 0 if the if statements above had the frame higher than 1
-            if(self.frame > 1):
-                self.frame = 0
 
             match self.frame:
                 case 0:
