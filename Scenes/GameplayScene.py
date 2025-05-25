@@ -6,13 +6,13 @@ Description: The GameplayScene class helps run the levels of the game. For every
 #Imports pygame and other libraries
 import pygame
 import os
-from Objects.PacMan import PacMan
-from Objects.Blinky import Blinky
-from Objects.Pinky import Pinky
-from Objects.Inky import Inky
-from Objects.Clyde import Clyde
-from Objects.Pellet import Pellet
-from Objects.PowerPellet import PowerPellet
+from Characters_and_Objects.PacMan import PacMan
+from Characters_and_Objects.Blinky import Blinky
+from Characters_and_Objects.Pinky import Pinky
+from Characters_and_Objects.Inky import Inky
+from Characters_and_Objects.Clyde import Clyde
+from Characters_and_Objects.Pellet import Pellet
+from Characters_and_Objects.PowerPellet import PowerPellet
 
 class GameplayScene:
     #A constructor to initialize an instance of Gameplay Scene
@@ -81,9 +81,6 @@ class GameplayScene:
 
         #Initializes a variable timer for the interface
         self.one_up_text_timer = 0
-
-        #Initializes a variable timer to dynamically change ghost state animation after Pac-Man eats a power pellet
-        self.ghost_scatter_timer = 0
 
     #A method to run the Gameplay Scene
     def run(self, event):  
@@ -824,11 +821,22 @@ class GameplayScene:
             #If Pac-Man ate a power pellet, the ghosts will scatter. Else, the ghosts continue to chase Pac-Man
             self.ghost_vulnerability()
         
-    #A method to update ghost vulnerability whhen Pac-Man eats or does not eat a power pellet
+    #A method to update ghost vulnerability when Pac-Man eats or does not eat a power pellet
     def ghost_vulnerability(self):
         #Pac-Man chases ghosts
         if(self.pac_man.get_eat_ghosts()):
-            self.ghost_scatter_timer += 1
+            '''
+            If Pac-Man ate another Power Pellet while the ghosts are still in a scatter state,
+            the ghosts' current frame and scatter timer gets reset
+            '''
+            if(self.pac_man.get_ghost_scatter_timer() == -1):
+                for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
+                    ghost.set_frame(0)
+                
+                self.pac_man.set_ghost_scatter_timer(0)
+            #Else, the program continues to increment the timer
+            else:
+                self.pac_man.set_ghost_scatter_timer(self.pac_man.get_ghost_scatter_timer() + 1)
 
             #Stops the siren channel
             self.siren_channel.stop()
@@ -842,16 +850,20 @@ class GameplayScene:
                 A section to update the skin of each ghost during the ghost scatter timer duration
                 '''
 
-                if(self.ghost_scatter_timer <= 300):
+                print(self.pac_man.get_ghost_scatter_timer())
+
+                if(self.pac_man.get_ghost_scatter_timer() <= 300):
+                    print('before 300\n')
+
                     for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
                         ghost.set_vulnerable_state_v1(True)
+                        ghost.set_vulnerable_state_v2(False)
                 else:
+                    print('after 300\n')
+
                     for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
                         ghost.set_vulnerable_state_v1(False)
-
-                    for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
                         ghost.set_vulnerable_state_v2(True)
-
                 
                 '''
                 A section to check if Pac-Man ate a ghost during the ghost scatter timer duration
@@ -868,7 +880,7 @@ class GameplayScene:
                         ghost.set_frame(0)
 
                 self.pac_man.set_eat_ghosts(False)
-                self.ghost_scatter_timer = 0
+                self.pac_man.set_ghost_scatter_timer(0)
         #Else, the ghosts chase Pac-Man
         else:
             #Loops the siren sound effect

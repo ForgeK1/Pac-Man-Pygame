@@ -14,7 +14,7 @@
 
 
 
-#Create a constant variable and a Clock object to keep track of the FPS
+#Create a variable and a Clock object to keep track of the FPS
 
 
 
@@ -25,8 +25,9 @@
     
         #Check if the player quit the game
         
-    
-    #Add a line of code that will constantly update the display surface for any changes in runtime (sounds, blitting of images and text, etc.)
+        
+
+    #Add a line of code that will constantly update the display surface (using pygame's display module) to detect any changes in runtime (sounds, blitting of images and text, etc.)
     
 
     #Add a line of code to tick the clock after each loop

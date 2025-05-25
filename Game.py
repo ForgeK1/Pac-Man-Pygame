@@ -4,7 +4,7 @@ Description: The Game module serves to run the game through the pygame libraries
 '''
 
 #Imports pygame libraries and needed classes from their respective modules
-import pygame # type: ignore
+import pygame #type: ignore
 from GameStateManager import GameStateManager
 from Scenes.SplashScene import SplashScene
 from Scenes.MainMenuScene import MainMenuScene
@@ -13,7 +13,7 @@ from Scenes.GameplayScene import GameplayScene
 #Initializes all pygame modules
 pygame.init()
 
-#Creates display surface
+#Creates display surface using pygame's display module
 WINDOW_WIDTH = 480
 WINDOW_HEIGHT = 640 
 display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA) 
@@ -31,7 +31,7 @@ clock = pygame.time.Clock()
 Sets up the game state manager to keep track of different scenes and running state during gameplay
     Note: Runs the Splash Scene when opening the game for the first time
 '''
-game_state_manager = GameStateManager('Splash Scene', True)
+game_state_manager = GameStateManager('Main Menu Scene', True)
 
 #Sets up scenes of the game
 splash_scene = SplashScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
