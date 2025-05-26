@@ -585,41 +585,42 @@ class PacMan:
         #Updates the position of the minimized rect hitbox
         self.minimized_rect.center = self.rect.center
 
-        #Grabs the index of the ghost that collided with Pac-Man's minimized rect
-        ghost_index = (blinky.get_rect().colliderect(self.minimized_rect) or 
-                       pinky.get_rect().colliderect(self.minimized_rect) or 
-                       inky.get_rect().colliderect(self.minimized_rect) or 
-                       clyde.get_rect().colliderect(self.minimized_rect))
+        for ghost in [blinky, pinky, inky, clyde]:
+            #Grabs the index of the ghost that collided with Pac-Man's minimized rect
+            ghost_index = ghost.get_rect().colliderect(self.minimized_rect)
+            
+            '''
+            If the index is -1, then Pac-Man did not collide with a ghost. Otherwise, the program grabs
+            the ghost that collided with Pac-Man, and calculates the X & Y range percentage between the 
+            ghost's center and Pac-Man's minimized rect center 
+            '''
+            if(ghost_index != -1):
+                #Checks which ghost Pac-Man collided with
+                if(blinky.get_rect().colliderect(self.minimized_rect) != -1):
+                    ghost = blinky
+                elif(pinky.get_rect().colliderect(self.minimized_rect) != -1):
+                    ghost = pinky
+                elif(inky.get_rect().colliderect(self.minimized_rect) != -1):
+                    ghost = inky
+                elif(clyde.get_rect().colliderect(self.minimized_rect) != -1):
+                    ghost = clyde
+            
+                if(self.minimized_rect.centerx > ghost.get_rect().centerx):
+                    range_x = ghost.get_rect().centerx / self.minimized_rect.centerx
+                else:
+                    range_x = self.minimized_rect.centerx / ghost.get_rect().centerx
+                
+                if(self.minimized_rect.centery > ghost.get_rect().centery):
+                    range_y = ghost.get_rect().centery / self.minimized_rect.centery
+                else: 
+                    range_y = self.minimized_rect.centery / ghost.get_rect().centery
+                
+                '''
+                If the X & Y range between the ghost's rect and Pac-man's minimized rect is 
+                98 % (or 2 % apart), then Pac-Man is "caught" by the ghost
 
-        '''
-        If the index is -1, then Pac-Man did not collide with a ghost. Otherwise, the program grabs
-        the ghost that collided with Pac-Man, and calculates the X & Y range percentage between the 
-        ghost's center and Pac-Man's minimized rect center 
-        '''
-        if(ghost_index != -1):
-            #Checks which ghost Pac-Man collided with
-            if(blinky.get_rect().colliderect(self.minimized_rect) != -1):
-                ghost = blinky
-            elif(pinky.get_rect().colliderect(self.minimized_rect) != -1):
-                ghost = pinky
-            elif(inky.get_rect().colliderect(self.minimized_rect) != -1):
-                ghost = inky
-            elif(clyde.get_rect().colliderect(self.minimized_rect) != -1):
-                ghost = clyde
-        
-            if(self.minimized_rect.centerx > ghost.get_rect().centerx):
-                range_x = ghost.get_rect().centerx / self.minimized_rect.centerx
-            else:
-                range_x = self.minimized_rect.centerx / ghost.get_rect().centerx
-            
-            if(self.minimized_rect.centery > ghost.get_rect().centery):
-                range_y = ghost.get_rect().centery / self.minimized_rect.centery
-            else: 
-                range_y = self.minimized_rect.centery / ghost.get_rect().centery
-            
-            '''
-            If the X & Y range between the ghost's rect and Pac-man's minimized rect is 
-            98 % (or 2 % apart), then Pac-Man is "caught" by the ghost
-            '''
-            if(range_x > 0.98 and range_y > 0.98):
-                self.set_is_caught(True)
+                Note: If all the ghosts are in their vulnerable state after Pac-Man ate a Power
+                    Pellet, then Pac-Man won't get caught 
+                '''
+                if(range_x > 0.98 and range_y > 0.98 and self.eat_ghosts is False):
+                    self.set_is_caught(True)

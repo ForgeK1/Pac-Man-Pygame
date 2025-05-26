@@ -520,7 +520,20 @@ class GameplayScene:
                     self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
                     self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
 
+                    #Resets the all ghosts' state, frame, and scatter timer back to normal
+                    for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+                        ghost.set_frame(0)
+                        ghost.set_eaten_state(False)
+                        ghost.set_vulnerable_state_v1(False)
+                        ghost.set_vulnerable_state_v2(False)
+
+                        #Updates the animation so that each ghost so can use it's default frame
+                        ghost.frame_update()
+                    
+                    self.pac_man.set_ghost_scatter_timer(0)
+
                     #Sets Pac-Man's variables back to normal
+                    self.pac_man.set_eat_ghosts(False)
                     self.pac_man.set_direction('Left')
                     self.pac_man.set_frame(0)
                     self.pac_man.set_CF()
@@ -850,16 +863,16 @@ class GameplayScene:
                 A section to update the skin of each ghost during the ghost scatter timer duration
                 '''
 
-                print(self.pac_man.get_ghost_scatter_timer())
-
                 if(self.pac_man.get_ghost_scatter_timer() <= 300):
-                    print('before 300\n')
+                    #Debug code
+                        #print('before 300\n')
 
                     for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
                         ghost.set_vulnerable_state_v1(True)
                         ghost.set_vulnerable_state_v2(False)
                 else:
-                    print('after 300\n')
+                    #Debug code
+                        #print('after 300\n')
 
                     for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
                         ghost.set_vulnerable_state_v1(False)
