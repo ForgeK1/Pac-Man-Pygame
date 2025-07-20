@@ -79,7 +79,7 @@ class GameplayScene:
         self.pac_man_death_sound_has_played = False
         self.transition_to_main_menu = False
 
-        #Initializes a variable timer for the interface
+        #Initializes a variable timer for the Gameplay Scene UI
         self.one_up_text_timer = 0
 
     #A method to run the Gameplay Scene
@@ -524,8 +524,8 @@ class GameplayScene:
                     for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
                         ghost.set_frame(0)
                         ghost.set_eaten_state(False)
-                        ghost.set_vulnerable_state_v1(False)
-                        ghost.set_vulnerable_state_v2(False)
+                        ghost.set_frightened_state_v1(False)
+                        ghost.set_frightened_state_v2(False)
 
                         #Updates the animation so that each ghost so can use it's default frame
                         ghost.frame_update()
@@ -856,7 +856,7 @@ class GameplayScene:
 
             '''
             Checks if the power pellet sound effect is still going on. If so, the ghosts will continue to be
-            in a vulnerable state
+            in a frightened state
             '''
             if(self.power_pellet_channel.get_busy() is True):
                 '''
@@ -868,15 +868,15 @@ class GameplayScene:
                         #print('before 300\n')
 
                     for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                        ghost.set_vulnerable_state_v1(True)
-                        ghost.set_vulnerable_state_v2(False)
+                        ghost.set_frightened_state_v1(True)
+                        ghost.set_frightened_state_v2(False)
                 else:
                     #Debug code
                         #print('after 300\n')
 
                     for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                        ghost.set_vulnerable_state_v1(False)
-                        ghost.set_vulnerable_state_v2(True)
+                        ghost.set_frightened_state_v1(False)
+                        ghost.set_frightened_state_v2(True)
                 
                 '''
                 A section to check if Pac-Man ate a ghost during the ghost scatter timer duration
@@ -885,8 +885,8 @@ class GameplayScene:
             #Else, the ghosts are resetted to their normal state and Pac-Man is no longer chasing the ghosts
             else:
                 for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                    ghost.set_vulnerable_state_v1(False)
-                    ghost.set_vulnerable_state_v2(False)
+                    ghost.set_frightened_state_v1(False)
+                    ghost.set_frightened_state_v2(False)
 
                     #Resets the frame to 0 so that the ghosts can start with their default frame
                     if(ghost.get_frame() >= 1):

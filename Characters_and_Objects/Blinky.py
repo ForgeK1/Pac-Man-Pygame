@@ -22,9 +22,11 @@ class Blinky:
         self.movement = movement
         self.frame = 0
 
-        #Variables to check what state the ghost is in (if all three variables below are False, then the ghost is in a normal state)
-        self.vulnerable_state_v1 = False #Blue skin
-        self.vulnerable_state_v2 = False #A pattern of repeating blue and white skin
+        #Variables to check what state the ghost is in
+        self.chase_state = True #Ghost chasing Pac-Man
+        self.scatter_state = False #Ghost moving away from Pac-Man
+        self.frightened_state_v1 = False #Blue skin 
+        self.frightened_state_v2 = False #A pattern of repeating blue and white skin
         self.eaten_state = False #A pair of floating eyes
 
         #Variables to control character animation speed
@@ -71,37 +73,13 @@ class Blinky:
     def set_direction(self, new_direction):
         self.direction = new_direction
     
-    #A method to return a boolean for Blinky's movement
+    #A method to return the boolean for Blinky's movement
     def get_movement(self):
         return self.movement
 
     #A method to set a new boolean for Blinky's movement
     def set_movement(self, new_movement):
         self.movement = new_movement
-
-    #A method to return a boolean for Blinky's vulnerable state version #1
-    def get_vulnerable_state_v1(self):
-        return self.vulnerable_state_v1
-
-    #A method to set a new boolean for Blinky's  vulnerable state version #1
-    def set_vulnerable_state_v1(self, new_vulnerable_state_v1):
-        self.vulnerable_state_v1 = new_vulnerable_state_v1
-
-    #A method to return a boolean for Blinky's vulnerable state version #2
-    def get_vulnerable_state_v2(self):
-        return self.vulnerable_state_v2
-
-    #A method to set a new boolean for Blinky's  vulnerable state version #2
-    def set_vulnerable_state_v2(self, new_vulnerable_state_v2):
-        self.vulnerable_state_v2 = new_vulnerable_state_v2
-    
-    #A method to return a boolean for Blinky's eaten state
-    def get_eaten_state(self):
-        return self.eaten_state
-
-    #A method to set a new boolean for Blinky's  vulnerable state
-    def set_eaten_state(self, new_eaten_state):
-        self.eaten_state = new_eaten_state
 
     #A method to return Blinky's current frame
     def get_frame(self):
@@ -110,6 +88,46 @@ class Blinky:
     #A method to set a new frame for Blinky
     def set_frame(self, new_frame):
         self.frame = new_frame
+
+    #A method to return the boolean for Blinky's chase state
+    def get_chase_state(self):
+        return self.chase_state
+    
+    #A method to set a new boolean for Blinky's chase state
+    def set_chase_state(self, new_chase_state):
+        self.chase_state = new_chase_state
+
+    #A method to return the boolean for Blinky's scatter state
+    def get_scatter_state(self):
+        return self.scatter_state
+    
+    #A method to set a new boolean for Blinky's scatter state
+    def set_scatter_state(self, new_scatter_state):
+        self.scatter_state = new_scatter_state
+    
+    #A method to return the boolean for Blinky's frightened state version #1
+    def get_frightened_state_v1(self):
+        return self.frightened_state_v1
+
+    #A method to set a new boolean for Blinky's frightened state version #1
+    def set_frightened_state_v1(self, new_frightened_state_v1):
+        self.frightened_state_v1 = new_frightened_state_v1
+
+    #A method to return the boolean for Blinky's frightened state version #2
+    def get_frightened_state_v2(self):
+        return self.frightened_state_v2
+
+    #A method to set a new boolean for Blinky's frightened state version #2
+    def set_frightened_state_v2(self, new_frightened_state_v2):
+        self.frightened_state_v2 = new_frightened_state_v2
+    
+    #A method to return the boolean for Blinky's eaten state
+    def get_eaten_state(self):
+        return self.eaten_state
+
+    #A method to set a new boolean for Blinky's eaten state
+    def set_eaten_state(self, new_eaten_state):
+        self.eaten_state = new_eaten_state
 
     '''
     A series of methods to set the current frame of the character in their normal state
@@ -156,27 +174,27 @@ class Blinky:
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     '''
-    A series of methods to set the current frame of the character in their vulnerable state
+    A series of methods to set the current frame of the character in their frightened state
     '''
 
     #Blue movement frame 1
     def set_BMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Vulnerable State/blue_frame_1.png')
+        self.image = pygame.image.load('Images/Ghosts/Frightened State/blue_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Blue movement frame 2
     def set_BMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Vulnerable State/blue_frame_2.png')
+        self.image = pygame.image.load('Images/Ghosts/Frightened State/blue_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #White movement frame 1
     def set_WMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Vulnerable State/white_frame_1.png')
+        self.image = pygame.image.load('Images/Ghosts/Frightened State/white_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #White movement frame 2
     def set_WMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Vulnerable State/white_frame_2.png')
+        self.image = pygame.image.load('Images/Ghosts/Frightened State/white_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     '''
@@ -205,10 +223,10 @@ class Blinky:
     
     #A method to check what movement frame and direction the ghost is in
     def frame_update(self):
-        #Vulnerable state #1 (a blue version of the ghost)
-        if(self.vulnerable_state_v1):
+        #Frightened state #1 (a blue version of the ghost)
+        if(self.frightened_state_v1):
             #Debug code
-                #print('Blinky is in a vulnerable state #1')
+                #print('Blinky is in a frightened state #1')
 
             match self.frame:
                 case 0:
@@ -221,10 +239,10 @@ class Blinky:
 
             #Debug code for checking frame change speed
                 #print(self.get_frame())
-        #Vulnerable state #2 (a pattern of repeating blue and white version of the ghost)
-        elif(self.vulnerable_state_v2):
+        #Frightened state #2 (a pattern of repeating blue and white version of the ghost)
+        elif(self.frightened_state_v2):
             #Debug code
-                #print('Blinky is in a vulnerable state #2')
+                #print('Blinky is in a frightened state #2')
 
             match self.frame:
                 case 0:
@@ -323,7 +341,36 @@ class Blinky:
         if(change_frame and self.movement):
             self.frame_update()
         
-    #A method for the player to control Blinky's movement position
-    def movement_update(self, event, list_obstacles):
-        #Empty for now
+    #A method to change the Blinky's state based on in-game events
+    def state_handler(self, event, list_obstacles):
+        '''
+        CONTINUE FROM HERE
+
+        Based on the "Pac-Man Ghost AI Explained" YouTube video (timestamp: 1:57 - 4:10),
+
+        Grab your iPad and sketch out how you think Blinky would get to Pac-Man - along with the 
+        required variables to accomplish this task.
+
+        After completing the basic movement, create the different states a ghost is in and design
+        Blinky's special movement algorithm based on one of those states
+        '''
+
+        
+
+        return None
+
+    #A method to update Blinky's movement based on his chase state
+    def chase_state_movement_update(self):
+        return None
+    
+    #A method to update Blinky's movement based on his scatter state
+    def scatter_state_movement_update(self):
+        return None
+
+    #A method to update Blinky's movement based on his frightened state
+    def frightened_state_movement_update(self):
+        return None
+
+    #A method to update Blinky's movement based on his eaten state
+    def eaten_state_movement_update(self):
         return None
