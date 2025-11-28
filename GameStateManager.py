@@ -4,8 +4,8 @@ Description: The GameStateManager class manages and switches between different g
              the GameStateManager can dynamically transition between scenes based on specific events in the 
              game
 
-             It also keeps track and can change the state of running. Note that, the game loop depends on 
-             what Boolean value running is to conitue running the game
+             Note that, the game loop depends on what Boolean value "running_state" is for ensuring that the 
+             game is still running  and the running state is not tied to a specific sceneW
 '''
 class GameStateManager:
     #A constructor to initialize an instance of GameStateManager

@@ -1,5 +1,5 @@
 '''
-Description: A class to create and showcase the splash scene of the game
+Description: A Splash Scene class creates and showcases the splash screen of the game
 '''
 
 #Imports pygame libraries

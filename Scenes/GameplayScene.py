@@ -7,10 +7,10 @@ Description: The GameplayScene class helps run the levels of the game. For every
 import pygame
 import os
 from Characters_and_Objects.PacMan import PacMan
-from Characters_and_Objects.Blinky import Blinky
-from Characters_and_Objects.Pinky import Pinky
-from Characters_and_Objects.Inky import Inky
-from Characters_and_Objects.Clyde import Clyde
+from Characters_and_Objects.Ghosts.Blinky import Blinky
+from Characters_and_Objects.Ghosts.Pinky import Pinky
+from Characters_and_Objects.Ghosts.Inky import Inky
+from Characters_and_Objects.Ghosts.Clyde import Clyde
 from Characters_and_Objects.Pellet import Pellet
 from Characters_and_Objects.PowerPellet import PowerPellet
 
@@ -30,18 +30,18 @@ class GameplayScene:
         '''
         self.gameplay_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
-        #Initializes two lists of obstacles for the game map
-        self.list_blue_obstacles = None
-        self.list_white_obstacles = None
-        self.load_obstacles()
-        self.default_obstacles = True #True = blue obstacles, False = white obstacles
-
         #Initializes the character objects
         self.pac_man = PacMan(30, 30, 'Left', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138, True, 50)
         self.blinky = Blinky(30, 30, "Left", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68, True, 100)
         self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20, True, 100)
         self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20, True, 100)
         self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20, True, 100)
+
+        #Initializes two lists of obstacles for the game map
+        self.list_blue_obstacles = None
+        self.list_white_obstacles = None
+        self.load_obstacles()
+        self.default_obstacles = True #True = blue obstacles, False = white obstacles
 
         #Initializes the pellet objects
         self.pellet = Pellet('Images/Pellets/pellet.png')
@@ -64,7 +64,7 @@ class GameplayScene:
         self.siren_v1_sound = pygame.mixer.Sound('Audio/Sound Effects/Ghost Siren V1.wav')
         self.siren_v2_sound = pygame.mixer.Sound('Audio/Sound Effects/Ghost Siren V2.wav')
 
-        #Initializes variables to check if the player is starting a new round
+        #Initializes variables to start a new round
         self.round_intro = True
         self.fresh_start = True
         self.pac_man_life_deduct = True
@@ -79,8 +79,11 @@ class GameplayScene:
         self.pac_man_death_sound_has_played = False
         self.transition_to_main_menu = False
 
-        #Initializes a variable timer for the Gameplay Scene UI
+        #Initializes a variable to showcase the "1UP" text for the Gameplay Scene UI
         self.one_up_text_timer = 0
+
+        #Initializes a variable for level counter
+        self.level = 1
 
     #A method to run the Gameplay Scene
     def run(self, event):  
@@ -509,6 +512,7 @@ class GameplayScene:
                     #Sets up variables to start a new round
                     self.round_intro = True
                     self.round_end = False
+                    self.level += 1
 
                     #Resets ghost disappear timer
                     self.ghost_disappear_timer = 0
@@ -728,6 +732,7 @@ class GameplayScene:
                         self.round_intro = True
                         self.fresh_start = True
                         self.round_end = False
+                        self.level = 0
                         self.pac_man_life_deduct = True
                         self.pac_man.set_is_caught(False)
 
@@ -822,7 +827,9 @@ class GameplayScene:
         else:
             self.pac_man.movement_update(event, self.list_blue_obstacles)
             self.blinky.set_movement(True)
-            self.pinky.set_movement(True)
+            self.pinky.set_movement(True) #<------------ This is the section to change the ghost method to "movement_update or "chase", and from
+                                          #              there you should create methods in the ghost class to determine their interactions in the
+                                          #              Gameplay Scene
             self.inky.set_movement(True)
             self.clyde.set_movement(True)
 

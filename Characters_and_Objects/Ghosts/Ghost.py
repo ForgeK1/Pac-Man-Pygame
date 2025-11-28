@@ -1,21 +1,21 @@
 '''
-Description: This class contains methods for animations and interactable events for the 
-             Blinky (Red) ghost object
+Description: This hybrid-abstract class serves as a parent Ghost class for the four ghosts to derive from
 '''
 
-#Imports pygame libraries
+#Imports for the Ghost class to function
 import pygame
+from abc import ABC, abstractmethod
 
-class Blinky:
-    #A constructor to initialize an instance of Blinky
-    def __init__(self, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed):
+class Ghost(ABC):
+    #A constructor to initialize an instance of the Ghost
+    def __init__(self, starting_image_path, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed):
         #Variables to keep track of the image and rect
-        self.image = pygame.image.load('Images/Ghosts/Blinky (Red)/left_frame_1.png')
+        self.image = pygame.image.load(starting_image_path)
         self.image = pygame.transform.scale(self.image, (horizontal_scale, vertical_scale))
         self.rect = self.image.get_rect()
         self.rect.center = (x_position, y_position)
 
-        #Variables to keep track of the scale, direction, movement boolean, and frame of Blinky
+        #Variables to keep track of the scale, direction, movement boolean, and frame of Ghost
         self.horizontal_scale = horizontal_scale
         self.vertical_scale = vertical_scale
         self.direction = direction
@@ -33,200 +33,206 @@ class Blinky:
         self.character_animation_speed = character_animation_speed #In miliseconds
         self.last_updated_time = 0 #In miliseconds
 
-    #A method to return Blinky's image
+    #A method to return Ghost's image
     def get_image(self):
         return self.image
 
-    #A method to set a new image for Blinky
+    #A method to set a new image for Ghost
     def set_image(self, new_image):
         self.image = new_image
 
-    #A method to return the rect of Blinky's image
+    #A method to return the rect of Ghost's image
     def get_rect(self):
         return self.rect
     
-    #A method to set a new rect for Blinky
+    #A method to set a new rect for Ghost
     def set_rect(self, new_rect):
         self.rect = new_rect
     
-    #A method to return Blinky's horizontal_scale
+    #A method to return Ghost's horizontal_scale
     def get_horizontal_scale(self):
         return self.horizontal_scale
 
-    #A method to set a new horizontal_scale for Blinky
+    #A method to set a new horizontal_scale for Ghost
     def set_horizontal_scale(self, new_horizontal_scale):
         self.horizontal_scale = new_horizontal_scale
     
-    #A method to return Blinky's vertical_scale
+    #A method to return Ghost's vertical_scale
     def get_vertical_scale(self):
         return self.vertical_scale
 
-    #A method to set a new vertical_scale for Blinky
+    #A method to set a new vertical_scale for Ghost
     def set_vertical_scale(self, new_vertical_scale):
         self.vertical_scale = new_vertical_scale
     
-    #A method to return Blinky's current direction
+    #A method to return Ghost's current direction
     def get_direction(self):
         return self.direction
     
-    #A method to set a new direction for Blinky
+    #A method to set a new direction for Ghost
     def set_direction(self, new_direction):
         self.direction = new_direction
     
-    #A method to return the boolean for Blinky's movement
+    #A method to return the boolean for Ghost's movement
     def get_movement(self):
         return self.movement
 
-    #A method to set a new boolean for Blinky's movement
+    #A method to set a new boolean for Ghost's movement
     def set_movement(self, new_movement):
         self.movement = new_movement
 
-    #A method to return Blinky's current frame
+    #A method to return Ghost's current frame
     def get_frame(self):
         return self.frame
     
-    #A method to set a new frame for Blinky
+    #A method to set a new frame for Ghost
     def set_frame(self, new_frame):
         self.frame = new_frame
 
-    #A method to return the boolean for Blinky's chase state
+    #A method to return the boolean for Ghost's chase state
     def get_chase_state(self):
         return self.chase_state
     
-    #A method to set a new boolean for Blinky's chase state
+    #A method to set a new boolean for Ghost's chase state
     def set_chase_state(self, new_chase_state):
         self.chase_state = new_chase_state
 
-    #A method to return the boolean for Blinky's scatter state
+    #A method to return the boolean for Ghost's scatter state
     def get_scatter_state(self):
         return self.scatter_state
     
-    #A method to set a new boolean for Blinky's scatter state
+    #A method to set a new boolean for Ghost's scatter state
     def set_scatter_state(self, new_scatter_state):
         self.scatter_state = new_scatter_state
     
-    #A method to return the boolean for Blinky's frightened state version #1
+    #A method to return the boolean for Ghost's frightened state version #1
     def get_frightened_state_v1(self):
         return self.frightened_state_v1
 
-    #A method to set a new boolean for Blinky's frightened state version #1
+    #A method to set a new boolean for Ghost's frightened state version #1
     def set_frightened_state_v1(self, new_frightened_state_v1):
         self.frightened_state_v1 = new_frightened_state_v1
 
-    #A method to return the boolean for Blinky's frightened state version #2
+    #A method to return the boolean for Ghost's frightened state version #2
     def get_frightened_state_v2(self):
         return self.frightened_state_v2
 
-    #A method to set a new boolean for Blinky's frightened state version #2
+    #A method to set a new boolean for Ghost's frightened state version #2
     def set_frightened_state_v2(self, new_frightened_state_v2):
         self.frightened_state_v2 = new_frightened_state_v2
     
-    #A method to return the boolean for Blinky's eaten state
+    #A method to return the boolean for Ghost's eaten state
     def get_eaten_state(self):
         return self.eaten_state
 
-    #A method to set a new boolean for Blinky's eaten state
+    #A method to set a new boolean for Ghost's eaten state
     def set_eaten_state(self, new_eaten_state):
         self.eaten_state = new_eaten_state
-
+    
     '''
     A series of methods to set the current frame of the character in their normal state
+        Note: All of these abstract methods will be implemented in the child ghost classes because each ghost 
+              their own specific image files
     '''
 
     #Right movement frame 1
+    @abstractmethod
     def set_RMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Blinky (Red)/right_frame_1.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     #Right movement frame 2
+    @abstractmethod
     def set_RMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Blinky (Red)/right_frame_2.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
 
     #Left movement frame 1
+    @abstractmethod
     def set_LMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Blinky (Red)/left_frame_1.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     #Left movement frame 2
+    @abstractmethod
     def set_LMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Blinky (Red)/left_frame_2.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     #Up movement frame 1
+    @abstractmethod
     def set_UMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Blinky (Red)/up_frame_1.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     #Up movement frame 2
+    @abstractmethod
     def set_UMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Blinky (Red)/up_frame_2.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     #Down movement frame 1
+    @abstractmethod
     def set_DMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Blinky (Red)/down_frame_1.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     #Down movement frame 2
+    @abstractmethod
     def set_DMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Blinky (Red)/down_frame_2.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     '''
     A series of methods to set the current frame of the character in their frightened state
+        Note: All of these abstract methods will be implemented in the child ghost classes because each ghost 
+              their own specific image files
     '''
 
     #Blue movement frame 1
+    @abstractmethod
     def set_BMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Frightened State/blue_frame_1.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     #Blue movement frame 2
+    @abstractmethod
     def set_BMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Frightened State/blue_frame_2.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     #White movement frame 1
+    @abstractmethod
     def set_WMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/Frightened State/white_frame_1.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     #White movement frame 2
+    @abstractmethod
     def set_WMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/Frightened State/white_frame_2.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     '''
     A series of methods to set the current frame of the character in their eaten state
+        Note: All of these abstract methods will be implemented in the child ghost classes because each ghost 
+              their own specific image files
     '''
 
     #Right eaten movement frame
+    @abstractmethod
     def set_REMF(self):
-        self.image = pygame.image.load('Images/Ghosts/Eaten State/right.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
 
     #Left eaten movement frame
+    @abstractmethod
     def set_LEMF(self):
-        self.image = pygame.image.load('Images/Ghosts/Eaten State/left.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     #Up eaten movement frame
+    @abstractmethod
     def set_UEMF(self):
-        self.image = pygame.image.load('Images/Ghosts/Eaten State/up.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+        pass
     
     #Down eaten movement frame
+    @abstractmethod
     def set_DEMF(self):
-        self.image = pygame.image.load('Images/Ghosts/Eaten State/down.png')
-        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
-    
+        pass
+
     #A method to check what movement frame and direction the ghost is in
     def frame_update(self):
         #Frightened state #1 (a blue version of the ghost)
         if(self.frightened_state_v1):
             #Debug code
-                #print('Blinky is in a frightened state #1')
+                #print('Ghost is in a frightened state #1')
 
             match self.frame:
                 case 0:
@@ -242,7 +248,7 @@ class Blinky:
         #Frightened state #2 (a pattern of repeating blue and white version of the ghost)
         elif(self.frightened_state_v2):
             #Debug code
-                #print('Blinky is in a frightened state #2')
+                #print('Ghost is in a frightened state #2')
 
             match self.frame:
                 case 0:
@@ -271,7 +277,7 @@ class Blinky:
         #A state where the ghost is a pair of floating eyes
         elif(self.eaten_state):
             #Debug code
-                #print('Blinky is in an eaten state')
+                #print('Ghost is in an eaten state')
 
             if(self.direction == 'Right'):
                 self.set_REMF()
@@ -284,7 +290,7 @@ class Blinky:
         #Normal state
         else:
             #Debug code
-                #print('Blinky is in a normal state')
+                #print('Ghost is in a normal state')
 
             match self.frame:
                 case 0:
@@ -311,7 +317,7 @@ class Blinky:
                     
                     self.frame = 0
         
-    #A method to update the animation speed for Blinky
+    #A method to update the animation speed for Ghost
     def animation_update(self):
         #Gets the current time in miliseconds
         curr_time = pygame.time.get_ticks()
@@ -340,37 +346,35 @@ class Blinky:
         #If True, then the program updates the frame of the character. If False, then the program uses the old frame in runtime
         if(change_frame and self.movement):
             self.frame_update()
-        
-    #A method to change the Blinky's state based on in-game events
+    
+    #A method to change the Ghost's state based on in-game events
     def state_handler(self, event, list_obstacles):
         '''
         CONTINUE FROM HERE
 
         Based on the "Pac-Man Ghost AI Explained" YouTube video (timestamp: 1:57 - 4:10),
 
-        Grab your iPad and sketch out how you think Blinky would get to Pac-Man - along with the 
+        Grab your iPad and sketch out how you think each ghost would get to Pac-Man - along with the 
         required variables to accomplish this task.
 
         After completing the basic movement, create the different states a ghost is in and design
-        Blinky's special movement algorithm based on one of those states
+        each ghost's special movement algorithm based on one of those states
         '''
-
-        
 
         return None
 
-    #A method to update Blinky's movement based on his chase state
+    #A method to update Ghost's movement based on his chase state
     def chase_state_movement_update(self):
         return None
     
-    #A method to update Blinky's movement based on his scatter state
+    #A method to update Ghost's movement based on his scatter state
     def scatter_state_movement_update(self):
         return None
 
-    #A method to update Blinky's movement based on his frightened state
+    #A method to update Ghost's movement based on his frightened state
     def frightened_state_movement_update(self):
         return None
 
-    #A method to update Blinky's movement based on his eaten state
+    #A method to update Ghost's movement based on his eaten state
     def eaten_state_movement_update(self):
         return None
