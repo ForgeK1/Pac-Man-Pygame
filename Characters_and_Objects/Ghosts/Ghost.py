@@ -8,7 +8,10 @@ from abc import ABC, abstractmethod
 
 class Ghost(ABC):
     #A constructor to initialize an instance of the Ghost
-    def __init__(self, starting_image_path, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed):
+    def __init__(self, ghost_name, starting_image_path, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed):
+        #A variable to assign the child ghost name (Blinky, Inky, Pinky, or Clyde)
+        self.ghost_name = ghost_name
+
         #Variables to keep track of the image and rect
         self.image = pygame.image.load(starting_image_path)
         self.image = pygame.transform.scale(self.image, (horizontal_scale, vertical_scale))
@@ -130,102 +133,96 @@ class Ghost(ABC):
         self.eaten_state = new_eaten_state
     
     '''
-    A series of methods to set the current frame of the character in their normal state
-        Note: All of these abstract methods will be implemented in the child ghost classes because each ghost 
-              their own specific image files
+    A series of methods to set the current frame of the Ghost in their normal state
     '''
 
     #Right movement frame 1
-    @abstractmethod
     def set_RMF1(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/right_frame_1.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Right movement frame 2
-    @abstractmethod
     def set_RMF2(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/right_frame_2.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
     #Left movement frame 1
-    @abstractmethod
     def set_LMF1(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/left_frame_1.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Left movement frame 2
-    @abstractmethod
     def set_LMF2(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/left_frame_2.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Up movement frame 1
-    @abstractmethod
     def set_UMF1(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/up_frame_1.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Up movement frame 2
-    @abstractmethod
     def set_UMF2(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/up_frame_2.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Down movement frame 1
-    @abstractmethod
     def set_DMF1(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/down_frame_1.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Down movement frame 2
-    @abstractmethod
     def set_DMF2(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/down_frame_2.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     '''
-    A series of methods to set the current frame of the character in their frightened state
-        Note: All of these abstract methods will be implemented in the child ghost classes because each ghost 
-              their own specific image files
+    A series of methods to set the current frame of the Ghost in their frightened state
     '''
 
     #Blue movement frame 1
-    @abstractmethod
     def set_BMF1(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/Frightened State/blue_frame_1.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Blue movement frame 2
-    @abstractmethod
     def set_BMF2(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/Frightened State/blue_frame_2.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #White movement frame 1
-    @abstractmethod
     def set_WMF1(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/Frightened State/white_frame_1.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #White movement frame 2
-    @abstractmethod
     def set_WMF2(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/Frightened State/white_frame_2.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     '''
-    A series of methods to set the current frame of the character in their eaten state
-        Note: All of these abstract methods will be implemented in the child ghost classes because each ghost 
-              their own specific image files
+    A series of methods to set the current frame of the Ghost in their eaten state
     '''
 
     #Right eaten movement frame
-    @abstractmethod
     def set_REMF(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/Eaten State/right.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
     #Left eaten movement frame
-    @abstractmethod
     def set_LEMF(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/Eaten State/left.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Up eaten movement frame
-    @abstractmethod
     def set_UEMF(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/Eaten State/up.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Down eaten movement frame
-    @abstractmethod
     def set_DEMF(self):
-        pass
+        self.image = pygame.image.load('Images/Ghosts/Eaten State/down.png')
+        self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
     #A method to check what movement frame and direction the ghost is in
     def frame_update(self):
