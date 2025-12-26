@@ -229,7 +229,7 @@ class Ghost(ABC):
         #Frightened state #1 (a blue version of the ghost)
         if(self.frightened_state_v1):
             #Debug code
-                #print('Ghost is in a frightened state #1')
+                #print('The Ghost is in a frightened state #1')
 
             match self.frame:
                 case 0:
@@ -245,7 +245,7 @@ class Ghost(ABC):
         #Frightened state #2 (a pattern of repeating blue and white version of the ghost)
         elif(self.frightened_state_v2):
             #Debug code
-                #print('Ghost is in a frightened state #2')
+                #print('The Ghost is in a frightened state #2')
 
             match self.frame:
                 case 0:
@@ -274,7 +274,7 @@ class Ghost(ABC):
         #A state where the ghost is a pair of floating eyes
         elif(self.eaten_state):
             #Debug code
-                #print('Ghost is in an eaten state')
+                #print('The Ghost is in an eaten state')
 
             if(self.direction == 'Right'):
                 self.set_REMF()
@@ -287,7 +287,7 @@ class Ghost(ABC):
         #Normal state
         else:
             #Debug code
-                #print('Ghost is in a normal state')
+                #print('The Ghost is in a normal state')
 
             match self.frame:
                 case 0:
@@ -315,10 +315,12 @@ class Ghost(ABC):
                     self.frame = 0
         
     #A method to update the animation speed for Ghost
-    def animation_update(self):
+    def animation_update(self):       
         #Gets the current time in miliseconds
         curr_time = pygame.time.get_ticks()
         
+        #print("\nCurrent Time: " + str(curr_time) + "\nLast Updated Time: " + str(self.last_updated_time) + "\n")
+
         #A variable to keep track of changing frame of characters
         change_frame = False
 
@@ -345,33 +347,32 @@ class Ghost(ABC):
             self.frame_update()
     
     #A method to change the Ghost's state based on in-game events
-    def state_handler(self, event, list_obstacles):
-        '''
-        CONTINUE FROM HERE
+    def state_handler(self, event):
+        states = ["Chase", "Scatter", "Frightened", "Eaten"]
 
-        Based on the "Pac-Man Ghost AI Explained" YouTube video (timestamp: 1:57 - 4:10),
+        current_state = states[0]
 
-        Grab your iPad and sketch out how you think each ghost would get to Pac-Man - along with the 
-        required variables to accomplish this task.
+        ### Outline ###
+        #Include a method that updates the phase_timer based on the current level of the game
 
-        After completing the basic movement, create the different states a ghost is in and design
-        each ghost's special movement algorithm based on one of those states
-        '''
+        #If the ghost is in Scatter or Chase state, use resepective movement methods
+
+        #If the ghost is in Frightened or Eaten state, use respective movementr methods
 
         return None
 
     #A method to update Ghost's movement based on his chase state
-    def chase_state_movement_update(self):
+    def chase_state_movement_update(self, list_obstacles):
         return None
     
     #A method to update Ghost's movement based on his scatter state
-    def scatter_state_movement_update(self):
+    def scatter_state_movement_update(self, list_obstacles):
         return None
 
     #A method to update Ghost's movement based on his frightened state
-    def frightened_state_movement_update(self):
+    def frightened_state_movement_update(self, list_obstacles):
         return None
 
     #A method to update Ghost's movement based on his eaten state
-    def eaten_state_movement_update(self):
+    def eaten_state_movement_update(self, list_obstacles):
         return None

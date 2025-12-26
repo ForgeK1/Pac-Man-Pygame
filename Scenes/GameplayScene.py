@@ -30,6 +30,10 @@ class GameplayScene:
         '''
         self.gameplay_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
+        #Initializes variables to keep track of the ghost phase timer and the current level number
+        self.phase_timer = 0
+        self.level_counter = 1
+
         #Initializes the character objects
         self.pac_man = PacMan(30, 30, 'Left', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138, True, 50)
         self.blinky = Blinky(30, 30, "Left", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68, True, 100)
@@ -82,9 +86,6 @@ class GameplayScene:
         #Initializes a variable to showcase the "1UP" text for the Gameplay Scene UI
         self.one_up_text_timer = 0
 
-        #Initializes a variable for level counter
-        self.level = 1
-
     #A method to run the Gameplay Scene
     def run(self, event):  
         #Fills the background of the display surface
@@ -111,6 +112,9 @@ class GameplayScene:
     def set_up_gameplay_surface(self):        
         #Resets the Gameplay Scene background
         self.gameplay_surface.fill('black')
+
+        #A method to update the Ghost phase timer when cycling between their states
+        self.update_phase_timer()
         
         #Updates all character animation based on the character_animation_speed variable
         self.pac_man.animation_update()
@@ -148,6 +152,28 @@ class GameplayScene:
         #A method to showcase list of lives, high score, current score, food images, etc. for the Gameplay Scene
         self.interface_update()
     
+    '''
+    A method that counts the number of seconds the current level has progressed so that the ghosts can cycle between the 
+    CHASE & SCATTER state in the Ghost class
+    '''
+    def update_phase_timer(self):
+        curr_time_in_seconds = pygame.time.get_ticks() / 1000
+
+        temp = {
+            7: "Scatter",
+            27: "Chase", 
+            34: "Scatter",
+            54: "Chase",
+            59: "Scatter",
+            79: "Chase", 
+            84: "Scatter",
+            0: "Chase"
+        }
+        
+        print(str(" seconds have passed"))
+        
+        return None
+
     #A method to load and update the Gameplay Scene interface (list of lives, high score, current score, food images, etc.)
     def interface_update(self):
         '''
@@ -512,7 +538,7 @@ class GameplayScene:
                     #Sets up variables to start a new round
                     self.round_intro = True
                     self.round_end = False
-                    self.level += 1
+                    self.level_counter += 1
 
                     #Resets ghost disappear timer
                     self.ghost_disappear_timer = 0
@@ -732,7 +758,7 @@ class GameplayScene:
                         self.round_intro = True
                         self.fresh_start = True
                         self.round_end = False
-                        self.level = 0
+                        self.level_counter = 1
                         self.pac_man_life_deduct = True
                         self.pac_man.set_is_caught(False)
 
