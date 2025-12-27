@@ -157,20 +157,58 @@ class GameplayScene:
     CHASE & SCATTER state in the Ghost class
     '''
     def update_phase_timer(self):
-        curr_time_in_seconds = pygame.time.get_ticks() / 1000
-
-        temp = {
-            7: "Scatter",
-            27: "Chase", 
-            34: "Scatter",
-            54: "Chase",
-            59: "Scatter",
-            79: "Chase", 
-            84: "Scatter",
-            0: "Chase"
-        }
+        curr_time = pygame.time.get_ticks() / 1000
+        phase_timer = None
         
-        print(str(" seconds have passed"))
+        if(phase_timer is None):
+            print(curr_time)
+            phase_timer = curr_time  
+
+        level = 1
+        phases = None
+
+        if(level == 1):
+            phases = {
+                7: "Scatter",
+                27: "Chase", 
+                34: "Scatter",
+                54: "Chase",
+                59: "Scatter",
+                79: "Chase", 
+                84: "Scatter",
+                84.01: "Chase"
+            }
+        elif(2 <= level or level <= 4):
+            phases = {
+                7: "Scatter",
+                27: "Chase", 
+                34: "Scatter",
+                54: "Chase",
+                59: "Scatter",
+                [76, 72, 73, 73]: "Chase", #Red 17 / Pink 13 / Inky 14 / Clyde 14 seconds
+                [76.01, 72.01, 73.01, 73.01]: "Scatter", #Active for only 1 frame
+                [76.02, 72.02, 73.02, 73.02]: "Chase" #Chase for the rest of the round
+            }
+        else: #Rounds 5 and up
+            phases = {
+                5: "Scatter",
+                25: "Chase", 
+                30: "Scatter",
+                50: "Chase",
+                55: "Scatter",
+                [72, 72, 69, 69]: "Chase", #Red 17 / Pink 17 / Inky 14 / Clyde 14 seconds
+                [72.01, 72.01, 69.01, 69.01]: "Scatter", #Active for only 1 frame
+                [72.02, 72.02, 69.02, 69.02]: "Chase" #Chase for the rest of the round
+            }
+
+        if(curr_time - phase_timer == phases.get(0)):
+            print("5 seconds have been reached")
+            phase_timer = curr_time
+        elif(curr_time - phase_timer == phases.get(0)):
+            print("27 seconds has been reached")
+            phase_timer = curr_time
+        
+        print(str(curr_time - phase_timer) + " seconds have passed")
         
         return None
 
