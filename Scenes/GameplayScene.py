@@ -30,8 +30,7 @@ class GameplayScene:
         '''
         self.gameplay_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
-        #Initializes variables to keep track of the ghost phase timer and the current level number
-        self.phase_timer = 0
+        #Initializes a variable current level
         self.level_counter = 1
 
         #Initializes the character objects
@@ -40,7 +39,7 @@ class GameplayScene:
         self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20, True, 100)
         self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20, True, 100)
         self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20, True, 100)
-
+        
         #Initializes two lists of obstacles for the game map
         self.list_blue_obstacles = None
         self.list_white_obstacles = None
@@ -114,7 +113,7 @@ class GameplayScene:
         self.gameplay_surface.fill('black')
 
         #A method to update the Ghost phase timer when cycling between their states
-        self.update_phase_timer()
+        self.update_ghost_phase()
         
         #Updates all character animation based on the character_animation_speed variable
         self.pac_man.animation_update()
@@ -151,66 +150,6 @@ class GameplayScene:
         
         #A method to showcase list of lives, high score, current score, food images, etc. for the Gameplay Scene
         self.interface_update()
-    
-    '''
-    A method that counts the number of seconds the current level has progressed so that the ghosts can cycle between the 
-    CHASE & SCATTER state in the Ghost class
-    '''
-    def update_phase_timer(self):
-        curr_time = pygame.time.get_ticks() / 1000
-        phase_timer = None
-        
-        if(phase_timer is None):
-            print(curr_time)
-            phase_timer = curr_time  
-
-        level = 1
-        phases = None
-
-        if(level == 1):
-            phases = {
-                7: "Scatter",
-                27: "Chase", 
-                34: "Scatter",
-                54: "Chase",
-                59: "Scatter",
-                79: "Chase", 
-                84: "Scatter",
-                84.01: "Chase"
-            }
-        elif(2 <= level or level <= 4):
-            phases = {
-                7: "Scatter",
-                27: "Chase", 
-                34: "Scatter",
-                54: "Chase",
-                59: "Scatter",
-                [76, 72, 73, 73]: "Chase", #Red 17 / Pink 13 / Inky 14 / Clyde 14 seconds
-                [76.01, 72.01, 73.01, 73.01]: "Scatter", #Active for only 1 frame
-                [76.02, 72.02, 73.02, 73.02]: "Chase" #Chase for the rest of the round
-            }
-        else: #Rounds 5 and up
-            phases = {
-                5: "Scatter",
-                25: "Chase", 
-                30: "Scatter",
-                50: "Chase",
-                55: "Scatter",
-                [72, 72, 69, 69]: "Chase", #Red 17 / Pink 17 / Inky 14 / Clyde 14 seconds
-                [72.01, 72.01, 69.01, 69.01]: "Scatter", #Active for only 1 frame
-                [72.02, 72.02, 69.02, 69.02]: "Chase" #Chase for the rest of the round
-            }
-
-        if(curr_time - phase_timer == phases.get(0)):
-            print("5 seconds have been reached")
-            phase_timer = curr_time
-        elif(curr_time - phase_timer == phases.get(0)):
-            print("27 seconds has been reached")
-            phase_timer = curr_time
-        
-        print(str(curr_time - phase_timer) + " seconds have passed")
-        
-        return None
 
     #A method to load and update the Gameplay Scene interface (list of lives, high score, current score, food images, etc.)
     def interface_update(self):

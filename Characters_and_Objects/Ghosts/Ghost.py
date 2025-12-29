@@ -224,6 +224,84 @@ class Ghost(ABC):
         self.image = pygame.image.load('Images/Ghosts/Eaten State/down.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
+    '''
+    A method that updates the ghost phase during gameplay (this method is called in the GameplayScene class)
+        Ex. Chase, Scatter, Frightened, Eaten states
+    '''
+    def update_ghost_phase(self):
+        #Checks if the ghost is in a frightened or eaten states
+
+
+
+
+        #Else, the ghost scatters between the chase and scatter states
+        
+        #***Place these variables in the constructor above and make getter & setter methods for them
+        # self.ghost_phases = self.ghost_scatter_and_chase_cycle()
+        # self.ghost_phase_real_timer = None
+        # self.ghost_phase_curr_timer = None
+
+        
+
+        #Grabs the time passed in game
+        self.ghost_phase_real_timer = round(pygame.time.get_ticks() / 1000)
+
+        '''
+        If the current timer has not been defined, it is set to the same value as the real timer.
+        This ensures that the overall timer starts from a clean slate 
+            Ex. real time - curr time = 0 seconds have passed
+        '''
+        if(self.ghost_phase_curr_timer is None):
+            self.ghost_phase_curr_timer = self.ghost_phase_real_timer  
+
+        num_seconds_passed = self.ghost_phase_real_timer - self.ghost_phase_curr_timer
+
+        print(str(num_seconds_passed) + " seconds have passed")
+        
+        return None
+    
+    '''
+    A method that sets the amount of time to cycle between the scatter and chase state
+    for all ghosts
+    '''
+    def ghost_scatter_and_chase_cycle(self):
+        if(self.ghost_phases is None):
+            if(self.level_counter == 1):
+                ghost_phases = {
+                    7: "Scatter",
+                    27: "Chase", 
+                    34: "Scatter",
+                    54: "Chase",
+                    59: "Scatter",
+                    79: "Chase", 
+                    84: "Scatter",
+                    84.01: "Chase"
+                }
+            elif(2 <= self.level_counter or self.level_counter <= 4):
+                ghost_phases = {
+                    7: "Scatter",
+                    27: "Chase", 
+                    34: "Scatter",
+                    54: "Chase",
+                    59: "Scatter",
+                    [76, 72, 73, 73]: "Chase", #Red 17 / Pink 13 / Inky 14 / Clyde 14 seconds
+                    [76.01, 72.01, 73.01, 73.01]: "Scatter", #Active for only 1 frame
+                    [76.02, 72.02, 73.02, 73.02]: "Chase" #Chase for the rest of the round
+                }
+            else: #Rounds 5 and up
+                ghost_phases = {
+                    5: "Scatter",
+                    25: "Chase", 
+                    30: "Scatter",
+                    50: "Chase",
+                    55: "Scatter",
+                    [72, 72, 69, 69]: "Chase", #Red 17 / Pink 17 / Inky 14 / Clyde 14 seconds
+                    [72.01, 72.01, 69.01, 69.01]: "Scatter", #Active for only 1 frame
+                    [72.02, 72.02, 69.02, 69.02]: "Chase" #Chase for the rest of the round
+                }
+            
+        return ghost_phases
+
     #A method to check what movement frame and direction the ghost is in
     def frame_update(self):
         #Frightened state #1 (a blue version of the ghost)
