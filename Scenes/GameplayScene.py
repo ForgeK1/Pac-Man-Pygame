@@ -113,7 +113,7 @@ class GameplayScene:
         self.gameplay_surface.fill('black')
 
         #A method to update the Ghost phase timer when cycling between their states
-        self.update_ghost_phase()
+        # self.update_ghost_phase()
         
         #Updates all character animation based on the character_animation_speed variable
         self.pac_man.animation_update()
