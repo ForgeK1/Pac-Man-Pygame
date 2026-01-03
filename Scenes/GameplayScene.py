@@ -836,6 +836,8 @@ class GameplayScene:
             self.inky.set_movement(True)
             self.clyde.set_movement(True)
 
+            self.blinky.update_ghost_phase()
+
             #A method to allow Pac-Man to eat pellets
             self.pac_man.eat_pellets(self.list_pellets, self.list_power_pellets, 
                                      self.pellet_channel, self.power_pellet_channel,

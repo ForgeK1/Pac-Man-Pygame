@@ -259,12 +259,28 @@ class Ghost(ABC):
 
             num_seconds_passed = self.chase_and_scatter_cycle_real_timer - self.chase_and_scatter_cycle_curr_timer
 
-            #Debug code
-                #print(str(num_seconds_passed) + " seconds have passed")
-            
-            
+            if len(self.chase_and_scatter_cycle_phases) == 1:
+                self.chase_state = True
+                self.scatter_state = False
 
-        return None
+                print("\nchase_and_scatter_cycle_phase_timers: " + str(self.chase_and_scatter_cycle_phase_timers) + "\n")
+            else:
+                if num_seconds_passed < self.chase_and_scatter_cycle_phase_timers[0]:
+                    if self.chase_and_scatter_cycle_phases[0] == "Chase":
+                        self.chase_state = True
+                        self.scatter_state = False
+                    else:
+                        self.chase_state = False
+                        self.scatter_state = True
+                else:
+                    self.chase_and_scatter_cycle_phases.pop(0)
+                    self.chase_and_scatter_cycle_phase_timers.pop(0)
+
+                    self.chase_and_scatter_cycle_curr_timer = self.chase_and_scatter_cycle_real_timer
+
+            #Debug code
+            print("\nCurrent phase: " + self.chase_and_scatter_cycle_phases[0] + " state\n" + 
+                  str(num_seconds_passed) + " seconds have passed")
     
     '''
     A method that sets the amount of time to cycle between the scatter and chase states
