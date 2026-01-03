@@ -9,27 +9,27 @@ from abc import ABC, abstractmethod
 class Ghost(ABC):
     #A constructor to initialize an instance of the Ghost
     def __init__(self, ghost_name, starting_image_path, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, level_counter):
-        #A variable to assign the child ghost name (Blinky, Inky, Pinky, or Clyde)
+        #Initializes a variable to assign the child ghost name (Blinky, Inky, Pinky, or Clyde)
         self.ghost_name = ghost_name
 
-        #Variables to keep track of the image and rect
+        #Initializes variables to keep track of the image and rect
         self.image = pygame.image.load(starting_image_path)
         self.image = pygame.transform.scale(self.image, (horizontal_scale, vertical_scale))
         self.rect = self.image.get_rect()
         self.rect.center = (x_position, y_position)
 
-        #Variables to keep track of the scale, direction, movement boolean, and frame of Ghost
+        #Initializes variables to keep track of the scale, direction, movement boolean, and frame of Ghost
         self.horizontal_scale = horizontal_scale
         self.vertical_scale = vertical_scale
         self.direction = direction
         self.movement = movement
         self.frame = 0
 
-        #Variables to control character animation speed
+        #Initializes variables to control character animation speed
         self.character_animation_speed = character_animation_speed #In miliseconds
         self.last_updated_time = 0 #In miliseconds
 
-        #A variable to keep track of current level from the Gameplay Scene
+        #Initializes a variable to keep track of current level from the Gameplay Scene
         self.level_counter = level_counter
 
         #Variables to check what state the ghost is in
@@ -39,8 +39,9 @@ class Ghost(ABC):
         self.frightened_state_v2 = False #A pattern of repeating blue and white skin
         self.eaten_state = False #A pair of floating eyes
 
-        self.chase_and_scatter_cycle_phases = self.set_up_ghost_scatter_and_chase_cycle_phases()
-        self.chase_and_scatter_cycle_phases_index = 0
+        #variables to help the ghost cycle between the chase and scatter state
+        self.chase_and_scatter_cycle_phases = ["Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase"]
+        self.chase_and_scatter_cycle_phase_timers = self.set_up_ghost_chase_and_scatter_cycle_phases()
         self.chase_and_scatter_cycle_real_timer = None
         self.chase_and_scatter_cycle_curr_timer = None
 
@@ -258,60 +259,29 @@ class Ghost(ABC):
 
             num_seconds_passed = self.chase_and_scatter_cycle_real_timer - self.chase_and_scatter_cycle_curr_timer
 
-            print(str(num_seconds_passed) + " seconds have passed")
-
-            '''
-            __Logic__
-            num_seconds_passed = 0
+            #Debug code
+                #print(str(num_seconds_passed) + " seconds have passed")
             
-            0 --> 7: "Scatter"
-            7 --> 27: "Chase"
+            
 
-
-            '''
-        
         return None
     
     '''
-    A method that sets the amount of time to cycle between the scatter and chase state
-    for all ghosts
+    A method that sets the amount of time to cycle between the scatter and chase states
+        Ex) Level 1 indicates
+            cycle_phase_timers: [7 seconds, 20 seconds, 7 seconds, 20 seconds, 5 seconds, 20 seconds, 5 seconds, -1 (Chase state until the round ends)]
+            cycle_phase_timers: ["Scatter", "Chase",    "Scatter", "Chase",    "Scatter", "Chase",    "Scatter", "Chase"]
     '''
-    def set_up_ghost_scatter_and_chase_cycle_phases(self):
+    def set_up_ghost_chase_and_scatter_cycle_phases(self):
         if(self.level_counter == 1):
-            self.chase_and_scatter_cycle_phases = {
-                7: "Scatter",
-                27: "Chase", 
-                34: "Scatter",
-                54: "Chase",
-                59: "Scatter",
-                79: "Chase", 
-                84: "Scatter",
-                84.01: "Chase"
-            }
+            cycle_phase_timers = [7, 20, 7, 20, 5, 20, -1]
         elif(2 <= self.level_counter or self.level_counter <= 4):
-            self.chase_and_scatter_cycle_phases = {
-                7: "Scatter",
-                27: "Chase", 
-                34: "Scatter",
-                54: "Chase",
-                59: "Scatter",
-                [76, 72, 73, 73]: "Chase", #Red 17 / Pink 13 / Inky 14 / Clyde 14 seconds
-                [76.01, 72.01, 73.01, 73.01]: "Scatter", #Active for only 1 frame
-                [76.02, 72.02, 73.02, 73.02]: "Chase" #Chase for the rest of the round
-            }
+            #For the inner list: Red 17 sec / Pink 13 sec / Inky 14 sec / Clyde 14 sec
+            cycle_phase_timers = [7, 20, 7, 20, 5, [17, 13, 14, 14], 0.01, -1]
         else: #Rounds 5 and up
-            self.chase_and_scatter_cycle_phases = {
-                5: "Scatter",
-                25: "Chase", 
-                30: "Scatter",
-                50: "Chase",
-                55: "Scatter",
-                [72, 72, 69, 69]: "Chase", #Red 17 / Pink 17 / Inky 14 / Clyde 14 seconds
-                [72.01, 72.01, 69.01, 69.01]: "Scatter", #Active for only 1 frame
-                [72.02, 72.02, 69.02, 69.02]: "Chase" #Chase for the rest of the round
-            }
+            cycle_phase_timers = [5, 20, 5, 20, 5, [17, 17, 14, 14], 0.01, -1]
             
-        return self.chase_and_scatter_cycle_phases
+        return cycle_phase_timers
 
     #A method to check what movement frame and direction the ghost is in
     def frame_update(self):
