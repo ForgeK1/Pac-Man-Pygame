@@ -31,14 +31,14 @@ class GameplayScene:
         self.gameplay_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
         #Initializes a variable current level
-        self.level_counter = 1
+        self.level_counter = 5
 
         #Initializes the character objects
         self.pac_man = PacMan(30, 30, 'Left', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138, True, 50)
-        self.blinky = Blinky(30, 30, "Left", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68, True, 100, self.level_counter)
-        self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter)
-        self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter)
-        self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter)
+        self.blinky = Blinky(30, 30, "Left", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68, True, 100, self.level_counter, self.game_state_manager)
+        self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
+        self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
+        self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
         
         #Initializes two lists of obstacles for the game map
         self.list_blue_obstacles = None
@@ -837,7 +837,10 @@ class GameplayScene:
             self.clyde.set_movement(True)
 
             self.blinky.update_ghost_phase()
-
+            self.pinky.update_ghost_phase()
+            self.inky.update_ghost_phase()
+            self.clyde.update_ghost_phase()
+            
             #A method to allow Pac-Man to eat pellets
             self.pac_man.eat_pellets(self.list_pellets, self.list_power_pellets, 
                                      self.pellet_channel, self.power_pellet_channel,

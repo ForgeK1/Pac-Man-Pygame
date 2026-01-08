@@ -29,10 +29,10 @@ class MainMenuScene:
 
         #Initializes the character objects
         self.pac_man = PacMan(70, 70, "Right", 320, self.WINDOW_HEIGHT / 2 - 50, True, 100)
-        self.blinky = Blinky(70, 70, "Right", 80, self.WINDOW_HEIGHT / 2 - 100, True, 100, 0)
-        self.pinky = Pinky(70, 70, "Right", 180, self.WINDOW_HEIGHT / 2 - 100, True, 100, 0)
-        self.inky = Inky(70, 70, "Right", 80, self.WINDOW_HEIGHT / 2, True, 100, 0)
-        self.clyde = Clyde(70, 70, "Right", 180, self.WINDOW_HEIGHT / 2, True, 100, 0)
+        self.blinky = Blinky(70, 70, "Right", 80, self.WINDOW_HEIGHT / 2 - 100, True, 100, None, self.game_state_manager)
+        self.pinky = Pinky(70, 70, "Right", 180, self.WINDOW_HEIGHT / 2 - 100, True, 100, None, self.game_state_manager)
+        self.inky = Inky(70, 70, "Right", 80, self.WINDOW_HEIGHT / 2, True, 100, None, self.game_state_manager)
+        self.clyde = Clyde(70, 70, "Right", 180, self.WINDOW_HEIGHT / 2, True, 100, None, self.game_state_manager)
         self.power_pellet_image = pygame.image.load('Images/Dots/power_pellet.png')
 
         #Initializes the interactable buttons

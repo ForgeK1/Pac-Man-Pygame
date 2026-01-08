@@ -60,7 +60,8 @@ while game_state_manager.get_running_state():
     pygame.display.update()
     
     #Delays the game loop so that all computers can run at 60 frames per second for every iteration of the game loop
-    clock.tick(FPS)
+    dt = clock.tick(FPS)
+    game_state_manager.set_clock_delta_time(dt)
     
 #Un-initializes all pygame modules
 pygame.quit()

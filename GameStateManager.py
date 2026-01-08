@@ -12,6 +12,7 @@ class GameStateManager:
     def __init__(self, scene_state, running_state):
         self.scene_state = scene_state
         self.running_state = running_state
+        self.clock_delta_time = None
     
     #A method to grab the current scene_state of the game
     def get_scene_state(self):
@@ -28,3 +29,11 @@ class GameStateManager:
     #A method to set the current running_state of the game
     def set_running_state(self, new_running_state):
         self.running_state = new_running_state
+
+    #A method to set the delta time variable created from the clock when ticking 60 fps in the main game loop
+    def set_clock_delta_time(self, delta_time):
+        self.clock_delta_time = delta_time
+
+    #A method to get the delta time variable
+    def get_clock_delta_time(self):
+        return self.clock_delta_time
