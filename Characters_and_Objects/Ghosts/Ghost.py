@@ -44,7 +44,7 @@ class Ghost(ABC):
 
         #variables to help the ghost cycle between the chase and scatter state
         self.chase_and_scatter_cycle_phases = ["Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase"]
-        self.chase_and_scatter_cycle_phase_timers = self.set_up_ghost_chase_and_scatter_cycle_phases()
+        self.chase_and_scatter_cycle_phase_timers = self.set_up_ghost_chase_and_scatter_cycle_phase_timers()
 
         self.chase_and_scatter_cycle_real_timer = 0
         self.chase_and_scatter_cycle_curr_timer = None
@@ -144,7 +144,23 @@ class Ghost(ABC):
     #A method to set a new boolean for Ghost's eaten state
     def set_eaten_state(self, new_eaten_state):
         self.eaten_state = new_eaten_state
+
+    '''
+    A method to reset the chase and scatter cycle phase timers for the Ghost 
+        Ex) At the end of a round, the timers for all ghosts need to be reset to transition
+            to the next level or to the Main Menu Scene
+    '''
+    def reset_chase_and_scatter_cycle_phase_timers(self):
+        self.chase_and_scatter_cycle_phase_timers = self.set_up_ghost_chase_and_scatter_cycle_phase_timers()
+        self.chase_and_scatter_cycle_curr_timer = 0
+        self.chase_and_scatter_cycle_real_timer = 0
     
+    '''
+    _________CONTINUE FROM HERE_________
+    1) The curr & real timer seems to cause an issue where the values of the phase timers don't pop out when 
+       Pac-Man transitions to the next round
+    '''
+
     '''
     A series of methods to set the current frame of the Ghost in their normal state
     '''
@@ -408,6 +424,7 @@ class Ghost(ABC):
                 self.scatter_state = False
             #If there is more than one phase left, the ghosts will cycle between chase and scatter states
             else:
+                #If the number of seconds passed hasn't reached the timer, the ghost will stay in the state at the beginning of the phase timers list
                 if num_seconds_passed < self.chase_and_scatter_cycle_phase_timers[0]:
                     if self.chase_and_scatter_cycle_phases[0] == "Chase":
                         self.chase_state = True
@@ -416,20 +433,25 @@ class Ghost(ABC):
                         self.chase_state = False
                         self.scatter_state = True
                 else:
+                    #As soon as the number of seconds passes the phase timer, the phase string and phase timer gets popped out of their lists
                     self.chase_and_scatter_cycle_phases.pop(0)
                     self.chase_and_scatter_cycle_phase_timers.pop(0)
 
+                    #Then the current timer gets reset
                     self.chase_and_scatter_cycle_curr_timer = self.chase_and_scatter_cycle_real_timer
-
-            print(num_seconds_passed)
-            print(str(self.chase_and_scatter_cycle_phase_timers[0]) + "\n")
             
-            #print("\n" + self.ghost_name + str(self.chase_and_scatter_cycle_phase_timers))
-
             #Debug code
                 # print(self.chase_and_scatter_cycle_phases[0] + " state\n" + 
                 #       str(num_seconds_passed) + " seconds have passed\n" + 
                 #       str(self.chase_and_scatter_cycle_phase_timers))
+
+                # print("\n" + self.ghost_name + " " + str(self.chase_and_scatter_cycle_phase_timers))
+                # print("\n" + self.ghost_name + " size: " + str(len(self.chase_and_scatter_cycle_phase_timers)))
+            
+            if(self.ghost_name == "Blinky (Red)"):
+                print("\n" + self.ghost_name + " " + str(self.chase_and_scatter_cycle_phase_timers))
+                print("Chase State: " + str(self.chase_state))
+                print("Scatter State: " + str(self.scatter_state))
     
     '''
     A method that sets the amount of time to cycle between the scatter and chase states
@@ -437,7 +459,7 @@ class Ghost(ABC):
             cycle_phase_timers: [7 seconds, 20 seconds, 7 seconds, 20 seconds, 5 seconds, 20 seconds, 5 seconds, -1 (Chase state until the round ends)]
             cycle_phase_timers: ["Scatter", "Chase",    "Scatter", "Chase",    "Scatter", "Chase",    "Scatter", "Chase"]
     '''
-    def set_up_ghost_chase_and_scatter_cycle_phases(self):
+    def set_up_ghost_chase_and_scatter_cycle_phase_timers(self):
         #Sets the timers to None if the ghost objects are created in the Main Menu Scene
         if(self.level_counter is None):
             return None
@@ -446,7 +468,7 @@ class Ghost(ABC):
             cycle_phase_timers = [7, 20, 7, 20, 5, 20, -1]
 
         elif(2 <= self.level_counter and self.level_counter <= 4):
-            #For the inner list: Red 17 sec / Pink 13 sec / Inky 14 sec / Clyde 14 sec
+            #For the 6th timer: Red 17 sec / Pink 13 sec / Inky 14 sec / Clyde 14 sec
             if(self.ghost_name == "Blinky (Red)"):
                 cycle_phase_timers = [7, 20, 7, 20, 5, 17, 0.01, -1]
             elif(self.ghost_name == "Pinky (Pink)"):
@@ -459,13 +481,13 @@ class Ghost(ABC):
         #Rounds 5 and up
         elif(5 <= self.level_counter): 
             if(self.ghost_name == "Blinky (Red)"):
-                cycle_phase_timers = [0.1, 5, 2, 5, 2, 5, 17, 0.01, -1]
+                cycle_phase_timers = [1, 2, 1, 2, 1, 7, 0.01, -1]
             elif(self.ghost_name == "Pinky (Pink)"):
-                cycle_phase_timers = [0.1, 5, 2, 5, 2, 5, 17, 0.01, -1]
+                cycle_phase_timers = [1, 2, 1, 2, 1, 7, 0.01, -1]
             elif(self.ghost_name == "Inky (Cyan)"):
-                cycle_phase_timers = [0.1, 5, 2, 5, 2, 5, 14, 0.01, -1]
+                cycle_phase_timers = [1, 2, 1, 2, 1, 4, 0.01, -1]
             elif(self.ghost_name == "Clyde (Orange)"):
-                cycle_phase_timers = [0.1, 5, 2, 5, 2, 5, 14, 0.01, -1]
+                cycle_phase_timers = [1, 2, 1, 2, 1, 4, 0.01, -1]
 
         return cycle_phase_timers
     

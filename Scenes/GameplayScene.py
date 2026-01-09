@@ -520,31 +520,6 @@ class GameplayScene:
                     #Resets ghost disappear timer
                     self.ghost_disappear_timer = 0
 
-                    #Resets the position of all characters
-                    self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
-                    self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
-                    self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20)
-                    self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
-                    self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
-
-                    #Resets the all ghosts' state, frame, and scatter timer back to normal
-                    for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
-                        ghost.set_frame(0)
-                        ghost.set_eaten_state(False)
-                        ghost.set_frightened_state_v1(False)
-                        ghost.set_frightened_state_v2(False)
-
-                        #Updates the animation so that each ghost so can use it's default frame
-                        ghost.frame_update()
-                    
-                    self.pac_man.set_ghost_scatter_timer(0)
-
-                    #Sets Pac-Man's variables back to normal
-                    self.pac_man.set_eat_ghosts(False)
-                    self.pac_man.set_direction('Left')
-                    self.pac_man.set_frame(0)
-                    self.pac_man.set_CF()
-
                     #A for loop to have all eaten pellets visible again
                     for i in range(len(self.list_pellets[0])):
                         #Enables visibility of pellet
@@ -554,6 +529,34 @@ class GameplayScene:
                     for i in range(len(self.list_power_pellets[0])):
                         #Enables visibility of power pellet
                         self.list_power_pellets[1][i] = True
+
+                    #Resets the position of all characters
+                    self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
+                    self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
+                    self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20)
+                    self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
+                    self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
+
+                    #Sets Pac-Man's variables back to normal
+                    self.pac_man.set_eat_ghosts(False)
+                    self.pac_man.set_direction('Left')
+                    self.pac_man.set_frame(0)
+                    self.pac_man.set_CF()
+                    self.pac_man.set_ghost_scatter_timer(0)
+
+                    #Resets the all ghosts' state, frame, and timers back to normal
+                    for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+                        ghost.set_frame(0)
+                        ghost.set_chase_state(False)
+                        ghost.set_scatter_state(True) #The first phase ghosts will be in at the start of a round is Scatter phase
+                        ghost.set_frightened_state_v1(False)
+                        ghost.set_frightened_state_v2(False)
+                        ghost.set_eaten_state(False)
+
+                        ghost.reset_chase_and_scatter_cycle_phase_timers()
+
+                        #Updates the animation so that each ghost so can use it's default frame
+                        ghost.frame_update()
 
             '''
             If True, the player sees a black screen when the level resets. Otherwise, changes from previous if statement 
@@ -756,6 +759,13 @@ class GameplayScene:
                             #Enables visibility of power pellet
                             self.list_power_pellets[1][i] = True
 
+                        #Resets the position of all characters
+                        self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
+                        self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
+                        self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20)
+                        self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
+                        self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
+
                         #Sets Pac-Man's variables back to normal
                         self.pac_man.set_list_of_lives(3)
                         self.pac_man.set_direction('Left')
@@ -763,14 +773,19 @@ class GameplayScene:
                         self.pac_man.set_CF()
                         self.pac_man.set_death_animation(False)
                         self.pac_man.set_death_animation_timer(0)
+                        self.pac_man.set_ghost_scatter_timer(0)
                         self.pac_man.set_score(0)
 
-                        #Resets the position of all characters
-                        self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
-                        self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
-                        self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20)
-                        self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
-                        self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
+                        #Resets the all ghosts' state, frame, and timers back to normal
+                        for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+                            ghost.set_frame(0)
+                            ghost.set_chase_state(False)
+                            ghost.set_scatter_state(True) #The first phase ghosts will be in at the start of a round is Scatter phase
+                            ghost.set_frightened_state_v1(False)
+                            ghost.set_frightened_state_v2(False)
+                            ghost.set_eaten_state(False)
+
+                            ghost.reset_chase_and_scatter_cycle_phase_timers()
 
                         #Resets the transition boolean and black screen timer
                         self.transition_to_main_menu = False
@@ -811,22 +826,16 @@ class GameplayScene:
 
     #A method to check and handle events for the Gameplay Scene
     def event_handler(self, event):
-        '''
-        A section to handle player events for Pac-Man
-        '''
-
         #Checks if a ghost has caught Pac-Man
         self.pac_man.check_is_caught(self.blinky, self.pinky, self.inky, self.clyde)
 
         #Checks if Pac-Man ate all of the pellets
         self.ate_all_pellets = self.check_ate_all_pellets() 
 
-        '''
-        If Pac-Man is caught or eats all of the pellets the round ends. Else, the event handler updates character movements, 
-        checks if Pac-Man ate all of the pellets, and updates ghost vulnerability state
-        '''
+        #If Pac-Man is caught or eats all of the pellets the round ends
         if(self.pac_man.get_is_caught() or self.ate_all_pellets):
             self.round_end = True
+        # Else, the event handler updates character movements, checks if Pac-Man ate all of the pellets, and updates ghost vulnerability state
         else:
             self.pac_man.movement_update(event, self.list_blue_obstacles)
             self.blinky.set_movement(True)
