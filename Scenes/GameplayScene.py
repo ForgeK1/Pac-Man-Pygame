@@ -552,8 +552,7 @@ class GameplayScene:
                         ghost.set_frightened_state_v1(False)
                         ghost.set_frightened_state_v2(False)
                         ghost.set_eaten_state(False)
-
-                        ghost.reset_chase_and_scatter_cycle_phase_timers()
+                        ghost.reset_chase_and_scatter_cycle()
 
                         #Updates the animation so that each ghost so can use it's default frame
                         ghost.frame_update()
@@ -784,8 +783,7 @@ class GameplayScene:
                             ghost.set_frightened_state_v1(False)
                             ghost.set_frightened_state_v2(False)
                             ghost.set_eaten_state(False)
-
-                            ghost.reset_chase_and_scatter_cycle_phase_timers()
+                            ghost.reset_chase_and_scatter_cycle()
 
                         #Resets the transition boolean and black screen timer
                         self.transition_to_main_menu = False
