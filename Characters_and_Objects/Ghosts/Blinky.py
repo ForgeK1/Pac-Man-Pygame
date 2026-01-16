@@ -16,3 +16,24 @@ class Blinky(Ghost):
                          direction, x_position, y_position, 
                          movement, character_animation_speed,
                          level_counter, game_state_manager)
+    
+    #An inherited method to update Blinky's chase state movement
+    def chase_state_movement_update(self, list_obstacles, target):
+        #print(self.ghost_name + " is in his chase state")
+
+        print(target) # Ex. (454, 560)
+
+        
+    
+    #An inherited method to update Blinky's scatter state movement
+    def scatter_state_movement_update(self, list_obstacles, target):
+        print("")
+        #print(self.ghost_name + " is in his scatter state")
+    
+    #An inherited method to update Blinky's frightened state movement
+    def frightened_state_movement_update(self, list_obstacles, target):
+        print(self.ghost_name + " is in his frightened state")
+    
+    #An inherited method to update Blinky's frightened state movement
+    def eaten_state_movement_update(self, list_obstacles, target):
+        print(self.ghost_name + " is in his eaten state")

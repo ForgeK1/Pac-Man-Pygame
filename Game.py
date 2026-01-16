@@ -48,8 +48,6 @@ while game_state_manager.get_running_state():
         #Checks if the player quit the game
         if(event.type == pygame.QUIT):
             game_state_manager.set_running_state(False)
-
-    # print(event)
     
     '''
     Continuously runs the current scene the game state manager focuses on based on current player events

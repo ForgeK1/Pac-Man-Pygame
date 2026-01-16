@@ -371,16 +371,22 @@ class Ghost(ABC):
             self.frame_update()
 
     '''
-    A method that updates the ghost phase during gameplay (this method is called in the GameplayScene class)
+    A method that updates the Ghost's behavior based on the current state their in during gameplay (this method is called in the GameplayScene class)
         Ex. Chase, Scatter, Frightened, Eaten states
     '''
-    def update_ghost_phase(self):
+    def state_handler(self):
         #Checks if the ghost is in an eaten state
         if(self.eaten_state):
-            print('Ghost is in an eaten state')
+            #Debug code
+                # print('Ghost is in an eaten state')
+
+            return None
         #Checks if the ghost is in a frightened state
         if(self.frightened_state_v1 or self.frightened_state_v2):
-            print('Ghost is in a frightened state')
+            #Debug code
+                # print('Ghost is in a frightened state')
+            
+            return None
         #Else, the ghost cycles between the chase and scatter states
         else:
             '''
@@ -418,16 +424,10 @@ class Ghost(ABC):
                 self.chase_state = True
                 self.scatter_state = False
 
-                print("\n000000000000000000000000000This if statement is running000000000000000000000000000")
+                #Debug code
+                    #print("\n000000000000000000000000000This if statement is running000000000000000000000000000")
             #If there is more than one phase left, the ghosts will cycle between chase and scatter states
             else:
-                if(self.ghost_name == "Blinky (Red)"):
-                    print("\n********************************This if statement is running********************************")
-                    print("\n" + self.ghost_name + " " + str(self.chase_and_scatter_cycle_phase_timers))
-                    print("Chase State: " + str(self.chase_state))
-                    print("Scatter State: " + str(self.scatter_state))
-                    print("Number of seconds passed: " + str(round(num_seconds_passed)))
-
                 #If the number of seconds passed hasn't reached the timer, the ghost will stay in the state at the beginning of the phase timers list
                 if num_seconds_passed < self.chase_and_scatter_cycle_phase_timers[0]:
                     if self.chase_and_scatter_cycle_phases[0] == "Chase":
@@ -445,12 +445,12 @@ class Ghost(ABC):
                     self.chase_and_scatter_cycle_curr_timer = self.chase_and_scatter_cycle_real_timer
             
             #Debug code
-                # print(self.chase_and_scatter_cycle_phases[0] + " state\n" + 
-                #       str(num_seconds_passed) + " seconds have passed\n" + 
-                #       str(self.chase_and_scatter_cycle_phase_timers))
-
-                # print("\n" + self.ghost_name + " " + str(self.chase_and_scatter_cycle_phase_timers))
-                # print("\n" + self.ghost_name + " size: " + str(len(self.chase_and_scatter_cycle_phase_timers)))
+                # if(self.ghost_name == "Blinky (Red)"):
+                #     print("\n********************************This if statement is running********************************")
+                #     print("\n" + self.ghost_name + " " + str(self.chase_and_scatter_cycle_phase_timers))
+                #     print("Chase State: " + str(self.chase_state))
+                #     print("Scatter State: " + str(self.scatter_state))
+                #     print("Number of seconds passed: " + str(round(num_seconds_passed)))
             
     '''
     A method that sets the amount of time to cycle between the scatter and chase states
@@ -490,18 +490,45 @@ class Ghost(ABC):
 
         return cycle_phase_timers
     
-    #A method to update Ghost's movement based on his chase state
-    def chase_state_movement_update(self, list_obstacles):
+    #A method to help the Ghost decide the direction they should take based on the target defined in movement_update
+    def direction(self, target):
+
+        '''
+        __Next Steps__
+        1) Assume the movement_update method will call the direction method, and gives direction a target (the target will be different for each ghost)
+        2) Define all possible paths the Ghost can take
+        3) Use the target to calculate the distance of each path
+        4) Choose the path closest to the target
+            Note: If two paths are the same distace, then the priority order is ⬆️⬅️⬇️➡️
+        '''
+
         return None
     
-    #A method to update Ghost's movement based on his scatter state
-    def scatter_state_movement_update(self, list_obstacles):
+    #A method to cycle through the Ghost's movement based on their current state
+    def movement_update(self, list_obstacles, target):
+        if(self.chase_state):
+            self.chase_state_movement_update(list_obstacles, target)
+        elif(self.scatter_state):
+            self.scatter_state_movement_update(list_obstacles, target)
+        elif(self.frightened_state_v1 or self.frightened_state_v2):
+            self.frightened_state_movement_update(list_obstacles, target)
+        elif(self.eaten_state):
+            self.eaten_state_movement_update(list_obstacles, target)
+        else:
+            print(self.ghost_name + " is not moving!")
+    
+    #An abstract method to update Ghost's movement based on their chase state
+    def chase_state_movement_update(self, list_obstacles, target):
+        return None
+    
+    #An abstract method to update Ghost's movement based on their scatter state
+    def scatter_state_movement_update(self, list_obstacles, target):
         return None
 
-    #A method to update Ghost's movement based on his frightened state
-    def frightened_state_movement_update(self, list_obstacles):
+    #An abstract method to update Ghost's movement based on their frightened state
+    def frightened_state_movement_update(self, list_obstacles, target):
         return None
 
-    #A method to update Ghost's movement based on his eaten state
-    def eaten_state_movement_update(self, list_obstacles):
+    #An abstract method to update Ghost's movement based on their eaten state
+    def eaten_state_movement_update(self, list_obstacles, target):
         return None

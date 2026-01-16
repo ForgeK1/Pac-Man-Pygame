@@ -835,19 +835,13 @@ class GameplayScene:
             self.round_end = True
         # Else, the event handler updates character movements, checks if Pac-Man ate all of the pellets, and updates ghost vulnerability state
         else:
-            self.pac_man.movement_update(event, self.list_blue_obstacles)
-            self.blinky.set_movement(True)
-            self.pinky.set_movement(True) #<------------ This is the section to change the ghost method to "movement_update or "chase", and from
-                                          #              there you should create methods in the ghost class to determine their interactions in the
-                                          #              Gameplay Scene
-            self.inky.set_movement(True)
-            self.clyde.set_movement(True)
-
-            self.blinky.update_ghost_phase()
-            self.pinky.update_ghost_phase()
-            self.inky.update_ghost_phase()
-            self.clyde.update_ghost_phase()
+            for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+                ghost.state_handler()
+                ghost.set_movement(True)
+                self.blinky.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
             
+            self.pac_man.movement_update(event, self.list_blue_obstacles)
+
             #A method to allow Pac-Man to eat pellets
             self.pac_man.eat_pellets(self.list_pellets, self.list_power_pellets, 
                                      self.pellet_channel, self.power_pellet_channel,
@@ -884,6 +878,15 @@ class GameplayScene:
                 '''
                 A section to update the skin of each ghost during the ghost scatter timer duration
                 '''
+
+                '''
+                Sets the ghost's chase and scatter states to False
+                    Note: These two states are not set to True once the power pellet channel is done because
+                          the state_handler in the abstract Ghost class automatically does that
+                '''
+                for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
+                    ghost.set_chase_state(False)
+                    ghost.set_scatter_state(False)
 
                 if(self.pac_man.get_ghost_scatter_timer() <= 300):
                     #Debug code
