@@ -836,9 +836,12 @@ class GameplayScene:
         # Else, the event handler updates character movements, checks if Pac-Man ate all of the pellets, and updates ghost vulnerability state
         else:
             for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
-                ghost.state_handler()
+                #ghost.state_handler()
                 ghost.set_movement(True)
-                self.blinky.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
+            
+            self.blinky.state_handler()
+            self.blinky.set_movement(True)
+            self.blinky.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
             
             self.pac_man.movement_update(event, self.list_blue_obstacles)
 

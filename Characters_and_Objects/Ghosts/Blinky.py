@@ -33,17 +33,29 @@ class Blinky(Ghost):
             self.rect.centery = self.rect.centery + 2
         elif self.direction == 'Right': 
             self.rect.centerx = self.rect.centerx + 2
-
     
     #An inherited method to update Blinky's scatter state movement
-    def scatter_state_movement_update(self, list_obstacles, target):
-        return None
+    def scatter_state_movement_update(self, list_obstacles):
         #print(self.ghost_name + " is in his scatter state")
+
+        #(479, 0) is top right of the display surface window
+        self.direction = self.direction_update(list_obstacles, (479, 0))
+
+        print(self.direction)
+
+        if self.direction == 'Up':
+            self.rect.centery = self.rect.centery - 2
+        elif self.direction == 'Left':
+            self.rect.centerx = self.rect.centerx - 2
+        elif self.direction == 'Down':
+            self.rect.centery = self.rect.centery + 2
+        elif self.direction == 'Right': 
+            self.rect.centerx = self.rect.centerx + 2
     
     #An inherited method to update Blinky's frightened state movement
-    def frightened_state_movement_update(self, list_obstacles, target):
+    def frightened_state_movement_update(self, list_obstacles):
         print(self.ghost_name + " is in his frightened state")
     
     #An inherited method to update Blinky's frightened state movement
-    def eaten_state_movement_update(self, list_obstacles, target):
+    def eaten_state_movement_update(self, list_obstacles):
         print(self.ghost_name + " is in his eaten state")

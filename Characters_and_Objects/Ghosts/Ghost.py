@@ -23,6 +23,7 @@ class Ghost(ABC):
         self.horizontal_scale = horizontal_scale
         self.vertical_scale = vertical_scale
         self.direction = direction
+        self.opposite_direction = None
         self.movement = movement
         self.frame = 0
 
@@ -446,12 +447,12 @@ class Ghost(ABC):
                     self.chase_and_scatter_cycle_curr_timer = self.chase_and_scatter_cycle_real_timer
             
             #Debug code
-                # if(self.ghost_name == "Blinky (Red)"):
-                #     print("\n********************************This if statement is running********************************")
-                #     print("\n" + self.ghost_name + " " + str(self.chase_and_scatter_cycle_phase_timers))
-                #     print("Chase State: " + str(self.chase_state))
-                #     print("Scatter State: " + str(self.scatter_state))
-                #     print("Number of seconds passed: " + str(round(num_seconds_passed)))
+            if(self.ghost_name == "Blinky (Red)"):
+                #print("\n********************************This if statement is running********************************")
+                print("\n" + self.ghost_name + " " + str(self.chase_and_scatter_cycle_phase_timers))
+                print("Chase State: " + str(self.chase_state))
+                print("Scatter State: " + str(self.scatter_state))
+                print("Number of seconds passed: " + str(round(num_seconds_passed)) + "\n")
             
     '''
     A method that sets the amount of time to cycle between the scatter and chase states
@@ -481,13 +482,13 @@ class Ghost(ABC):
         #Rounds 5 and up
         elif(5 <= self.level_counter): 
             if(self.ghost_name == "Blinky (Red)"):
-                cycle_phase_timers = [1, 2, 1, 2, 1, 7, 0.01, -1]
+                cycle_phase_timers = [5, 20, 5, 20, 5, 17, 0.01, -1]
             elif(self.ghost_name == "Pinky (Pink)"):
-                cycle_phase_timers = [1, 2, 1, 2, 1, 7, 0.01, -1]
+                cycle_phase_timers = [5, 20, 5, 20, 5, 17, 0.01, -1]
             elif(self.ghost_name == "Inky (Cyan)"):
-                cycle_phase_timers = [1, 2, 1, 2, 1, 4, 0.01, -1]
+                cycle_phase_timers = [5, 20, 5, 20, 5, 14, 0.01, -1]
             elif(self.ghost_name == "Clyde (Orange)"):
-                cycle_phase_timers = [1, 2, 1, 2, 1, 4, 0.01, -1]
+                cycle_phase_timers = [5, 20, 5, 20, 5, 14, 0.01, -1]
 
         return cycle_phase_timers
     
@@ -500,11 +501,21 @@ class Ghost(ABC):
     '''
     def direction_update(self, list_obstacles, target):
         directions = {
-            "Up": None,
-            "Left": None,
-            "Down": None,
-            "Right": None
+            'Up': None,
+            'Left': None,
+            'Down': None,
+            'Right': None
         }
+
+        #Prevents the Ghost from being able to turn around
+        if self.direction == 'Up':
+            directions.pop('Down')
+        elif(self.direction == 'Left'):
+            directions.pop('Right')
+        elif(self.direction == 'Down'):
+            directions.pop('Up')
+        elif(self.direction == 'Right'):
+            directions.pop('Left')
 
         #Cycles through the dictionary to assign each key a rect value that determines the future position of each direction
         for key in directions:
@@ -551,6 +562,8 @@ class Ghost(ABC):
             distance = math.sqrt(difference_x + difference_y)
 
             directions[key] = distance
+        
+        print(directions)
 
         '''
         Selects the direction whose associated value (distance) is the smallest. The expression `key=directions.get` 
@@ -566,11 +579,11 @@ class Ghost(ABC):
         if(self.chase_state):
             self.chase_state_movement_update(list_obstacles, target)
         elif(self.scatter_state):
-            self.scatter_state_movement_update(list_obstacles, target)
+            self.scatter_state_movement_update(list_obstacles)
         elif(self.frightened_state_v1 or self.frightened_state_v2):
-            self.frightened_state_movement_update(list_obstacles, target)
+            self.frightened_state_movement_update(list_obstacles)
         elif(self.eaten_state):
-            self.eaten_state_movement_update(list_obstacles, target)
+            self.eaten_state_movement_update(list_obstacles)
         else:
             print(self.ghost_name + " is not moving!")
     

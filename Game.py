@@ -16,7 +16,7 @@ pygame.init()
 #Creates display surface using pygame's display module
 WINDOW_WIDTH = 480
 WINDOW_HEIGHT = 640 
-display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA) 
+display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
 
 #Sets the game's icon and caption
 game_icon_image = pygame.image.load('Images/Pac-Man/icon.png')
@@ -31,7 +31,7 @@ clock = pygame.time.Clock()
 Sets up the game state manager to keep track of different scenes and running state during gameplay
     Note: Runs the Splash Scene when opening the game for the first time
 '''
-game_state_manager = GameStateManager('Gameplay Scene', True)
+game_state_manager = GameStateManager('Splash Scene', True)
 
 #Sets up scenes of the game
 splash_scene = SplashScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
