@@ -491,16 +491,42 @@ class Ghost(ABC):
         return cycle_phase_timers
     
     #A method to help the Ghost decide the direction they should take based on the target defined in movement_update
-    def direction(self, target):
-
+    def direction_update(self, list_obstacles, target):
         '''
         __Next Steps__
-        1) Assume the movement_update method will call the direction method, and gives direction a target (the target will be different for each ghost)
+        1) Assume the movement_update method will call this method, and gives it a target (the target will be different for each ghost)
         2) Define all possible paths the Ghost can take
         3) Use the target to calculate the distance of each path
         4) Choose the path closest to the target
-            Note: If two paths are the same distace, then the priority order is ⬆️⬅️⬇️➡️
+            Note: If two paths are the same distace, then the priority order is ⬆️ ⬅️ ⬇️ ➡️
         '''
+
+        directions = {
+            "Up": None,
+            "Left": None,
+            "Down": None,
+            "Right": None
+        }
+
+        for key in directions:
+            rect = pygame.Rect.copy(self.rect)
+
+            if key == 'up':
+                rect.centery = self.rect.centery - 2
+            elif key == 'left':
+                rect.centerx = self.rect.centerx - 2
+            elif key == 'down':
+                rect.centery = self.rect.centery + 2
+            elif key == 'Right': 
+                rect.centerx = self.rect.centerx + 2
+
+            directions[key] = rect
+
+        for key in directions:
+            if(directions[key].collidelist(list_obstacles[2]) != -1):
+                directions.pop(key)
+
+        print(directions)
 
         return None
     

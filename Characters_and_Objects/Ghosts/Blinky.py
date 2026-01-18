@@ -21,13 +21,13 @@ class Blinky(Ghost):
     def chase_state_movement_update(self, list_obstacles, target):
         #print(self.ghost_name + " is in his chase state")
 
-        print(target) # Ex. (454, 560)
+        #print("This if statement runs")
 
-        
+        self.direction_update(list_obstacles, target) # Ex. (454, 560)
     
     #An inherited method to update Blinky's scatter state movement
     def scatter_state_movement_update(self, list_obstacles, target):
-        print("")
+        return None
         #print(self.ghost_name + " is in his scatter state")
     
     #An inherited method to update Blinky's frightened state movement
