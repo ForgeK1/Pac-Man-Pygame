@@ -4,6 +4,7 @@ Description: This hybrid-abstract class serves as a parent Ghost class for the f
 
 #Imports for the Ghost class to function
 import pygame
+import math
 from abc import ABC, abstractmethod
 
 class Ghost(ABC):
@@ -490,17 +491,14 @@ class Ghost(ABC):
 
         return cycle_phase_timers
     
-    #A method to help the Ghost decide the direction they should take based on the target defined in movement_update
+    '''
+    A method to help the Ghost decide the direction they should take based on the Pac-Man's location (target) defined in movement_update
+        1) Defines all possible paths the Ghost can take
+        2) Uses the target to calculate the distance of each path
+        3) Choose the path closest to the target
+            Note: If two paths are the same distance, then the priority order is ⬆️ ⬅️ ⬇️ ➡️
+    '''
     def direction_update(self, list_obstacles, target):
-        '''
-        __Next Steps__
-        1) Assume the movement_update method will call this method, and gives it a target (the target will be different for each ghost)
-        2) Define all possible paths the Ghost can take
-        3) Use the target to calculate the distance of each path
-        4) Choose the path closest to the target
-            Note: If two paths are the same distace, then the priority order is ⬆️ ⬅️ ⬇️ ➡️
-        '''
-
         directions = {
             "Up": None,
             "Left": None,
@@ -508,27 +506,60 @@ class Ghost(ABC):
             "Right": None
         }
 
+        #Cycles through the dictionary to assign each key a rect value that determines the future position of each direction
         for key in directions:
+            #Copies the rect of the Ghost
             rect = pygame.Rect.copy(self.rect)
 
-            if key == 'up':
+            if key == 'Up':
                 rect.centery = self.rect.centery - 2
-            elif key == 'left':
+            elif key == 'Left':
                 rect.centerx = self.rect.centerx - 2
-            elif key == 'down':
+            elif key == 'Down':
                 rect.centery = self.rect.centery + 2
             elif key == 'Right': 
                 rect.centerx = self.rect.centerx + 2
 
             directions[key] = rect
+        
+        #Cycles through each new position to see which directions are a viable path
+        for key in list(directions):
+            #Debug code
+                #print(str(key) + ": " + str(directions[key].collidelist(list_obstacles[2]) != -1))
 
-        for key in directions:
+            #If the direction collides with a wall, the direction is removed from the list
             if(directions[key].collidelist(list_obstacles[2]) != -1):
                 directions.pop(key)
+        
+        '''
+        Calculates the distance between each rect and the target, then replaces the rect value to 
+        a distance value for each respective direction
 
-        print(directions)
+        Distance formula: d = √(x_2 - X_1)^2 + (y_2 - Y_1)^2
+        
+        Ex) Possible paths: {'Left': <rect(223, 237, 30, 30)>, 'Right': <rect(227, 237, 30, 30)>} 
+            Target:         (368, 458)
 
-        return None
+            Result: {'Left': 243.6, 'Right': 241.5} <-- Right is the best direction to take
+        '''
+        for key in directions:
+            rect = directions[key]
+
+            difference_x = math.pow(target[0] - rect.centerx, 2) 
+            difference_y = math.pow(target[1] - rect.centery, 2)
+
+            distance = math.sqrt(difference_x + difference_y)
+
+            directions[key] = distance
+
+        '''
+        Selects the direction whose associated value (distance) is the smallest. The expression `key=directions.get` 
+        tells `min()` to compare dictionary entries using their values (distances) instead of their keys (direction names). 
+        If distances are equal, dictionary insertion order (Up → Left → Down → Right) is used as a deterministic tie-breaker
+        '''
+        best_direction = min(directions, key=directions.get)
+
+        return best_direction
     
     #A method to cycle through the Ghost's movement based on their current state
     def movement_update(self, list_obstacles, target):

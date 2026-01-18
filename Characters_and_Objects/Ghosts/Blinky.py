@@ -21,9 +21,19 @@ class Blinky(Ghost):
     def chase_state_movement_update(self, list_obstacles, target):
         #print(self.ghost_name + " is in his chase state")
 
-        #print("This if statement runs")
+        self.direction = self.direction_update(list_obstacles, target) # Ex. (454, 560)
 
-        self.direction_update(list_obstacles, target) # Ex. (454, 560)
+        print(self.direction)
+
+        if self.direction == 'Up':
+            self.rect.centery = self.rect.centery - 2
+        elif self.direction == 'Left':
+            self.rect.centerx = self.rect.centerx - 2
+        elif self.direction == 'Down':
+            self.rect.centery = self.rect.centery + 2
+        elif self.direction == 'Right': 
+            self.rect.centerx = self.rect.centerx + 2
+
     
     #An inherited method to update Blinky's scatter state movement
     def scatter_state_movement_update(self, list_obstacles, target):
