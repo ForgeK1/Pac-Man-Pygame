@@ -19,12 +19,19 @@ class Blinky(Ghost):
     
     #An inherited method to update Blinky's chase state movement
     def chase_state_movement_update(self, list_obstacles, target):
-        #print(self.ghost_name + " is in his chase state")
+        #Debug code
+            # print(self.ghost_name + " is in his chase state")
 
-        self.direction = self.direction_update(list_obstacles, target) # Ex. (454, 560)
+        #Teleports Blinky to the other side of the tunnel
+        self.tunnel_edge_teleport()
 
-        print(self.direction)
+        #Returns the direction Blinky should take to chase Pac-Man
+        self.direction = self.direction_update(list_obstacles, target)
 
+        #Debug code
+            # print(self.direction)
+
+        #Updates Blinky's movement based on the given direction
         if self.direction == 'Up':
             self.rect.centery = self.rect.centery - 2
         elif self.direction == 'Left':
@@ -36,13 +43,22 @@ class Blinky(Ghost):
     
     #An inherited method to update Blinky's scatter state movement
     def scatter_state_movement_update(self, list_obstacles):
-        #print(self.ghost_name + " is in his scatter state")
+        #Debug code
+            # print(self.ghost_name + " is in his scatter state")
 
-        #(479, 0) is top right of the display surface window
+        #Teleports Blinky to the other side of the tunnel
+        self.tunnel_edge_teleport()
+
+        '''
+        Returns the direction Blinky should take to be in a scatter loop
+            Ex) (479, 0) is top right of the display surface window
+        '''
         self.direction = self.direction_update(list_obstacles, (479, 0))
 
-        print(self.direction)
+        #Debug code
+            # print(self.direction)
 
+        #Updates Blinky's movement based on the given direction
         if self.direction == 'Up':
             self.rect.centery = self.rect.centery - 2
         elif self.direction == 'Left':
@@ -51,11 +67,3 @@ class Blinky(Ghost):
             self.rect.centery = self.rect.centery + 2
         elif self.direction == 'Right': 
             self.rect.centerx = self.rect.centerx + 2
-    
-    #An inherited method to update Blinky's frightened state movement
-    def frightened_state_movement_update(self, list_obstacles):
-        print(self.ghost_name + " is in his frightened state")
-    
-    #An inherited method to update Blinky's frightened state movement
-    def eaten_state_movement_update(self, list_obstacles):
-        print(self.ghost_name + " is in his eaten state")

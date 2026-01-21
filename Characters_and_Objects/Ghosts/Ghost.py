@@ -4,6 +4,7 @@ Description: This hybrid-abstract class serves as a parent Ghost class for the f
 
 #Imports for the Ghost class to function
 import pygame
+import random
 import math
 from abc import ABC, abstractmethod
 
@@ -50,6 +51,9 @@ class Ghost(ABC):
 
         self.chase_and_scatter_cycle_real_timer = 0
         self.chase_and_scatter_cycle_curr_timer = None
+
+        #Initializes a variable for the Ghost to move half of their speed when in a frightened state (this variable is used in the frightened_state_movement_update method for each ghost)
+        self.move_counter = 1
 
     #A method to return Ghost's image
     def get_image(self):
@@ -447,12 +451,12 @@ class Ghost(ABC):
                     self.chase_and_scatter_cycle_curr_timer = self.chase_and_scatter_cycle_real_timer
             
             #Debug code
-            if(self.ghost_name == "Blinky (Red)"):
-                #print("\n********************************This if statement is running********************************")
-                print("\n" + self.ghost_name + " " + str(self.chase_and_scatter_cycle_phase_timers))
-                print("Chase State: " + str(self.chase_state))
-                print("Scatter State: " + str(self.scatter_state))
-                print("Number of seconds passed: " + str(round(num_seconds_passed)) + "\n")
+                # if(self.ghost_name == "Blinky (Red)"):
+                #     #print("\n********************************This if statement is running********************************")
+                #     print("\n" + self.ghost_name + " " + str(self.chase_and_scatter_cycle_phase_timers))
+                #     print("Chase State: " + str(self.chase_state))
+                #     print("Scatter State: " + str(self.scatter_state))
+                #     print("Number of seconds passed: " + str(round(num_seconds_passed)) + "\n")
             
     '''
     A method that sets the amount of time to cycle between the scatter and chase states
@@ -563,14 +567,24 @@ class Ghost(ABC):
 
             directions[key] = distance
         
-        print(directions)
+        #Debug code
+        #print(directions)
 
         '''
-        Selects the direction whose associated value (distance) is the smallest. The expression `key=directions.get` 
-        tells `min()` to compare dictionary entries using their values (distances) instead of their keys (direction names). 
-        If distances are equal, dictionary insertion order (Up → Left → Down → Right) is used as a deterministic tie-breaker
+        Checks if the Ghost is in a frightened state. If so, the Ghost will move in a random direction
         '''
-        best_direction = min(directions, key=directions.get)
+        if (self.frightened_state_v1 is True or self.frightened_state_v2 is True):
+            random_direction = random.randint(0, len(directions) - 1)
+            
+            return list(directions.keys())[random_direction]
+        #Else, the Ghost follows the direction closest to the target
+        else:
+            '''
+            Selects the direction whose associated value (distance) is the smallest. The expression `key=directions.get` 
+            tells `min()` to compare dictionary entries using their values (distances) instead of their keys (direction names). 
+            If distances are equal, dictionary insertion order (Up → Left → Down → Right) is used as a deterministic tie-breaker
+            '''
+            best_direction = min(directions, key=directions.get)
 
         return best_direction
     
@@ -591,14 +605,54 @@ class Ghost(ABC):
     def chase_state_movement_update(self, list_obstacles, target):
         return None
     
-    #An abstract method to update Ghost's movement based on their scatter state
+    #An abstract method to update the Ghost's movement based on their scatter state
     def scatter_state_movement_update(self, list_obstacles, target):
         return None
 
-    #An abstract method to update Ghost's movement based on their frightened state
-    def frightened_state_movement_update(self, list_obstacles, target):
-        return None
+    #A method to update the Ghost's frightened state movement
+    def frightened_state_movement_update(self, list_obstacles):
+        #Debug code
+            # print(self.ghost_name + " is in his frightened state")
 
-    #An abstract method to update Ghost's movement based on their eaten state
-    def eaten_state_movement_update(self, list_obstacles, target):
-        return None
+        #Teleports Ghost to the other side of the tunnel
+        self.tunnel_edge_teleport()
+
+        '''
+        Returns the direction the Ghost should take to be in a scatter loop
+            Ex) (479, 0) is top right of the display surface window
+        '''
+        self.direction = self.direction_update(list_obstacles, (479, 0))
+
+        #Debug code
+            # print(self.direction)
+        
+        '''
+        Move counter helps the Ghost move half of his speed when in a frightened state
+        '''
+        self.move_counter += 1
+
+        if self.move_counter >= 2:
+            #Updates the Ghost's movement based on the given direction
+            if self.direction == 'Up':
+                self.rect.centery = self.rect.centery - 2
+            elif self.direction == 'Left':
+                self.rect.centerx = self.rect.centerx - 2
+            elif self.direction == 'Down':
+                self.rect.centery = self.rect.centery + 2
+            elif self.direction == 'Right': 
+                self.rect.centerx = self.rect.centerx + 2
+            
+            self.move_counter = 0
+    
+    #A method to update the Ghost's eaten state movement
+    def eaten_state_movement_update(self, list_obstacles):
+        print(self.ghost_name + " is in his eaten state")
+    
+    #A method to help the Ghost travel through the tunnel edge at the left or right side of the game map
+    def tunnel_edge_teleport(self):
+        if(self.rect.centerx == -2 and self.rect.centery == 304):
+            self.direction = 'Left'
+            self.rect.center = (482, 304)
+        elif(self.rect.centerx == 482 and self.rect.centery == 304):
+            self.direction = 'Right'
+            self.rect.center = (-2, 304)
