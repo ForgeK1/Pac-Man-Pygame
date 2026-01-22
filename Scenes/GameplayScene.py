@@ -112,22 +112,15 @@ class GameplayScene:
         #Resets the Gameplay Scene background
         self.gameplay_surface.fill('black')
 
-        #A method to update the Ghost phase timer when cycling between their states
-        # self.update_ghost_phase()
-        
-        #Updates all character animation based on the character_animation_speed variable
+        '''
+        Updates Pac-Man's animation based on his character_animation_speed variable, and blits each ghost's 
+        images and rects onto the Gameplay Scene
+            Note: Pac-Man's section comes before blitting the pellets because the pellets would show up in his mouth. 
+                  Note that, the pellets dissapear once they reach Pac-Man's mouth. In contrast, the ghosts are blit 
+                  after the pellets since the pellets do not dissapear when they interact with them
+        '''
         self.pac_man.animation_update()
-        self.blinky.animation_update()
-        self.pinky.animation_update()
-        self.inky.animation_update()
-        self.clyde.animation_update()
-
-        #Blits all character images and rects onto the Gameplay Scene
         self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
-        self.gameplay_surface.blit(self.blinky.get_image(), self.blinky.get_rect())
-        self.gameplay_surface.blit(self.pinky.get_image(), self.pinky.get_rect())
-        self.gameplay_surface.blit(self.inky.get_image(), self.inky.get_rect())
-        self.gameplay_surface.blit(self.clyde.get_image(), self.clyde.get_rect())
 
         #Blits obstacles on the Gameplay Scene
         for i in range(len(self.list_blue_obstacles[0])): 
@@ -147,6 +140,13 @@ class GameplayScene:
                 self.list_power_pellets[2] = self.power_pellet.animation_update(self.list_power_pellets[2])
 
                 self.gameplay_surface.blit(self.list_power_pellets[2], self.list_power_pellets[3][i])
+        '''
+        Updates each ghost's animation based on their character_animation_speed variable, and blits each ghost's 
+        images and rects onto the Gameplay Scene
+        '''
+        for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+            ghost.animation_update()
+            self.gameplay_surface.blit(ghost.get_image(), ghost.get_rect())
         
         #A method to showcase list of lives, high score, current score, food images, etc. for the Gameplay Scene
         self.interface_update()
@@ -542,7 +542,6 @@ class GameplayScene:
                     self.pac_man.set_direction('Left')
                     self.pac_man.set_frame(0)
                     self.pac_man.set_CF()
-                    self.pac_man.set_ghost_scatter_timer(0)
 
                     #Resets the all ghosts' state, frame, and timers back to normal
                     for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
@@ -553,6 +552,7 @@ class GameplayScene:
                         ghost.set_frightened_state_v2(False)
                         ghost.set_eaten_state(False)
                         ghost.reset_chase_and_scatter_cycle()
+                        ghost.set_ghost_scatter_timer(0)
 
                         #Updates the animation so that each ghost so can use it's default frame
                         ghost.frame_update()
@@ -772,7 +772,6 @@ class GameplayScene:
                         self.pac_man.set_CF()
                         self.pac_man.set_death_animation(False)
                         self.pac_man.set_death_animation_timer(0)
-                        self.pac_man.set_ghost_scatter_timer(0)
                         self.pac_man.set_score(0)
 
                         #Resets the all ghosts' state, frame, and timers back to normal
@@ -784,6 +783,7 @@ class GameplayScene:
                             ghost.set_frightened_state_v2(False)
                             ghost.set_eaten_state(False)
                             ghost.reset_chase_and_scatter_cycle()
+                            ghost.set_ghost_scatter_timer(0)
 
                         #Resets the transition boolean and black screen timer
                         self.transition_to_main_menu = False
@@ -835,95 +835,25 @@ class GameplayScene:
             self.round_end = True
         # Else, the event handler updates character movements, checks if Pac-Man ate all of the pellets, and updates ghost vulnerability state
         else:
-            for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
-                #ghost.state_handler()
-                ghost.set_movement(True)
-            
-            self.blinky.state_handler()
+            self.blinky.state_handler(self.power_pellet_channel, self.pac_man)
             self.blinky.set_movement(True)
             self.blinky.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
+            
+            self.pinky.set_movement(True)
+            self.inky.set_movement(True)
+            self.clyde.set_movement(True)
             
             self.pac_man.movement_update(event, self.list_blue_obstacles)
 
             #A method to allow Pac-Man to eat pellets
-            self.pac_man.eat_pellets(self.list_pellets, self.list_power_pellets, 
+            self.pac_man.eat_pellets([self.blinky, self.pinky, self.inky, self.clyde],
+                                     self.list_pellets, self.list_power_pellets, 
                                      self.pellet_channel, self.power_pellet_channel,
                                      self.pellet_sound, self.power_pellet_sound)
 
-            #If Pac-Man ate a power pellet, the ghosts will scatter. Else, the ghosts continue to chase Pac-Man
-            self.ghost_vulnerability()
-        
-    #A method to update ghost vulnerability when Pac-Man eats or does not eat a power pellet
-    def ghost_vulnerability(self):
-        #Pac-Man chases ghosts
-        if(self.pac_man.get_eat_ghosts()):
-            '''
-            If Pac-Man ate another Power Pellet while the ghosts are still in a scatter state,
-            the ghosts' current frame and scatter timer gets reset
-            '''
-            if(self.pac_man.get_ghost_scatter_timer() == -1):
-                for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                    ghost.set_frame(0)
-                
-                self.pac_man.set_ghost_scatter_timer(0)
-            #Else, the program continues to increment the timer
-            else:
-                self.pac_man.set_ghost_scatter_timer(self.pac_man.get_ghost_scatter_timer() + 1)
-
-            #Stops the siren channel
-            self.siren_channel.stop()
-
-            '''
-            Checks if the power pellet sound effect is still going on. If so, the ghosts will continue to be
-            in a frightened state
-            '''
-            if(self.power_pellet_channel.get_busy() is True):
-                '''
-                A section to update the skin of each ghost during the ghost scatter timer duration
-                '''
-
-                '''
-                Sets the ghost's chase and scatter states to False
-                    Note: These two states are not set to True once the power pellet channel is done because
-                          the state_handler in the abstract Ghost class automatically does that
-                '''
-                for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                    ghost.set_chase_state(False)
-                    ghost.set_scatter_state(False)
-
-                if(self.pac_man.get_ghost_scatter_timer() <= 300):
-                    #Debug code
-                        #print('before 300\n')
-
-                    for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                        ghost.set_frightened_state_v1(True)
-                        ghost.set_frightened_state_v2(False)
-                else:
-                    #Debug code
-                        #print('after 300\n')
-
-                    for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                        ghost.set_frightened_state_v1(False)
-                        ghost.set_frightened_state_v2(True)
-                
-                '''
-                A section to check if Pac-Man ate a ghost during the ghost scatter timer duration
-                '''
-                #if(self.pac_man.check_ate_ghost): 
-            #Else, the ghosts are resetted to their normal state and Pac-Man is no longer chasing the ghosts
-            else:
-                for ghost in [self.clyde, self.blinky, self.inky, self.pinky]:
-                    ghost.set_frightened_state_v1(False)
-                    ghost.set_frightened_state_v2(False)
-
-                    #Resets the frame to 0 so that the ghosts can start with their default frame
-                    if(ghost.get_frame() >= 1):
-                        ghost.set_frame(0)
-
-                self.pac_man.set_eat_ghosts(False)
-                self.pac_man.set_ghost_scatter_timer(0)
-        #Else, the ghosts chase Pac-Man
-        else:
             #Loops the siren sound effect
-            if(self.siren_channel.get_busy() is False):
-                self.siren_channel.play(self.siren_v1_sound)
+            if(self.pac_man.get_eat_ghosts() is False):
+                if(self.siren_channel.get_busy() is False):
+                    self.siren_channel.play(self.siren_v1_sound)    
+            else:
+                self.siren_channel.stop()

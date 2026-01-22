@@ -36,9 +36,6 @@ class PacMan:
         self.eat_ghosts = False
         self.is_caught = False
 
-        #Initializes a variable timer to dynamically change ghost state animation after Pac-Man eats a power pellet
-        self.ghost_scatter_timer = 0
-
         #Variables to control character animation speed
         self.character_animation_speed = character_animation_speed #In miliseconds
         self.last_updated_time = 0 #In miliseconds
@@ -166,14 +163,6 @@ class PacMan:
     #A method to set a new boolean for Pac-Man's is_caught
     def set_is_caught(self, new_is_caught):
         self.is_caught = new_is_caught
-
-    #A method to return the ghost scatter timer
-    def get_ghost_scatter_timer(self):
-        return self.ghost_scatter_timer
-    
-    #A method to set the ghost scatter timer
-    def set_ghost_scatter_timer(self, new_ghost_scatter_timer):
-        self.ghost_scatter_timer = new_ghost_scatter_timer
     
     #A method to return a boolean for Pac-Man's death_animation
     def get_death_animation(self):
@@ -492,7 +481,7 @@ class PacMan:
             self.movement = False
     
     #A method for the player to eat pellets in the Gameplay Scene
-    def eat_pellets(self, list_pellets, list_power_pellets, pellet_channel, power_pellet_channel, pellet_sound, power_pellet_sound): 
+    def eat_pellets(self, list_ghosts, list_pellets, list_power_pellets, pellet_channel, power_pellet_channel, pellet_sound, power_pellet_sound): 
         '''
         Checks if the player's minimized hitbox is interacting with a pellet
         '''
@@ -556,9 +545,21 @@ class PacMan:
                 range_y = self.minimized_rect.centery / list_power_pellets[3][power_pellet_index].centery
 
             if(range_x > 0.95 and range_y > 0.95):
-                #If Pac-Man has already eaten a Power Pellet, then the ghost scatter timer gets reset
+                #If Pac-Man has already eaten a Power Pellet, then all ghost's scatter timer and frames gets reset
                 if(power_pellet_channel.get_busy()):
-                    self.ghost_scatter_timer = -1
+                    for ghost in list_ghosts:
+                        ghost.set_ghost_scatter_timer(0)
+                        ghost.set_frame(0)
+                
+                '''
+                Sets the ghost's chase and scatter states to False
+                    Note: These two states are not set to True once the power pellet channel is done because
+                        the state_handler in the abstract Ghost class automatically does that
+                '''
+                for ghost in list_ghosts:
+                    ghost.set_chase_state(False)
+                    ghost.set_scatter_state(False)
+                    ghost.set_frightened_state_v1(True)
                 
                 power_pellet_channel.play(power_pellet_sound)
 
