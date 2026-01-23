@@ -78,7 +78,6 @@ class GameplayScene:
         self.game_over_text_timer = 0
         self.transition_to_main_menu_timer = 0
         self.round_end = False
-        self.ate_all_pellets = False
         self.pac_man_death_sound_has_played = False
         self.transition_to_main_menu = False
 
@@ -464,7 +463,7 @@ class GameplayScene:
         self.gameplay_surface.fill('black')
         
         #An if statement to check if Pac-Man ate all the pellets to move to the next round
-        if(self.ate_all_pellets):
+        if(self.pac_man.get_ate_all_pellets()):
             #Stops the all relative sound channels
             self.siren_channel.stop()
             self.power_pellet_channel.stop()
@@ -538,10 +537,10 @@ class GameplayScene:
                     self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
 
                     #Sets Pac-Man's variables back to normal
-                    self.pac_man.set_eat_ghosts(False)
                     self.pac_man.set_direction('Left')
                     self.pac_man.set_frame(0)
                     self.pac_man.set_CF()
+                    self.pac_man.set_ate_all_pellets(False)
 
                     #Resets the all ghosts' state, frame, and timers back to normal
                     for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
@@ -739,7 +738,6 @@ class GameplayScene:
                         self.round_end = False
                         self.level_counter = 1
                         self.pac_man_life_deduct = True
-                        self.pac_man.set_is_caught(False)
 
                         #Resets the game over text timer for when Pac-Man loses all of his lives again
                         self.game_over_text_timer = 0
@@ -773,6 +771,7 @@ class GameplayScene:
                         self.pac_man.set_death_animation(False)
                         self.pac_man.set_death_animation_timer(0)
                         self.pac_man.set_score(0)
+                        self.pac_man.set_is_caught(False)
 
                         #Resets the all ghosts' state, frame, and timers back to normal
                         for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
@@ -805,35 +804,33 @@ class GameplayScene:
             elif(self.game_state_manager.get_scene_state() != 'Main Menu Scene'):
                 self.display_surface.blit(self.gameplay_surface, (0, 0))
 
-    #A method to check if Pac-Man ate all of the pellets in the Gameplay Scene
-    def check_ate_all_pellets(self):
-        ate_all_small_pellets = True
-        ate_all_power_pellets = True
-        
-        if True in self.list_pellets[1]:
-            ate_all_small_pellets = False
-        
-        if True in self.list_power_pellets[1]:
-            ate_all_power_pellets = False
-        
-        #Debug code
-            #print(str(ate_all_small_pellets) + ' and ' + str(ate_all_power_pellets))
-            #print(ate_all_small_pellets and ate_all_power_pellets)
-        
-        return ate_all_small_pellets and ate_all_power_pellets
-
     #A method to check and handle events for the Gameplay Scene
     def event_handler(self, event):
-        #Checks if a ghost has caught Pac-Man
+        #Checks if Pac-Man ate all of the pellets
+        self.pac_man.check_ate_all_pellets(self.list_pellets, self.list_power_pellets)
+
+        #Checks if Pac-Man is caught by a ghost
         self.pac_man.check_is_caught(self.blinky, self.pinky, self.inky, self.clyde)
 
-        #Checks if Pac-Man ate all of the pellets
-        self.ate_all_pellets = self.check_ate_all_pellets() 
+        #Checks if Pac-Man ate a ghost (while the ghost was in a frightened state)
+        self.pac_man.check_if_ate_a_ghost(self.blinky, self.pinky, self.inky, self.clyde)
 
-        #If Pac-Man is caught or eats all of the pellets the round ends
-        if(self.pac_man.get_is_caught() or self.ate_all_pellets):
+        #An if statement to check if Pac-Man is ate all of the pellets or is caught by a ghost, which makes the round end
+        if(self.pac_man.get_ate_all_pellets() or self.pac_man.get_is_caught()):
             self.round_end = True
-        # Else, the event handler updates character movements, checks if Pac-Man ate all of the pellets, and updates ghost vulnerability state
+
+        #An else-if statement to check if Pac-Man ate a ghost while the ghost was in a frightened state
+        elif(self.pac_man.get_ate_a_ghost()):
+            print("Pac-Man ate a ghost: " + str(self.pac_man.get_ate_a_ghost()))
+
+            self.blinky.set_movement(False)
+            self.pinky.set_movement(False)
+            self.inky.set_movement(False)
+            self.clyde.set_movement(False)
+
+            self.blinky.state_handler(self.power_pellet_channel, self.pac_man)
+
+        #Else, the event handler resumes gameplay as normal
         else:
             self.blinky.state_handler(self.power_pellet_channel, self.pac_man)
             self.blinky.set_movement(True)
@@ -851,9 +848,9 @@ class GameplayScene:
                                      self.pellet_channel, self.power_pellet_channel,
                                      self.pellet_sound, self.power_pellet_sound)
 
-            #Loops the siren sound effect
-            if(self.pac_man.get_eat_ghosts() is False):
+            #Loops the ghost siren sound effect
+            if(self.power_pellet_channel.get_busy()):
+                   self.siren_channel.stop()
+            else:                
                 if(self.siren_channel.get_busy() is False):
-                    self.siren_channel.play(self.siren_v1_sound)    
-            else:
-                self.siren_channel.stop()
+                    self.siren_channel.play(self.siren_v1_sound) 

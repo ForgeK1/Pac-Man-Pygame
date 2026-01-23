@@ -58,6 +58,14 @@ class Ghost(ABC):
         #Initializes a variable timer to dynamically change ghost frightened state frame after Pac-Man eats a power pellet
         self.ghost_scatter_timer = 0
 
+    #A method to return Ghost's name
+    def get_name(self):
+        return self.name
+
+    #A method to set a new name for Ghost
+    def set_name(self, new_name):
+        self.name = new_name
+
     #A method to return Ghost's image
     def get_image(self):
         return self.image
@@ -388,7 +396,7 @@ class Ghost(ABC):
             self.frame_update()
 
     '''
-    A method that updates the Ghost's behavior based on the current state their in during gameplay (this method is called in the GameplayScene class)
+    A method that updates the Ghost's behavior based on the current state they're in during gameplay (this method is called in the GameplayScene class)
         Ex. Chase, Scatter, Frightened, Eaten states
     '''
     def state_handler(self, power_pellet_channel, pac_man):
@@ -397,15 +405,20 @@ class Ghost(ABC):
             #Debug code
                 # print('Ghost is in an eaten state')
 
+            
+
+            pac_man.set_ate_a_ghost(False)
+
             return None
         #Checks if the ghost is in a frightened state
         if(self.frightened_state_v1 or self.frightened_state_v2):
             #Debug code
                 # print('Ghost is in a frightened state')
             
+            #Increments the timer based on how long the power pellet lasts
             self.ghost_scatter_timer += 1
 
-            #An if-else statement to cycle between the v1 and v2 frames
+            #An if-else statement to switch from the frightened v1 to the v2 frame cycle
             if(power_pellet_channel.get_busy()):
                 if(self.ghost_scatter_timer <= 300):
                     #Debug code
@@ -419,22 +432,13 @@ class Ghost(ABC):
 
                     self.frightened_state_v1 = False
                     self.frightened_state_v2 = True
-            #Else, the ghosts are resetted to their normal state and Pac-Man is no longer chasing the ghosts
+            #Once the power pellet wears off, the ghosts are resetted to their normal state and Pac-Man is no longer chasing the ghosts
             else:          
                 self.frightened_state_v1 = False
                 self.frightened_state_v2 = False
 
                 self.frame = 0
                 self.ghost_scatter_timer = 0
-
-                pac_man.set_eat_ghosts(False)
-
-            '''
-            A section to check if Pac-Man ate a ghost during the ghost scatter timer duration
-            '''
-            #if(self.pac_man.check_ate_ghost): 
-
-
         #Else, the ghost cycles between the chase and scatter states
         else:
             '''
@@ -687,6 +691,25 @@ class Ghost(ABC):
     #A method to update the Ghost's eaten state movement
     def eaten_state_movement_update(self, list_obstacles):
         print(self.ghost_name + " is in his eaten state")
+
+        #Teleports Ghost to the other side of the tunnel
+        self.tunnel_edge_teleport()
+
+        #Returns the direction the Ghost should take to get back to the ghost gate so that they can respawn
+        self.direction = self.direction_update(list_obstacles, (240, 250))
+
+        #Debug code
+            # print(self.direction)
+        
+        #Updates the Ghost's movement based on the given direction
+        if self.direction == 'Up':
+            self.rect.centery = self.rect.centery - 2
+        elif self.direction == 'Left':
+            self.rect.centerx = self.rect.centerx - 2
+        elif self.direction == 'Down':
+            self.rect.centery = self.rect.centery + 2
+        elif self.direction == 'Right': 
+            self.rect.centerx = self.rect.centerx + 2
     
     #A method to help the Ghost travel through the tunnel edge at the left or right side of the game map
     def tunnel_edge_teleport(self):

@@ -32,10 +32,9 @@ class PacMan:
         self.high_score = 0
         self.score = 0
 
-        #Variables to check if Pac-Man ate all pellets, is caught by a ghost, or ate a ghost while the ghost was in a frightened state
-        self.ate_all_pellets = False
+        #Variables to check if Pac-Man is caught by a ghost, ate a power pellet to eat ghosts, or ate all of the pellets
+        self.eat_ghosts = False
         self.is_caught = False
-        self.ate_a_ghost = False
 
         #Variables to control character animation speed
         self.character_animation_speed = character_animation_speed #In miliseconds
@@ -148,6 +147,14 @@ class PacMan:
     #A method to set Pac-Man's current score
     def set_score(self, new_score):
         self.score = new_score
+    
+    #A method to return a boolean for Pac-Man's eat_ghosts
+    def get_eat_ghosts(self):
+        return self.eat_ghosts
+    
+    #A method to set a new boolean for Pac-Man's eat_ghosts
+    def set_eat_ghosts(self, eat_ghosts):
+        self.eat_ghosts = eat_ghosts
 
     #A method to return a boolean for Pac-Man's is_caught
     def get_is_caught(self):
@@ -156,22 +163,6 @@ class PacMan:
     #A method to set a new boolean for Pac-Man's is_caught
     def set_is_caught(self, new_is_caught):
         self.is_caught = new_is_caught
-
-    #A method to return a boolean for Pac-Man's ate_all_pellets
-    def get_ate_all_pellets(self):
-        return self.ate_all_pellets
-    
-    #A method to set a new boolean for Pac-Man's ate_all_pellets
-    def set_ate_all_pellets(self, new_ate_all_pellets):
-        self.ate_all_pellets = new_ate_all_pellets
-
-    #A method to return a boolean for Pac-Man's ate_a_ghost
-    def get_ate_a_ghost(self):
-        return self.ate_a_ghost
-    
-    #A method to set a new boolean for Pac-Man's ate_a_ghost
-    def set_ate_a_ghost(self, new_ate_a_ghost):
-        self.ate_a_ghost = new_ate_a_ghost
     
     #A method to return a boolean for Pac-Man's death_animation
     def get_death_animation(self):
@@ -574,6 +565,12 @@ class PacMan:
 
                 list_power_pellets[1][power_pellet_index] = False
 
+                '''
+                Sets the eat_ghosts variable to True so the event handler method in the Gameplay Scene 
+                can set the ghosts to scatter mode
+                '''
+                self.eat_ghosts = True
+
                 self.score += 50
         
         #If Pac-Man's current score is higher than his high score, the high score value is updated
@@ -595,9 +592,13 @@ class PacMan:
             #print(str(ate_all_small_pellets) + ' and ' + str(ate_all_power_pellets))
             #print(ate_all_small_pellets and ate_all_power_pellets)
         
-        self.ate_all_pellets = ate_all_small_pellets and ate_all_power_pellets
+        return ate_all_small_pellets and ate_all_power_pellets
 
-    #A method to check if Pac-Man is caught by a ghost
+    '''
+    A method to check if:
+        1) Pac-Man is caught by a ghost
+        2) Pac-Man catches a ghost while the ghost is in their frightened state
+    '''
     def check_is_caught(self, blinky, pinky, inky, clyde):
         '''
         Checks if the player's minimized hitbox is interacting with a pellet
@@ -639,48 +640,9 @@ class PacMan:
                 '''
                 If the X & Y range between the ghost's rect and Pac-man's minimized rect is 
                 98 % (or 2 % apart), then Pac-Man is "caught" by the ghost
+
+                Note: If all the ghosts are in their vulnerable state after Pac-Man ate a Power
+                    Pellet, then Pac-Man won't get caught 
                 '''
                 if((range_x > 0.98 and range_y > 0.98) and (ghost.get_chase_state() is True or ghost.get_scatter_state() is True)):
                     self.is_caught = True
-    
-    #A method to check if Pac-Man ate a ghost while the ghost is in their frightened state
-    def check_if_ate_a_ghost(self, blinky, pinky, inky, clyde):
-        #Updates the position of the minimized rect hitbox
-        self.minimized_rect.center = self.rect.center
-
-        for ghost in [blinky, pinky, inky, clyde]:
-            #Grabs the index of the ghost that collided with Pac-Man's minimized rect
-            ghost_index = ghost.get_rect().colliderect(self.minimized_rect)
-            
-            if(ghost_index != -1):
-                #Checks which ghost Pac-Man collided with
-                if(blinky.get_rect().colliderect(self.minimized_rect) != -1):
-                    ghost = blinky
-                elif(pinky.get_rect().colliderect(self.minimized_rect) != -1):
-                    ghost = pinky
-                elif(inky.get_rect().colliderect(self.minimized_rect) != -1):
-                    ghost = inky
-                elif(clyde.get_rect().colliderect(self.minimized_rect) != -1):
-                    ghost = clyde
-            
-                if(self.minimized_rect.centerx > ghost.get_rect().centerx):
-                    range_x = ghost.get_rect().centerx / self.minimized_rect.centerx
-                else:
-                    range_x = self.minimized_rect.centerx / ghost.get_rect().centerx
-                
-                if(self.minimized_rect.centery > ghost.get_rect().centery):
-                    range_y = ghost.get_rect().centery / self.minimized_rect.centery
-                else: 
-                    range_y = self.minimized_rect.centery / ghost.get_rect().centery
-                
-                '''
-                If the X & Y range between the ghost's rect and Pac-man's minimized rect is 
-                98 % (or 2 % apart), then Pac-Man is "caught" by the ghost
-                '''
-                if((range_x > 0.98 and range_y > 0.98) and (ghost.get_frightened_state_v1() is True or ghost.get_frightened_state_v2() is True)):
-                    self.ate_a_ghost = True
-
-                    ghost.set_frightened_state_v1(False)
-                    ghost.set_frightened_state_v2(False)
-
-                    ghost.set_eaten_state(True)
