@@ -59,6 +59,7 @@ class GameplayScene:
         self.pellet_channel = pygame.mixer.Channel(2)
         self.power_pellet_channel = pygame.mixer.Channel(3)
         self.siren_channel = pygame.mixer.Channel(4)
+        self.ghost_eaten_channel = pygame.mixer.Channel(5)
 
         #Initializes music and sound effects
         self.pac_man_death_sound = pygame.mixer.Sound('Audio/Sound Effects/Pac-Man Death.wav')
@@ -66,6 +67,8 @@ class GameplayScene:
         self.power_pellet_sound = pygame.mixer.Sound('Audio/Sound Effects/Power-Up.wav')
         self.siren_v1_sound = pygame.mixer.Sound('Audio/Sound Effects/Ghost Siren V1.wav')
         self.siren_v2_sound = pygame.mixer.Sound('Audio/Sound Effects/Ghost Siren V2.wav')
+        self.pac_man_ate_ghost_sound = pygame.mixer.Sound('Audio/Sound Effects/Pac-Man Eating A Ghost.wav')
+        self.ghost_return = pygame.mixer.Sound('Audio/Sound Effects/Ghost Return.wav')
 
         #Initializes variables to start a new round
         self.round_intro = True
@@ -813,7 +816,7 @@ class GameplayScene:
         self.pac_man.check_is_caught(self.blinky, self.pinky, self.inky, self.clyde)
 
         #Checks if Pac-Man ate a ghost (while the ghost was in a frightened state)
-        self.pac_man.check_if_ate_a_ghost(self.blinky, self.pinky, self.inky, self.clyde)
+        self.pac_man.check_if_ate_a_ghost(self.ghost_eaten_channel, self.pac_man_ate_ghost_sound, self.blinky, self.pinky, self.inky, self.clyde)
 
         #An if statement to check if Pac-Man is ate all of the pellets or is caught by a ghost, which makes the round end
         if(self.pac_man.get_ate_all_pellets() or self.pac_man.get_is_caught()):
@@ -828,11 +831,24 @@ class GameplayScene:
             self.inky.set_movement(False)
             self.clyde.set_movement(False)
 
-            self.blinky.state_handler(self.power_pellet_channel, self.pac_man)
+            if self.ghost_eaten_channel.get_busy():
+                print("Ghost has been eaten")
+            else:          
+                self.blinky.set_movement(True)
+                self.pinky.set_movement(True)
+                self.inky.set_movement(True)
+                self.clyde.set_movement(True)
+
+                self.power_pellet_channel.set_volume(0)
+
+                if self.ghost_eaten_channel.get_busy() is False:
+                    self.ghost_eaten_channel.play(self.ghost_return)
+
+                self.blinky.state_handler(self.ghost_eaten_channel, self.power_pellet_channel, self.pac_man)
 
         #Else, the event handler resumes gameplay as normal
         else:
-            self.blinky.state_handler(self.power_pellet_channel, self.pac_man)
+            self.blinky.state_handler(self.ghost_eaten_channel, self.power_pellet_channel, self.pac_man)
             self.blinky.set_movement(True)
             self.blinky.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
             

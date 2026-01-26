@@ -58,6 +58,8 @@ class Ghost(ABC):
         #Initializes a variable timer to dynamically change ghost frightened state frame after Pac-Man eats a power pellet
         self.ghost_scatter_timer = 0
 
+        self.steps_per_frame = 0
+
     #A method to return Ghost's name
     def get_name(self):
         return self.name
@@ -399,17 +401,19 @@ class Ghost(ABC):
     A method that updates the Ghost's behavior based on the current state they're in during gameplay (this method is called in the GameplayScene class)
         Ex. Chase, Scatter, Frightened, Eaten states
     '''
-    def state_handler(self, power_pellet_channel, pac_man):
+    def state_handler(self, ghost_eaten_channel, power_pellet_channel, pac_man):
         #Checks if the ghost is in an eaten state
         if(self.eaten_state):
             #Debug code
                 # print('Ghost is in an eaten state')
 
-            
+            if self.rect.centerx == 240 and self.rect.centery == 250:
+                ghost_eaten_channel.stop()
+                power_pellet_channel.set_volume(1)
+
+                self.eaten_state = False
 
             pac_man.set_ate_a_ghost(False)
-
-            return None
         #Checks if the ghost is in a frightened state
         if(self.frightened_state_v1 or self.frightened_state_v2):
             #Debug code
@@ -690,7 +694,7 @@ class Ghost(ABC):
     
     #A method to update the Ghost's eaten state movement
     def eaten_state_movement_update(self, list_obstacles):
-        print(self.ghost_name + " is in his eaten state")
+        #print(self.ghost_name + " is in his eaten state")
 
         #Teleports Ghost to the other side of the tunnel
         self.tunnel_edge_teleport()
@@ -698,18 +702,43 @@ class Ghost(ABC):
         #Returns the direction the Ghost should take to get back to the ghost gate so that they can respawn
         self.direction = self.direction_update(list_obstacles, (240, 250))
 
-        #Debug code
-            # print(self.direction)
-        
-        #Updates the Ghost's movement based on the given direction
-        if self.direction == 'Up':
-            self.rect.centery = self.rect.centery - 2
-        elif self.direction == 'Left':
-            self.rect.centerx = self.rect.centerx - 2
-        elif self.direction == 'Down':
-            self.rect.centery = self.rect.centery + 2
-        elif self.direction == 'Right': 
-            self.rect.centerx = self.rect.centerx + 2
+        '''
+        Because direction_update only checked if the first step was valid, the program needs to check if the 
+        following step is also valid for the same direction
+            Note: Movement is twice as fast for the eaten state compared to the other states
+        '''
+        for steps_per_frame in range(2):
+            #Debug code
+                # print(steps_per_frame)
+                # print(self.direction)
+            
+            if(steps_per_frame == 1):
+                collision = pygame.Rect.copy(self.rect)
+
+                if self.direction == 'Up':
+                    collision.centery = self.rect.centery - 2
+                elif self.direction == 'Left':
+                    collision.centerx = self.rect.centerx - 2
+                elif self.direction == 'Down':
+                    collision.centery = self.rect.centery + 2
+                elif self.direction == 'Right': 
+                    collision.centerx = self.rect.centerx + 2
+                
+                #Debug code
+                    # print(collision)
+                
+                if(collision.collidelist(list_obstacles[2]) != -1):
+                    break
+
+            #Updates the Ghost's movement based on the given direction
+            if self.direction == 'Up':
+                self.rect.centery = self.rect.centery - 2
+            elif self.direction == 'Left':
+                self.rect.centerx = self.rect.centerx - 2
+            elif self.direction == 'Down':
+                self.rect.centery = self.rect.centery + 2
+            elif self.direction == 'Right': 
+                self.rect.centerx = self.rect.centerx + 2
     
     #A method to help the Ghost travel through the tunnel edge at the left or right side of the game map
     def tunnel_edge_teleport(self):
