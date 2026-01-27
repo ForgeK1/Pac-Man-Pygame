@@ -10,9 +10,9 @@ from abc import ABC, abstractmethod
 
 class Ghost(ABC):
     #A constructor to initialize an instance of the Ghost
-    def __init__(self, ghost_name, starting_image_path, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, level_counter, game_state_manager):
+    def __init__(self, name, starting_image_path, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, level_counter, game_state_manager):
         #Initializes a variable to assign the child ghost name (Blinky, Inky, Pinky, or Clyde)
-        self.ghost_name = ghost_name
+        self.name = name
 
         #Initializes variables to keep track of the image and rect
         self.image = pygame.image.load(starting_image_path)
@@ -189,42 +189,42 @@ class Ghost(ABC):
 
     #Right movement frame 1
     def set_RMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/right_frame_1.png')
+        self.image = pygame.image.load('Images/Ghosts/' + self.name + '/right_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Right movement frame 2
     def set_RMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/right_frame_2.png')
+        self.image = pygame.image.load('Images/Ghosts/' + self.name + '/right_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
     #Left movement frame 1
     def set_LMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/left_frame_1.png')
+        self.image = pygame.image.load('Images/Ghosts/' + self.name + '/left_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Left movement frame 2
     def set_LMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/left_frame_2.png')
+        self.image = pygame.image.load('Images/Ghosts/' + self.name + '/left_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Up movement frame 1
     def set_UMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/up_frame_1.png')
+        self.image = pygame.image.load('Images/Ghosts/' + self.name + '/up_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Up movement frame 2
     def set_UMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/up_frame_2.png')
+        self.image = pygame.image.load('Images/Ghosts/' + self.name + '/up_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Down movement frame 1
     def set_DMF1(self):
-        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/down_frame_1.png')
+        self.image = pygame.image.load('Images/Ghosts/' + self.name + '/down_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     #Down movement frame 2
     def set_DMF2(self):
-        self.image = pygame.image.load('Images/Ghosts/' + self.ghost_name + '/down_frame_2.png')
+        self.image = pygame.image.load('Images/Ghosts/' + self.name + '/down_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     '''
@@ -410,10 +410,11 @@ class Ghost(ABC):
             if self.rect.centerx == 240 and self.rect.centery == 250:
                 ghost_eaten_channel.stop()
                 power_pellet_channel.set_volume(1)
+                self.siren_channel.set_volume(1)
 
                 self.eaten_state = False
-
-            pac_man.set_ate_a_ghost(False)
+                pac_man.set_ate_a_ghost(None, False)
+                
         #Checks if the ghost is in a frightened state
         if(self.frightened_state_v1 or self.frightened_state_v2):
             #Debug code
@@ -501,9 +502,9 @@ class Ghost(ABC):
                     self.chase_and_scatter_cycle_curr_timer = self.chase_and_scatter_cycle_real_timer
             
             #Debug code
-                # if(self.ghost_name == "Blinky (Red)"):
+                # if(self.name == "Blinky (Red)"):
                 #     #print("\n********************************This if statement is running********************************")
-                #     print("\n" + self.ghost_name + " " + str(self.chase_and_scatter_cycle_phase_timers))
+                #     print("\n" + self.name + " " + str(self.chase_and_scatter_cycle_phase_timers))
                 #     print("Chase State: " + str(self.chase_state))
                 #     print("Scatter State: " + str(self.scatter_state))
                 #     print("Number of seconds passed: " + str(round(num_seconds_passed)) + "\n")
@@ -524,24 +525,24 @@ class Ghost(ABC):
 
         elif(2 <= self.level_counter and self.level_counter <= 4):
             #For the 6th timer: Red 17 sec / Pink 13 sec / Inky 14 sec / Clyde 14 sec
-            if(self.ghost_name == "Blinky (Red)"):
+            if(self.name == "Blinky (Red)"):
                 cycle_phase_timers = [7, 20, 7, 20, 5, 17, 0.01, -1]
-            elif(self.ghost_name == "Pinky (Pink)"):
+            elif(self.name == "Pinky (Pink)"):
                 cycle_phase_timers = [7, 20, 7, 20, 5, 13, 0.01, -1]
-            elif(self.ghost_name == "Inky (Cyan)"):
+            elif(self.name == "Inky (Cyan)"):
                 cycle_phase_timers = [7, 20, 7, 20, 5, 14, 0.01, -1]
-            elif(self.ghost_name == "Clyde (Orange)"):
+            elif(self.name == "Clyde (Orange)"):
                 cycle_phase_timers = [7, 20, 7, 20, 5, 14, 0.01, -1]
 
         #Rounds 5 and up
         elif(5 <= self.level_counter): 
-            if(self.ghost_name == "Blinky (Red)"):
+            if(self.name == "Blinky (Red)"):
                 cycle_phase_timers = [5, 20, 5, 20, 5, 17, 0.01, -1]
-            elif(self.ghost_name == "Pinky (Pink)"):
+            elif(self.name == "Pinky (Pink)"):
                 cycle_phase_timers = [5, 20, 5, 20, 5, 17, 0.01, -1]
-            elif(self.ghost_name == "Inky (Cyan)"):
+            elif(self.name == "Inky (Cyan)"):
                 cycle_phase_timers = [5, 20, 5, 20, 5, 14, 0.01, -1]
-            elif(self.ghost_name == "Clyde (Orange)"):
+            elif(self.name == "Clyde (Orange)"):
                 cycle_phase_timers = [5, 20, 5, 20, 5, 14, 0.01, -1]
 
         return cycle_phase_timers
@@ -660,7 +661,7 @@ class Ghost(ABC):
     #A method to update the Ghost's frightened state movement
     def frightened_state_movement_update(self, list_obstacles):
         #Debug code
-            # print(self.ghost_name + " is in his frightened state")
+            # print(self.name + " is in his frightened state")
 
         #Teleports Ghost to the other side of the tunnel
         self.tunnel_edge_teleport()
@@ -694,7 +695,7 @@ class Ghost(ABC):
     
     #A method to update the Ghost's eaten state movement
     def eaten_state_movement_update(self, list_obstacles):
-        #print(self.ghost_name + " is in his eaten state")
+        #print(self.name + " is in his eaten state")
 
         #Teleports Ghost to the other side of the tunnel
         self.tunnel_edge_teleport()

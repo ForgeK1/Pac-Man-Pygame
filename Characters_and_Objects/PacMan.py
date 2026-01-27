@@ -35,7 +35,7 @@ class PacMan:
         #Variables to check if Pac-Man ate all pellets, is caught by a ghost, or ate a ghost while the ghost was in a frightened state
         self.ate_all_pellets = False
         self.is_caught = False
-        self.ate_a_ghost = False
+        self.ate_a_ghost = [None, False]
 
         #Variables to control character animation speed
         self.character_animation_speed = character_animation_speed #In miliseconds
@@ -165,13 +165,13 @@ class PacMan:
     def set_ate_all_pellets(self, new_ate_all_pellets):
         self.ate_all_pellets = new_ate_all_pellets
 
-    #A method to return a boolean for Pac-Man's ate_a_ghost
+    #A method to return a boolean for Pac-Man's ate_a_ghost --> [Ghost object, Boolean of ghost being eaten]
     def get_ate_a_ghost(self):
         return self.ate_a_ghost
     
-    #A method to set a new boolean for Pac-Man's ate_a_ghost
-    def set_ate_a_ghost(self, new_ate_a_ghost):
-        self.ate_a_ghost = new_ate_a_ghost
+    #A method to set a new boolean for Pac-Man's ate_a_ghost --> [Ghost object, Boolean of ghost being eaten]
+    def set_ate_a_ghost(self, new_ghost, ghost_eaten):
+        self.ate_a_ghost = [new_ghost, ghost_eaten]
     
     #A method to return a boolean for Pac-Man's death_animation
     def get_death_animation(self):
@@ -678,12 +678,13 @@ class PacMan:
                 98 % (or 2 % apart), then Pac-Man is "caught" by the ghost
                 '''
                 if((range_x > 0.98 and range_y > 0.98) and (ghost.get_frightened_state_v1() is True or ghost.get_frightened_state_v2() is True) and (ghost.get_eaten_state() is False)):
-                    self.ate_a_ghost = True
+                    self.ate_a_ghost = [ghost, True]
 
                     ghost.set_frightened_state_v1(False)
                     ghost.set_frightened_state_v2(False)
+                    ghost.set_eaten_state(True)
 
                     if ghost_eaten_channel.get_busy() is False:
                         ghost_eaten_channel.play(pac_man_ate_ghost_sound)
 
-                    ghost.set_eaten_state(True)
+                    print(self.ate_a_ghost)

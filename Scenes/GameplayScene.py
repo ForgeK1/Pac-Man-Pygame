@@ -822,39 +822,17 @@ class GameplayScene:
         if(self.pac_man.get_ate_all_pellets() or self.pac_man.get_is_caught()):
             self.round_end = True
 
-        #An else-if statement to check if Pac-Man ate a ghost while the ghost was in a frightened state
-        elif(self.pac_man.get_ate_a_ghost()):
-            print("Pac-Man ate a ghost: " + str(self.pac_man.get_ate_a_ghost()))
-
-            self.blinky.set_movement(False)
-            self.pinky.set_movement(False)
-            self.inky.set_movement(False)
-            self.clyde.set_movement(False)
-
-            if self.ghost_eaten_channel.get_busy():
-                print("Ghost has been eaten")
-            else:          
-                self.blinky.set_movement(True)
-                self.pinky.set_movement(True)
-                self.inky.set_movement(True)
-                self.clyde.set_movement(True)
-
-                self.power_pellet_channel.set_volume(0)
-
-                if self.ghost_eaten_channel.get_busy() is False:
-                    self.ghost_eaten_channel.play(self.ghost_return)
-
-                self.blinky.state_handler(self.ghost_eaten_channel, self.power_pellet_channel, self.pac_man)
-
         #Else, the event handler resumes gameplay as normal
         else:
+            #Loops the ghost siren sound effect
+            if(self.power_pellet_channel.get_busy()):
+                   self.siren_channel.stop()
+            else:                
+                if(self.siren_channel.get_busy() is False):
+                    self.siren_channel.play(self.siren_v1_sound) 
+
             self.blinky.state_handler(self.ghost_eaten_channel, self.power_pellet_channel, self.pac_man)
-            self.blinky.set_movement(True)
             self.blinky.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
-            
-            self.pinky.set_movement(True)
-            self.inky.set_movement(True)
-            self.clyde.set_movement(True)
             
             self.pac_man.movement_update(event, self.list_blue_obstacles)
 
@@ -864,9 +842,40 @@ class GameplayScene:
                                      self.pellet_channel, self.power_pellet_channel,
                                      self.pellet_sound, self.power_pellet_sound)
 
-            #Loops the ghost siren sound effect
-            if(self.power_pellet_channel.get_busy()):
-                   self.siren_channel.stop()
-            else:                
-                if(self.siren_channel.get_busy() is False):
-                    self.siren_channel.play(self.siren_v1_sound) 
+            #An if statement to check if Pac-Man ate a ghost while the ghost was in a frightened state
+            if(self.pac_man.get_ate_a_ghost()[1]):
+                ghost = self.pac_man.get_ate_a_ghost()[0]
+
+                if self.ghost_eaten_channel.get_busy():
+                    print(str(ghost.get_name()) + " Ghost has been eaten")
+                    
+                    self.blinky.set_movement(False)
+                    self.pinky.set_movement(False)
+                    self.inky.set_movement(False)
+                    self.clyde.set_movement(False)
+
+                    self.pac_man.set_movement(False)
+
+                    ghost.get_image().set_alpha(0)
+                else:          
+                    if(ghost.get_movement() is False):
+                        self.blinky.set_movement(True)
+                        self.pinky.set_movement(True)
+                        self.inky.set_movement(True)
+                        self.clyde.set_movement(True)
+
+                        ghost.get_image().set_alpha(1)
+
+                        self.pac_man.set_movement(True)
+
+                    #for ghost 
+                    '''
+                    <--- Continue from here and try to combine this if statement with
+                         the one above
+                    '''
+
+                    self.power_pellet_channel.set_volume(0)
+                    self.siren_channel.set_volume(0)
+
+                    if self.ghost_eaten_channel.get_busy() is False:
+                        self.ghost_eaten_channel.play(self.ghost_return)
