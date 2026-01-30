@@ -171,7 +171,7 @@ class PacMan:
     
     #A method to set a new boolean for Pac-Man's ate_a_ghost --> [Ghost object, Boolean of ghost being eaten]
     def set_ate_a_ghost(self, new_ghost, ghost_eaten):
-        self.ate_a_ghost = [new_ghost, ghost_eaten]
+        self.ate_a_ghost = (new_ghost, ghost_eaten)
     
     #A method to return a boolean for Pac-Man's death_animation
     def get_death_animation(self):
@@ -597,7 +597,7 @@ class PacMan:
         
         self.ate_all_pellets = ate_all_small_pellets and ate_all_power_pellets
 
-    #A method to check if Pac-Man is caught by a ghost
+    #A method to check if Pac-Man is caught by a ghost in the Gameplay Scene
     def check_is_caught(self, blinky, pinky, inky, clyde):
         '''
         Checks if the player's minimized hitbox is interacting with a pellet
@@ -643,7 +643,7 @@ class PacMan:
                 if((range_x > 0.98 and range_y > 0.98) and (ghost.get_chase_state() is True or ghost.get_scatter_state() is True) and (ghost.eaten_state is False)):
                     self.is_caught = True
     
-    #A method to check if Pac-Man ate a ghost while the ghost is in their frightened state
+    #A method to check if Pac-Man ate a ghost while the ghost is in their frightened state in the Gameplay Scene
     def check_if_ate_a_ghost(self, ghost_eaten_channel, pac_man_ate_ghost_sound, blinky, pinky, inky, clyde):
         #Updates the position of the minimized rect hitbox
         self.minimized_rect.center = self.rect.center
@@ -675,16 +675,17 @@ class PacMan:
                 
                 '''
                 If the X & Y range between the ghost's rect and Pac-man's minimized rect is 
-                98 % (or 2 % apart), then Pac-Man is "caught" by the ghost
+                98 % (or 2 % apart), then Pac-Man "ate" a ghost
                 '''
                 if((range_x > 0.98 and range_y > 0.98) and (ghost.get_frightened_state_v1() is True or ghost.get_frightened_state_v2() is True) and (ghost.get_eaten_state() is False)):
-                    self.ate_a_ghost = [ghost, True]
+                    self.ate_a_ghost = (ghost, True)
 
                     ghost.set_frightened_state_v1(False)
                     ghost.set_frightened_state_v2(False)
                     ghost.set_eaten_state(True)
-
+                    
                     if ghost_eaten_channel.get_busy() is False:
                         ghost_eaten_channel.play(pac_man_ate_ghost_sound)
 
-                    print(self.ate_a_ghost)
+                    #Debug code
+                        #print(self.ate_a_ghost)

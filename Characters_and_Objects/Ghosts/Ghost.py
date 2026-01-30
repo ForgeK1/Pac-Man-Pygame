@@ -401,22 +401,58 @@ class Ghost(ABC):
     A method that updates the Ghost's behavior based on the current state they're in during gameplay (this method is called in the GameplayScene class)
         Ex. Chase, Scatter, Frightened, Eaten states
     '''
-    def state_handler(self, ghost_eaten_channel, power_pellet_channel, pac_man):
+    def state_handler(self, siren_channel, ghost_eaten_channel, ghost_return, power_pellet_channel):
+        #Debug code
+            # print("\nEaten state: " + str(self.eaten_state) + 
+            #       "\nFrightend state: " + str(self.frightened_state_v1 or self.frightened_state_v2) +
+            #       "\nChase state: " + str(self.chase_state) + 
+            #       "\nScatter state: " + str(self.scatter_state))
+        
         #Checks if the ghost is in an eaten state
         if(self.eaten_state):
             #Debug code
                 # print('Ghost is in an eaten state')
 
-            if self.rect.centerx == 240 and self.rect.centery == 250:
+            '''
+            Plays the ghost return sound effect until the ghost respawns at the gate
+            '''
+
+            power_pellet_channel.set_volume(0)
+            siren_channel.set_volume(0)
+
+            if ghost_eaten_channel.get_busy() is False:
+                ghost_eaten_channel.play(ghost_return)
+
+            '''
+            Checks how close the ghost is to the gate to respawn. If the ghost is in front of the gate, 
+            the ghost state goes back to normal and the original sound effects are resumed
+            '''
+
+            gate_coordinates = (240, 250)
+
+            if(gate_coordinates[0] > self.rect.centerx):
+                range_x = self.rect.centerx / gate_coordinates[0]
+            else:
+                range_x = gate_coordinates[0] / self.rect.centerx
+            
+            if(gate_coordinates[1] > self.rect.centery):
+                range_y = self.rect.centery / gate_coordinates[1]
+            else: 
+                range_y = gate_coordinates[1] / self.rect.centery
+
+            #Debug code
+                # print('\nrange_x: ' + str(range_x))
+                # print('\nrange_y: ' + str(range_y))
+
+            if range_x > 0.98 and range_y > 0.98:
                 ghost_eaten_channel.stop()
                 power_pellet_channel.set_volume(1)
-                self.siren_channel.set_volume(1)
+                siren_channel.set_volume(1)
 
                 self.eaten_state = False
-                pac_man.set_ate_a_ghost(None, False)
                 
         #Checks if the ghost is in a frightened state
-        if(self.frightened_state_v1 or self.frightened_state_v2):
+        elif(self.frightened_state_v1 or self.frightened_state_v2):
             #Debug code
                 # print('Ghost is in a frightened state')
             
