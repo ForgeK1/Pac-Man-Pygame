@@ -36,9 +36,13 @@ class GameplayScene:
         #Initializes the character objects
         self.pac_man = PacMan(30, 30, 'Left', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138, True, 50)
         self.blinky = Blinky(30, 30, "Left", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68, True, 100, self.level_counter, self.game_state_manager)
-        self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
-        self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
-        self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
+        # self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
+        # self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
+        # self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
+
+        self.pinky = Pinky(30, 30, "Down", 239, 353, True, 100, self.level_counter, self.game_state_manager)
+        self.inky = Inky(30, 30, "Up", 161, 299, True, 100, self.level_counter, self.game_state_manager)
+        self.clyde = Clyde(30, 30, "Up", 318, 300, True, 100, self.level_counter, self.game_state_manager)
         
         #Initializes two lists of obstacles for the game map
         self.list_blue_obstacles = None
@@ -60,6 +64,7 @@ class GameplayScene:
         self.power_pellet_channel = pygame.mixer.Channel(3)
         self.siren_channel = pygame.mixer.Channel(4)
         self.ghost_eaten_channel = pygame.mixer.Channel(5)
+        self.ghost_return_channel = pygame.mixer.Channel(6)
 
         #Initializes music and sound effects
         self.pac_man_death_sound = pygame.mixer.Sound('Audio/Sound Effects/Pac-Man Death.wav')
@@ -99,12 +104,12 @@ class GameplayScene:
         elif(self.round_end):
             self.end_round()
         #Else, the player is playing the game
-        else:            
-            #A method to check player and game events for the Gameplay Scene
-            self.event_handler(event)
-
+        else:     
             #A method to set up the updated Gameplay Scene surface during when the player controls Pac-Man
             self.set_up_gameplay_surface()
+
+            #A method to check player and game events for the Gameplay Scene
+            self.event_handler(event)            
 
             #Blits the Gameplay Scene surface onto the display surface
             self.display_surface.blit(self.gameplay_surface, (0, 0))
@@ -829,6 +834,10 @@ class GameplayScene:
         
         #An else-if statement to pause momentarily after Pac-Man eats a ghost (Note: get_ate_a_ghost is [ghost object, boolean])
         elif(self.pac_man.get_ate_a_ghost()[1]):
+            #Stops the ghost_return channel (if a ghost has been eaten beforehand)
+            if(self.ghost_return_channel.get_busy()):
+                self.ghost_return_channel.stop()
+
             #Grabs the ghost that was caught
             ghost = self.pac_man.get_ate_a_ghost()[0]
 
@@ -843,9 +852,29 @@ class GameplayScene:
                 self.inky.set_movement(False)
                 self.clyde.set_movement(False)
 
-                #Showcases the amount of score Pac-Man recieves when he eats a ghost
                 self.pac_man.get_image().set_alpha(0)
                 ghost.get_image().set_alpha(0)  
+
+                '''
+                Showcases the amount of score Pac-Man recieves when he eats a ghost
+                '''
+                score_streak_image = None
+                score_streak_image_rect = None
+
+                match self.pac_man.get_score_streak():
+                    case 1: 
+                        score_streak_image = pygame.transform.scale(pygame.image.load('Images/Score Streak (# of Ghosts Eaten)/200.png'), (30, 15))
+                    case 2:
+                        score_streak_image = pygame.transform.scale(pygame.image.load('Images/Score Streak (# of Ghosts Eaten)/400.png'), (30, 15))
+                    case 3:
+                        score_streak_image = pygame.transform.scale(pygame.image.load('Images/Score Streak (# of Ghosts Eaten)/800.png'), (30, 15))
+                    case 4:
+                        score_streak_image = pygame.transform.scale(pygame.image.load('Images/Score Streak (# of Ghosts Eaten)/1600.png'), (30, 15))
+                
+                score_streak_image_rect = score_streak_image.get_rect()
+                score_streak_image_rect.center = self.pac_man.get_rect().center
+
+                self.gameplay_surface.blit(score_streak_image, score_streak_image_rect)
 
             #Resumes all character movements                         
             else:          
@@ -868,12 +897,14 @@ class GameplayScene:
                    self.siren_channel.stop()
             else:                
                 if(self.siren_channel.get_busy() is False):
-                    self.siren_channel.play(self.siren_v1_sound) 
+                    self.siren_channel.play(self.siren_v1_sound)
 
-            for ghost in [self.pinky, self.inky, self.clyde]:
-                ghost.state_handler(self.siren_channel, self.ghost_eaten_channel, self.ghost_return, self.power_pellet_channel)
+                #Resets Pac-Man's score streak (# of ghosts eaten in a row) when the power_pellet_channel ends
+                self.pac_man.set_score_streak(0)
 
-            self.blinky.state_handler(self.siren_channel, self.ghost_eaten_channel, self.ghost_return, self.power_pellet_channel)
+            for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:                
+                ghost.state_handler(self.siren_channel, self.ghost_return_channel, self.ghost_return, self.power_pellet_channel)
+
             self.blinky.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
             
             self.pac_man.movement_update(event, self.list_blue_obstacles)

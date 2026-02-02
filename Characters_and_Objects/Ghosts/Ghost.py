@@ -20,13 +20,14 @@ class Ghost(ABC):
         self.rect = self.image.get_rect()
         self.rect.center = (x_position, y_position)
 
-        #Initializes variables to keep track of the scale, direction, movement boolean, and frame of Ghost
+        #Initializes variables to keep track of the scale, direction, movement boolean, frame of the Ghost, and how many steps to take per frame (based on their current state)
         self.horizontal_scale = horizontal_scale
         self.vertical_scale = vertical_scale
         self.direction = direction
         self.opposite_direction = None
         self.movement = movement
         self.frame = 0
+        self.steps_per_frame = 0
 
         #Initializes variables to control character animation speed
         self.character_animation_speed = character_animation_speed #In miliseconds
@@ -57,8 +58,6 @@ class Ghost(ABC):
 
         #Initializes a variable timer to dynamically change ghost frightened state frame after Pac-Man eats a power pellet
         self.ghost_scatter_timer = 0
-
-        self.steps_per_frame = 0
 
     #A method to return Ghost's name
     def get_name(self):
@@ -401,7 +400,7 @@ class Ghost(ABC):
     A method that updates the Ghost's behavior based on the current state they're in during gameplay (this method is called in the GameplayScene class)
         Ex. Chase, Scatter, Frightened, Eaten states
     '''
-    def state_handler(self, siren_channel, ghost_eaten_channel, ghost_return, power_pellet_channel):
+    def state_handler(self, siren_channel, ghost_return_channel, ghost_return, power_pellet_channel):
         #Debug code
             # print("\nEaten state: " + str(self.eaten_state) + 
             #       "\nFrightend state: " + str(self.frightened_state_v1 or self.frightened_state_v2) +
@@ -420,8 +419,8 @@ class Ghost(ABC):
             power_pellet_channel.set_volume(0)
             siren_channel.set_volume(0)
 
-            if ghost_eaten_channel.get_busy() is False:
-                ghost_eaten_channel.play(ghost_return)
+            if ghost_return_channel.get_busy() is False:
+                ghost_return_channel.play(ghost_return)
 
             '''
             Checks how close the ghost is to the gate to respawn. If the ghost is in front of the gate, 
@@ -445,7 +444,7 @@ class Ghost(ABC):
                 # print('\nrange_y: ' + str(range_y))
 
             if range_x > 0.98 and range_y > 0.98:
-                ghost_eaten_channel.stop()
+                ghost_return_channel.stop()
                 power_pellet_channel.set_volume(1)
                 siren_channel.set_volume(1)
 

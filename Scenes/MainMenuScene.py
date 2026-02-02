@@ -46,11 +46,11 @@ class MainMenuScene:
         #Fills the background of the display surface
         self.display_surface.fill('black')
         
-        #Checks and handles player events for the Main Menu Scene
-        self.event_handler(event)
-        
         #A method to set up the updated Main Menu Scene surface
         self.set_up_main_menu_surface()
+
+        #Checks and handles player events for the Main Menu Scene
+        self.event_handler(event)
 
         #Blits the Main Menu Scene surface onto the display surface
         self.display_surface.blit(self.main_menu_surface, (0, 0))
