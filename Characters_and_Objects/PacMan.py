@@ -673,8 +673,6 @@ class PacMan:
         98 % (or 2 % apart), then Pac-Man "ate" a ghost
         '''
         if((range_x > 0.97 and range_y > 0.97) and (ghost.get_frightened_state_v1() is True or ghost.get_frightened_state_v2() is True) and (ghost.get_eaten_state() is False)):
-            print("If statement is running")
-            
             self.ate_a_ghost = (ghost, True)
 
             ghost.set_frightened_state_v1(False)
@@ -687,10 +685,6 @@ class PacMan:
             #Updates Pac-Man's score based on the number of ghosts Pac-Man ate in a row
             self.score_streak += 1
             self.score += (math.pow(2, self.score_streak) * 100) #200, 400, 800, 1600 (the streak keeps going so long as the power_pellet channel is active)
-            
-            #Resets the score streak after all four ghosts have been eaten in a row (regardless if another Power Pellet was eaten)
-            if(self.score_streak == 4):
-                self.score_streak = 1
 
             #Debug code
                 #print(self.ate_a_ghost)

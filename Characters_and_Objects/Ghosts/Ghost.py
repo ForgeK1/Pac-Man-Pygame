@@ -392,6 +392,8 @@ class Ghost(ABC):
             #Sets up a new time
             self.last_updated_time = curr_time
         
+        print(self.movement)
+
         #If True, then the program updates the frame of the character. If False, then the program uses the old frame in runtime
         if(change_frame and self.movement):
             self.frame_update()
@@ -538,7 +540,7 @@ class Ghost(ABC):
             
             #Debug code
                 # if(self.name == "Blinky (Red)"):
-                #     #print("\n********************************This if statement is running********************************")
+                #     #print("\n********************************This ********************************")
                 #     print("\n" + self.name + " " + str(self.chase_and_scatter_cycle_phase_timers))
                 #     print("Chase State: " + str(self.chase_state))
                 #     print("Scatter State: " + str(self.scatter_state))
