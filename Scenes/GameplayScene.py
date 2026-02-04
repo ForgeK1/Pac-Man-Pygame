@@ -316,7 +316,7 @@ class GameplayScene:
                 self.pac_man.set_movement(True)
 
                 for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:  
-                        ghost.set_movement(True)
+                    ghost.set_movement(True)
             
             '''
             A section to set up the obstacles and pellets
@@ -455,7 +455,7 @@ class GameplayScene:
                 self.display_surface.blit(self.gameplay_surface, (0, 0))
 
                 #After another 200 iterations, the gameplay for the play will resume
-                if(self.transition_to_next_round_timer == 200):
+                if(self.transition_to_next_round_timer >= 200):
                     #Ensures that the methods in the else statement of the run() method can start
                     self.round_intro = False
 
@@ -556,11 +556,17 @@ class GameplayScene:
                     self.pac_man.set_CF()
                     self.pac_man.set_ate_all_pellets(False)
 
-                    #Resets the all ghosts' state, frame, and timers back to normal
+                    #Resets all ghosts to their default direction
+                    self.blinky.set_direction('Left')
+                    self.pinky.set_direction('Down')
+                    self.inky.set_direction('Down')
+                    self.clyde.set_direction('Down')
+
+                    #Resets the all ghosts' variables back to normal
                     for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
                         ghost.set_frame(0)
                         ghost.set_chase_state(False)
-                        ghost.set_scatter_state(True) #The first phase ghosts will be in at the start of a round is Scatter phase
+                        ghost.set_scatter_state(True) #The first phase ghosts will be in at the start of each round is Scatter phase
                         ghost.set_frightened_state_v1(False)
                         ghost.set_frightened_state_v2(False)
                         ghost.set_eaten_state(False)
@@ -637,13 +643,33 @@ class GameplayScene:
                     self.pac_man.set_frame(0)
                     self.pac_man.set_death_animation(True)
 
-                #Plays Pac-Man's death animation until the death sound stops
+                #Once Pac-Man's death animation stops, character and game variables are reset for the next round
                 if(self.end_round_channel.get_busy() is False):
-                    #Resets all of their states so that they can go back to their chase and scatter cycle
+                    #Resets Pac-Man's variables back to normal
+                    self.pac_man.set_direction('Left')
+                    self.pac_man.set_frame(0)
+                    self.pac_man.set_CF()
+                    self.pac_man.set_death_animation(False)
+                    self.pac_man.set_death_animation_timer(0)
+                    self.pac_man.set_is_caught(False)
+                    self.pac_man.frame_update()
+
+                    #Resets all ghosts to their default direction
+                    self.blinky.set_direction('Left')
+                    self.pinky.set_direction('Down')
+                    self.inky.set_direction('Up')
+                    self.clyde.set_direction('Up')
+
+                    #Resets the all ghosts' state, frame, and timers back to normal
                     for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+                        ghost.set_frame(0)
+                        ghost.set_chase_state(False)
+                        ghost.set_scatter_state(True) #The first phase ghosts will be in at the start of each round is Scatter phase
                         ghost.set_frightened_state_v1(False)
                         ghost.set_frightened_state_v2(False)
                         ghost.set_eaten_state(False)
+                        ghost.reset_chase_and_scatter_cycle()
+                        ghost.set_ghost_scatter_timer(0)
 
                         #Updates the animation so that each ghost so can use it's default frame
                         ghost.frame_update()
@@ -698,7 +724,6 @@ class GameplayScene:
                     #Sets Pac-Man's frame and animation boolean as setup for his death animation
                     self.pac_man.set_frame(0)
                     self.pac_man.set_death_animation(True)
-                    #self.pac_man.set_character_animation_speed(10)
 
                 #Plays Pac-Man's death animation until the death sound stops
                 if(self.end_round_channel.get_busy() is False):
@@ -778,7 +803,7 @@ class GameplayScene:
                         self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
                         self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
 
-                        #Sets Pac-Man's variables back to normal
+                        #Resets Pac-Man's variables back to normal
                         self.pac_man.set_list_of_lives(3)
                         self.pac_man.set_direction('Left')
                         self.pac_man.set_frame(0)
@@ -787,6 +812,13 @@ class GameplayScene:
                         self.pac_man.set_death_animation_timer(0)
                         self.pac_man.set_score(0)
                         self.pac_man.set_is_caught(False)
+                        self.pac_man.frame_update()
+
+                        #Resets all ghosts to their default direction
+                        self.blinky.set_direction('Left')
+                        self.pinky.set_direction('Down')
+                        self.inky.set_direction('Up')
+                        self.clyde.set_direction('Up')
 
                         #Resets the all ghosts' state, frame, and timers back to normal
                         for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
@@ -798,7 +830,8 @@ class GameplayScene:
                             ghost.set_eaten_state(False)
                             ghost.reset_chase_and_scatter_cycle()
                             ghost.set_ghost_scatter_timer(0)
-
+                            ghost.frame_update()
+                            
                         #Resets the transition boolean and black screen timer
                         self.transition_to_main_menu = False
                         self.transition_to_main_menu_timer = 0

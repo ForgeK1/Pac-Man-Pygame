@@ -29,7 +29,7 @@ class PacMan:
         self.frame = 0
 
         #Variables to keep track of Pac-Man's list of lives, high score, current score, and score streak (the number of ghosts eaten in a row)
-        self.list_of_lives = 3
+        self.list_of_lives = 1
         self.high_score = 0
         self.score = 0
         self.score_streak = 0
