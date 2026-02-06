@@ -563,22 +563,19 @@ class PacMan:
             else: 
                 range_y = self.minimized_rect.centery / list_power_pellets[3][power_pellet_index].centery
 
+            #Pac-Man eats a power-pellet
             if(range_x > 0.95 and range_y > 0.95):
-                #If Pac-Man has already eaten a Power Pellet, then all ghost's scatter timer and frames gets reset
-                if(power_pellet_channel.get_busy()):
-                    for ghost in list_ghosts:
-                        ghost.set_ghost_scatter_timer(0)
-                        ghost.set_frame(0)
-                
                 '''
-                Sets the ghost's chase and scatter states to False
+                Updates the ghost's variables for the power pellet
                     Note: These two states are not set to True once the power pellet channel is done because
-                        the state_handler in the abstract Ghost class automatically does that
+                          the state_handler in the abstract Ghost class automatically does that
                 '''
                 for ghost in list_ghosts:
                     ghost.set_chase_state(False)
                     ghost.set_scatter_state(False)
                     ghost.set_frightened_state_v1(True)
+                    ghost.set_frame(0)
+                    ghost.set_ghost_scatter_timer(0)
                 
                 power_pellet_channel.play(power_pellet_sound)
 
@@ -674,17 +671,17 @@ class PacMan:
         '''
         if((range_x > 0.97 and range_y > 0.97) and (ghost.get_frightened_state_v1() is True or ghost.get_frightened_state_v2() is True) and (ghost.get_eaten_state() is False)):
             self.ate_a_ghost = (ghost, True)
-
+            
             ghost.set_frightened_state_v1(False)
             ghost.set_frightened_state_v2(False)
             ghost.set_eaten_state(True)
+            ghost.set_frame(0)
             
-            if ghost_eaten_channel.get_busy() is False:
-                ghost_eaten_channel.play(pac_man_ate_ghost_sound)
+            ghost_eaten_channel.play(pac_man_ate_ghost_sound)
 
             #Updates Pac-Man's score based on the number of ghosts Pac-Man ate in a row
             self.score_streak += 1
-            self.score += (math.pow(2, self.score_streak) * 100) #200, 400, 800, 1600 (the streak keeps going so long as the power_pellet channel is active)
+            self.score += int(math.pow(2, self.score_streak) * 100) #200, 400, 800, 1600 (the streak keeps going so long as the power_pellet channel is active)
 
             #Debug code
                 #print(self.ate_a_ghost)

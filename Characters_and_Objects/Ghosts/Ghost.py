@@ -292,6 +292,7 @@ class Ghost(ABC):
 
             #Debug code for checking frame change speed
                 #print(self.get_frame())
+
         #Frightened state #2 (a pattern of repeating blue and white version of the ghost)
         elif(self.frightened_state_v2):
             #Debug code
@@ -321,6 +322,7 @@ class Ghost(ABC):
                 case 5:
                     self.set_BMF2()
                     self.frame = 0
+
         #A state where the ghost is a pair of floating eyes
         elif(self.eaten_state):
             #Debug code
@@ -334,10 +336,18 @@ class Ghost(ABC):
                 self.set_DEMF()
             elif(self.direction == 'Up'):
                 self.set_UEMF()
+
         #Normal state
         else:
             #Debug code
                 #print('The Ghost is in a normal state')
+
+            '''
+            To ensure that the normal state is not handed a frame greater than 1 (when coming out of
+            the frightened or eaten state), the frame is reset to 0
+            '''
+            if(self.frame > 1):
+                self.frame = 0
 
             match self.frame:
                 case 0:
@@ -391,12 +401,13 @@ class Ghost(ABC):
 
             #Sets up a new time
             self.last_updated_time = curr_time
-        
-        print(self.movement)
 
         #If True, then the program updates the frame of the character. If False, then the program uses the old frame in runtime
         if(change_frame and self.movement):
             self.frame_update()
+
+            if(self.name == 'Blinky (Red)'):
+                print(self.ghost_scatter_timer)
 
     '''
     A method that updates the Ghost's behavior based on the current state they're in during gameplay (this method is called in the GameplayScene class)
