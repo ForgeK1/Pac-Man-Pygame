@@ -483,7 +483,7 @@ class PacMan:
             old_direction_rect.centery = old_direction_rect.centery + 2
         elif(old_direction == 'Up'):
             old_direction_rect.centery = old_direction_rect.centery - 2
-        
+
         '''
         If Pac-Man's new direction and position does result in a collision with any walls,  
         the new values are applied to the current Pac-Man object. Otherwise, the original direction 
@@ -571,6 +571,10 @@ class PacMan:
                           the state_handler in the abstract Ghost class automatically does that
                 '''
                 for ghost in list_ghosts:
+                    #Checks if the ghost is in an eaten state. If so, the ghost will not change into a frightened state
+                    if(ghost.get_eaten_state()):
+                        continue
+
                     ghost.set_chase_state(False)
                     ghost.set_scatter_state(False)
                     ghost.set_frightened_state_v1(True)
@@ -669,12 +673,13 @@ class PacMan:
         If the X & Y range between the ghost's rect and Pac-man's minimized rect is 
         98 % (or 2 % apart), then Pac-Man "ate" a ghost
         '''
-        if((range_x > 0.97 and range_y > 0.97) and (ghost.get_frightened_state_v1() is True or ghost.get_frightened_state_v2() is True) and (ghost.get_eaten_state() is False)):
+        if((range_x > 0.95 and range_y > 0.95) and (ghost.get_frightened_state_v1() is True or ghost.get_frightened_state_v2() is True) and (ghost.get_eaten_state() is False)):
             self.ate_a_ghost = (ghost, True)
             
             ghost.set_frightened_state_v1(False)
             ghost.set_frightened_state_v2(False)
             ghost.set_eaten_state(True)
+            ghost.set_movement(False)
             ghost.set_frame(0)
             
             ghost_eaten_channel.play(pac_man_ate_ghost_sound)

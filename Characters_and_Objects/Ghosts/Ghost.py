@@ -27,7 +27,8 @@ class Ghost(ABC):
         self.opposite_direction = None
         self.movement = movement
         self.frame = 0
-        self.steps_per_frame = 0
+        self.frightened_state_steps_per_frame = 0
+        self.eaten_state_steps_per_frame = 0
 
         #Initializes variables to control character animation speed
         self.character_animation_speed = character_animation_speed #In miliseconds
@@ -52,9 +53,6 @@ class Ghost(ABC):
 
         self.chase_and_scatter_cycle_real_timer = 0
         self.chase_and_scatter_cycle_curr_timer = None
-
-        #Initializes a variable for the Ghost to move half of their speed when in a frightened state (this variable is used in the frightened_state_movement_update method for each ghost)
-        self.move_counter = 1
 
         #Initializes a variable timer to dynamically change ghost frightened state frame after Pac-Man eats a power pellet
         self.ghost_scatter_timer = 0
@@ -440,28 +438,30 @@ class Ghost(ABC):
             the ghost state goes back to normal and the original sound effects are resumed
             '''
 
-            gate_coordinates = (240, 250)
+            respawn_coordinates = (240, 310)
 
-            if(gate_coordinates[0] > self.rect.centerx):
-                range_x = self.rect.centerx / gate_coordinates[0]
+            if(respawn_coordinates[0] > self.rect.centerx):
+                range_x = self.rect.centerx / respawn_coordinates[0]
             else:
-                range_x = gate_coordinates[0] / self.rect.centerx
+                range_x = respawn_coordinates[0] / self.rect.centerx
             
-            if(gate_coordinates[1] > self.rect.centery):
-                range_y = self.rect.centery / gate_coordinates[1]
+            if(respawn_coordinates[1] > self.rect.centery):
+                range_y = self.rect.centery / respawn_coordinates[1]
             else: 
-                range_y = gate_coordinates[1] / self.rect.centery
+                range_y = respawn_coordinates[1] / self.rect.centery
 
             #Debug code
                 # print('\nrange_x: ' + str(range_x))
                 # print('\nrange_y: ' + str(range_y))
 
-            if range_x > 0.98 and range_y > 0.98:
+            if range_x > 0.95 and range_y > 0.95:
                 ghost_return_channel.stop()
                 power_pellet_channel.set_volume(1)
                 siren_channel.set_volume(1)
 
                 self.eaten_state = False
+
+                self.direction = 'Up'
                 
         #Checks if the ghost is in a frightened state
         elif(self.frightened_state_v1 or self.frightened_state_v2):
@@ -623,28 +623,39 @@ class Ghost(ABC):
         #Cycles through the dictionary to assign each key a rect value that determines the future position of each direction
         for key in directions:
             #Copies the rect of the Ghost
-            rect = pygame.Rect.copy(self.rect)
+            rect_copy = pygame.Rect.copy(self.rect)
 
             if key == 'Up':
-                rect.centery = self.rect.centery - 2
+                rect_copy.centery = self.rect.centery - 2
             elif key == 'Left':
-                rect.centerx = self.rect.centerx - 2
+                rect_copy.centerx = self.rect.centerx - 2
             elif key == 'Down':
-                rect.centery = self.rect.centery + 2
+                rect_copy.centery = self.rect.centery + 2
             elif key == 'Right': 
-                rect.centerx = self.rect.centerx + 2
+                rect_copy.centerx = self.rect.centerx + 2
 
-            directions[key] = rect
+            directions[key] = rect_copy
         
         #Cycles through each new position to see which directions are a viable path
         for key in list(directions):
             #Debug code
                 #print(str(key) + ": " + str(directions[key].collidelist(list_obstacles[2]) != -1))
 
+            #Checks if the Ghost is exiting or enterting the pink gate
+            if(key == 'Up' and self.exiting_pink_gate(directions[key])):
+                return 'Up'
+            
+            if(key in ['Left', 'Right'] and self.entering_pink_gate(directions[key])):
+                return 'Down'
+
             #If the direction collides with a wall, the direction is removed from the list
             if(directions[key].collidelist(list_obstacles[2]) != -1):
                 directions.pop(key)
         
+        #Debug code
+            # if(self.name == 'Inky (Cyan)'):
+            #     print(directions)
+
         '''
         Calculates the distance between each rect and the target, then replaces the rect value to 
         a distance value for each respective direction
@@ -665,9 +676,6 @@ class Ghost(ABC):
             distance = math.sqrt(difference_x + difference_y)
 
             directions[key] = distance
-        
-        #Debug code
-        #print(directions)
 
         '''
         Checks if the Ghost is in a frightened state. If so, the Ghost will move in a random direction
@@ -686,7 +694,54 @@ class Ghost(ABC):
             best_direction = min(directions, key=directions.get)
 
         return best_direction
+
+    #A method to allow the ghost to exit the pink gate based on their current state
+    def exiting_pink_gate(self, rect_copy):
+        #Exiting the gate (when starting the round or after respawn)
+        if(self.chase_state or self.scatter_state):
+            if(rect_copy.centerx > 240):
+                range_x = 240 / rect_copy.centerx
+            else:
+                range_x = rect_copy.centerx / 240
+            
+            if(rect_copy.centery > 272):
+                range_y = 272 / rect_copy.centery
+            else: 
+                range_y = rect_copy.centery / 272
+
+            if(range_x > 0.93 and range_y > 0.93):
+                return True
+            
+        #Debug code
+            # if(self.name == 'Pinky (Pink)'):
+                # print('range_x: ' + str(range_x))
+                # print('\nrange_y: ' + str(range_y) + '\n')
+
+            # if(self.name == 'Pinky (Pink)'):
+            #     print(range_x > 0.90 and range_y > 0.90)
     
+    #A method to allow the ghost to enter the pink gate when they are in an eaten state (so that they can respawn)
+    def entering_pink_gate(self, rect_copy):
+        if(self.eaten_state):
+            if(rect_copy.centerx > 240):
+                range_x = 240 / rect_copy.centerx
+            else:
+                range_x = rect_copy.centerx / 240
+            
+            if(rect_copy.centery > 253):
+                range_y = 253 / rect_copy.centery
+            else: 
+                range_y = rect_copy.centery / 253
+
+            # if(self.name == 'Pinky (Pink)'):
+            #     print('range_x: ' + str(range_x))
+            #     print('\nrange_y: ' + str(range_y) + '\n')
+
+            if(range_x > 0.99 and range_y > 0.99):
+                print('If statement is running')
+
+                return True
+        
     #A method to cycle through the Ghost's movement based on their current state
     def movement_update(self, list_obstacles, target):
         if(self.chase_state):
@@ -726,9 +781,9 @@ class Ghost(ABC):
         '''
         Move counter helps the Ghost move half of his speed when in a frightened state
         '''
-        self.move_counter += 1
+        self.frightened_state_steps_per_frame += 1
 
-        if self.move_counter >= 2:
+        if self.frightened_state_steps_per_frame >= 2:
             #Updates the Ghost's movement based on the given direction
             if self.direction == 'Up':
                 self.rect.centery = self.rect.centery - 2
@@ -739,7 +794,7 @@ class Ghost(ABC):
             elif self.direction == 'Right': 
                 self.rect.centerx = self.rect.centerx + 2
             
-            self.move_counter = 0
+            self.frightened_state_steps_per_frame = 0
     
     #A method to update the Ghost's eaten state movement
     def eaten_state_movement_update(self, list_obstacles):
@@ -749,45 +804,47 @@ class Ghost(ABC):
         self.tunnel_edge_teleport()
 
         #Returns the direction the Ghost should take to get back to the ghost gate so that they can respawn
-        self.direction = self.direction_update(list_obstacles, (240, 250))
+        self.direction = self.direction_update(list_obstacles, (240, 303))
+
+        #Updates the Ghost's movement based on the given direction
+        if self.direction == 'Up':
+            self.rect.centery = self.rect.centery - 2
+        elif self.direction == 'Left':
+            self.rect.centerx = self.rect.centerx - 2
+        elif self.direction == 'Down':
+            self.rect.centery = self.rect.centery + 2
+        elif self.direction == 'Right': 
+            self.rect.centerx = self.rect.centerx + 2
 
         '''
         Because direction_update only checked if the first step was valid, the program needs to check if the 
         following step is also valid for the same direction
             Note: Movement is twice as fast for the eaten state compared to the other states
         '''
-        for steps_per_frame in range(2):
-            #Debug code
-                # print(steps_per_frame)
-                # print(self.direction)
-            
-            if(steps_per_frame == 1):
-                collision = pygame.Rect.copy(self.rect)
+        if(self.eaten_state_steps_per_frame == 0):
+            collision = pygame.Rect.copy(self.rect)
 
-                if self.direction == 'Up':
-                    collision.centery = self.rect.centery - 2
-                elif self.direction == 'Left':
-                    collision.centerx = self.rect.centerx - 2
-                elif self.direction == 'Down':
-                    collision.centery = self.rect.centery + 2
-                elif self.direction == 'Right': 
-                    collision.centerx = self.rect.centerx + 2
-                
-                #Debug code
-                    # print(collision)
-                
-                if(collision.collidelist(list_obstacles[2]) != -1):
-                    break
-
-            #Updates the Ghost's movement based on the given direction
             if self.direction == 'Up':
-                self.rect.centery = self.rect.centery - 2
+                collision.centery = self.rect.centery - 2
             elif self.direction == 'Left':
-                self.rect.centerx = self.rect.centerx - 2
+                collision.centerx = self.rect.centerx - 2
             elif self.direction == 'Down':
-                self.rect.centery = self.rect.centery + 2
+                collision.centery = self.rect.centery + 2
             elif self.direction == 'Right': 
-                self.rect.centerx = self.rect.centerx + 2
+                collision.centerx = self.rect.centerx + 2
+            
+            #Debug code
+                # print(collision)
+            
+            if(collision.collidelist(list_obstacles[2]) == -1):
+                self.rect = collision
+
+            self.eaten_state_steps_per_frame = 1
+        else:
+            self.eaten_state_steps_per_frame = 0
+        
+        #Debug code
+            # print(self.steps_per_frame)
     
     #A method to help the Ghost travel through the tunnel edge at the left or right side of the game map
     def tunnel_edge_teleport(self):

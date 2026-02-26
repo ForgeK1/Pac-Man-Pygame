@@ -36,10 +36,10 @@ class GameplayScene:
         #Initializes the character objects
         self.pac_man = PacMan(30, 30, 'Left', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138, True, 50)
         self.blinky = Blinky(30, 30, "Left", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68, True, 100, self.level_counter, self.game_state_manager)
-        self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
-        self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
-        self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20, True, 100, self.level_counter, self.game_state_manager)
-        
+        self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 18, True, 100, self.level_counter, self.game_state_manager)
+        self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 18, True, 100, self.level_counter, self.game_state_manager)
+        self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 18, True, 100, self.level_counter, self.game_state_manager)
+
         #Initializes two lists of obstacles for the game map
         self.list_blue_obstacles = None
         self.list_white_obstacles = None
@@ -234,22 +234,29 @@ class GameplayScene:
         First parameter:  [X, Y] coordinates of the image
         Second parameter: Surface object of the image
         Third parameter:  Rect of the image
-        Fourth parameter: Contains the index for the pink gate image
+        Fourth parameter: Contains the image and rect of the pink gate
         '''
         self.list_blue_obstacles = [[], [], [], -1]
 
-        #An index to keep track of which file is the gate image in the for loop below
-        gate_index = 0
-
         #A for loop to iterate through all image files in the obstacles folder
-        for filename in os.listdir('Images/Obstacles/Blue'):
+        for filename in os.listdir('Images/Obstacles/Blue'):   
+            if(filename.removesuffix('.png') == '(223,268)'):
+                print('If statement ran')
+                
+                continue
+
             '''
             A section to grab the top left X & Y coordinate of each file as an array 
                 Note: The coordinates for the file are stored in the file name
             '''
             coordinates = filename
             coordinates = coordinates.removeprefix('(')
-            coordinates = coordinates.removesuffix(').png')
+
+            if('void' in filename):
+                coordinates = coordinates.removesuffix(')_void.png')
+            else:
+                coordinates = coordinates.removesuffix(').png')
+
             coordinates = coordinates.split(',')
             coordinates[0] = int(coordinates[0])
             coordinates[1] = int(coordinates[1])
@@ -268,13 +275,11 @@ class GameplayScene:
             self.list_blue_obstacles[1].append(image)
             self.list_blue_obstacles[2].append(image_rect)
 
-            '''
-            A section to save the index of the pink gate image
-            '''
-            if(filename.removesuffix('.png') == '(223,268)'):
-                self.list_blue_obstacles[3] = gate_index 
-            elif(self.list_blue_obstacles[3] == -1):
-                gate_index += 1
+            # '''
+            # A section to save the index of the pink gate image
+            # '''
+            # if(filename.removesuffix('.png') == '(223,268)'):
+            #     self.list_blue_obstacles[3] = [image, image_rect]
 
         self.list_white_obstacles = [[], [], []]
 
@@ -372,9 +377,9 @@ class GameplayScene:
 
                 #Resets all ghosts to their default direction
                 self.blinky.set_direction('Left')
-                self.pinky.set_direction('Down')
-                self.inky.set_direction('Up')
-                self.clyde.set_direction('Up')
+                self.pinky.set_direction('Up')
+                self.inky.set_direction('Right')
+                self.clyde.set_direction('Left')
 
                 #Resets the all ghosts' state, frame, and timers back to normal
                 for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
@@ -391,13 +396,13 @@ class GameplayScene:
                 #Resets the position of all characters
                 self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
                 self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
-                self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20)
-                self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
-                self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
+                self.pinky.get_rect().center = (240, 302)
+                self.inky.get_rect().center = (206, 302)
+                self.clyde.get_rect().center = (272, 302)
 
-                # self.pinky.get_rect().center = (238, 352)
-                # self.inky.get_rect().center = (160, 298)
-                # self.clyde.get_rect().center = (318, 300)
+                # self.pinky.get_rect().center = (0, 0)
+                # self.inky.get_rect().center = (0, 0)
+                # self.clyde.get_rect().center = (0, 0)
 
                 #Blits the characters onto the Gameplay surface
                 self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
@@ -488,9 +493,9 @@ class GameplayScene:
                 #Resets the position of all characters
                 self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
                 self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
-                self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20)
-                self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
-                self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
+                self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 18)
+                self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 18)
+                self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 18)
 
                 #Blits the characters onto the Gameplay surface
                 self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
@@ -907,9 +912,14 @@ class GameplayScene:
                 #Resets Pac-Man's score streak (# of ghosts eaten in a row) when the power_pellet_channel ends
                 self.pac_man.set_score_streak(0)
 
-            for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:                
+            #self.blinky,
+            for ghost in [self.pinky,self.inky, self.clyde]:                
                 ghost.state_handler(self.siren_channel, self.ghost_return_channel, self.ghost_return, self.power_pellet_channel)
                 ghost.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
+                
+                #Debug code
+                    # print("Pinky's center: " + str(self.pinky.get_rect().center))
+                    # print("Inky's & Clyde's center: " + str(self.inky.get_rect().center))
 
             # self.blinky.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
             
