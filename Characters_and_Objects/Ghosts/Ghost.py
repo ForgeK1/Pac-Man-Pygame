@@ -641,12 +641,12 @@ class Ghost(ABC):
             #Debug code
                 #print(str(key) + ": " + str(directions[key].collidelist(list_obstacles[2]) != -1))
 
-            #Checks if the Ghost is exiting or enterting the pink gate
-            if(key == 'Up' and self.exiting_pink_gate(directions[key])):
-                return 'Up'
+            # #Checks if the Ghost is exiting or enterting the pink gate
+            # if(key == 'Up' and self.exiting_pink_gate(directions[key])):
+            #     return 'Up'
             
-            if(key in ['Left', 'Right'] and self.entering_pink_gate(directions[key])):
-                return 'Down'
+            # if(key in ['Left', 'Right'] and self.entering_pink_gate(directions[key])):
+            #     return 'Down'
 
             #If the direction collides with a wall, the direction is removed from the list
             if(directions[key].collidelist(list_obstacles[2]) != -1):
