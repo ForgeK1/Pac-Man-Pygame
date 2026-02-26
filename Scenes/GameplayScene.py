@@ -391,13 +391,13 @@ class GameplayScene:
                 #Resets the position of all characters
                 self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
                 self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
-                # self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20)
-                # self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
-                # self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
+                self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 20)
+                self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 20)
+                self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 20)
 
-                self.pinky.get_rect().center = (238, 352)
-                self.inky.get_rect().center = (160, 298)
-                self.clyde.get_rect().center = (318, 300)
+                # self.pinky.get_rect().center = (238, 352)
+                # self.inky.get_rect().center = (160, 298)
+                # self.clyde.get_rect().center = (318, 300)
 
                 #Blits the characters onto the Gameplay surface
                 self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())

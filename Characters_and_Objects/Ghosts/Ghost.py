@@ -406,8 +406,8 @@ class Ghost(ABC):
         if(change_frame and self.movement):
             self.frame_update()
 
-            if(self.name == 'Blinky (Red)'):
-                print(self.ghost_scatter_timer)
+            # if(self.name == 'Blinky (Red)'):
+            #     print(self.ghost_scatter_timer)
 
     '''
     A method that updates the Ghost's behavior based on the current state they're in during gameplay (this method is called in the GameplayScene class)
