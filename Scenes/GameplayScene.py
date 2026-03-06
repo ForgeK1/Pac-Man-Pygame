@@ -234,19 +234,13 @@ class GameplayScene:
         First parameter:  [X, Y] coordinates of the image
         Second parameter: Surface object of the image
         Third parameter:  Rect of the image
-        Fourth parameter: Contains the image and rect of the pink gate
         '''
-        self.list_blue_obstacles = [[], [], [], -1]
+        self.list_blue_obstacles = [[], [], []]
 
         #A for loop to iterate through all image files in the obstacles folder
         for filename in os.listdir('Images/Obstacles/Blue'):   
-            if(filename.removesuffix('.png') == '(223,268)'):
-                print('If statement ran')
-                
-                continue
-
             '''
-            A section to grab the top left X & Y coordinate of each file as an array 
+            A section to grab the top left X & Y coordinate of each file and store it in an array 
                 Note: The coordinates for the file are stored in the file name
             '''
             coordinates = filename
@@ -271,15 +265,24 @@ class GameplayScene:
             image_rect = image.get_rect()
             image_rect.topleft = (coordinates[0], coordinates[1])
 
+            #Saves the pink gate image separately
+            if(filename.removesuffix('.png') == '(223,268)'):
+                pink_gate_image = image
+                pink_gate_rect = image_rect
+
+                #Moves onto the next obstacle png to decipher
+                continue
+
             #Stores image in the second list and the rect in the third list
             self.list_blue_obstacles[1].append(image)
             self.list_blue_obstacles[2].append(image_rect)
 
-            # '''
-            # A section to save the index of the pink gate image
-            # '''
-            # if(filename.removesuffix('.png') == '(223,268)'):
-            #     self.list_blue_obstacles[3] = [image, image_rect]
+        '''
+        Appends the pink gate image and rect after all other obstacle images have been added
+            Note: This is so that other images are not blitted on top of the pink gate image
+        '''
+        self.list_blue_obstacles[1].append(pink_gate_image)
+        self.list_blue_obstacles[2].append(pink_gate_rect)
 
         self.list_white_obstacles = [[], [], []]
 
@@ -398,7 +401,7 @@ class GameplayScene:
                 self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
                 self.pinky.get_rect().center = (240, 302)
                 self.inky.get_rect().center = (206, 302)
-                self.clyde.get_rect().center = (272, 302)
+                self.clyde.get_rect().center = (274, 302)
 
                 # self.pinky.get_rect().center = (0, 0)
                 # self.inky.get_rect().center = (0, 0)
@@ -474,9 +477,9 @@ class GameplayScene:
 
                 #Resets all ghosts to their default direction
                 self.blinky.set_direction('Left')
-                self.pinky.set_direction('Down')
-                self.inky.set_direction('Up')
-                self.clyde.set_direction('Up')
+                self.pinky.set_direction('Up')
+                self.inky.set_direction('Right')
+                self.clyde.set_direction('Left')
 
                 #Resets the all ghosts' state, frame, and timers back to normal
                 for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
@@ -493,9 +496,9 @@ class GameplayScene:
                 #Resets the position of all characters
                 self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
                 self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
-                self.pinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 18)
-                self.inky.get_rect().center = (self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 18)
-                self.clyde.get_rect().center = (self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 18)
+                self.pinky.get_rect().center = (240, 302)
+                self.inky.get_rect().center = (206, 302)
+                self.clyde.get_rect().center = (274, 302)
 
                 #Blits the characters onto the Gameplay surface
                 self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
@@ -538,9 +541,9 @@ class GameplayScene:
         #An if statement to check if Pac-Man ate all the pellets to move to the next round
         if(self.pac_man.get_ate_all_pellets()):
             #Stops the all relative sound channels
-            self.siren_channel.stop()
-            self.power_pellet_channel.stop()
-            self.pellet_channel.stop()
+            for channel in [self.siren_channel, self.power_pellet_channel, self.pellet_channel, self.ghost_eaten_channel, self.ghost_return_channel]: 
+                channel.stop()
+                channel.set_volume(1) #Sets the volume back to normal in case it was muted 
             
             #Stops Pac-Man from frame change and movement
             self.pac_man.set_movement(False)
@@ -613,7 +616,7 @@ class GameplayScene:
                         #Blits blue obstacles on the Gameplay Scene
                         for i in range(len(self.list_blue_obstacles[0])): 
                             #All obstacles are blit on this scene except for the gate image
-                            if(i != self.list_blue_obstacles[3]):
+                            if(self.list_blue_obstacles[2][i].topleft != (223, 268)):
                                 self.gameplay_surface.blit(self.list_blue_obstacles[1][i], self.list_blue_obstacles[2][i])
                     else:
                         #Blits white obstacles on the Gameplay Scene
@@ -635,9 +638,9 @@ class GameplayScene:
         #An else-if statement to check if Pac-Man got caught by a ghost but still have lives to continue
         elif(self.pac_man.get_list_of_lives() > 0):            
             #Stops the all relative sound channels
-            self.siren_channel.stop()
-            self.power_pellet_channel.stop()
-            self.pellet_channel.stop()
+            for channel in [self.siren_channel, self.power_pellet_channel, self.pellet_channel, self.ghost_eaten_channel, self.ghost_return_channel]: 
+                channel.stop()
+                channel.set_volume(1) #Sets the volume back to normal in case it was muted 
             
             #Stops Pac-Man from frame change and movement
             self.pac_man.set_movement(False)
@@ -690,9 +693,9 @@ class GameplayScene:
         #An else statement for when Pac-Man gets caught and has no more lives
         else:
             #Stops the all relative sound channels
-            self.siren_channel.stop()
-            self.power_pellet_channel.stop()
-            self.pellet_channel.stop()
+            for channel in [self.siren_channel, self.power_pellet_channel, self.pellet_channel, self.ghost_eaten_channel, self.ghost_return_channel]: 
+                channel.stop()
+                channel.set_volume(1) #Sets the volume back to normal in case it was muted 
             
             #Stops Pac-Man from frame change and movement
             self.pac_man.set_movement(False)
@@ -779,6 +782,7 @@ class GameplayScene:
                         self.pac_man.set_death_animation_timer(0)
                         self.pac_man.set_score(0)
                         self.pac_man.set_is_caught(False)
+                        self.pac_man.set_list_of_lives(3)
                         self.ghost_disappear_timer = 0
                         self.pac_man_death_sound_is_playing = False
 

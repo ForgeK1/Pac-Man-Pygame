@@ -641,19 +641,20 @@ class Ghost(ABC):
             #Debug code
                 #print(str(key) + ": " + str(directions[key].collidelist(list_obstacles[2]) != -1))
 
-            # #Checks if the Ghost is exiting or enterting the pink gate
-            # if(key == 'Up' and self.exiting_pink_gate(directions[key])):
-            #     return 'Up'
+            #Checks if the ghost's current direction is to exit the pink gate from the inside
+            if(key == 'Up' and self.exiting_pink_gate(directions[key])):
+                return 'Up'
             
-            # if(key in ['Left', 'Right'] and self.entering_pink_gate(directions[key])):
-            #     return 'Down'
+            #Checks if the ghost's current direction is to enter the pink gate from the outside
+            if(key in ['Left', 'Down', 'Right'] and self.entering_pink_gate(directions[key])):
+                return 'Down'
 
-            #If the direction collides with a wall, the direction is removed from the list
+            #Checks if the ghost's current direction is colliding with a wall. If so, the direction is removed from the list
             if(directions[key].collidelist(list_obstacles[2]) != -1):
                 directions.pop(key)
         
         #Debug code
-            # if(self.name == 'Inky (Cyan)'):
+            # if(self.name == 'Pinky (Pink)'):
             #     print(directions)
 
         '''
@@ -695,9 +696,9 @@ class Ghost(ABC):
 
         return best_direction
 
-    #A method to allow the ghost to exit the pink gate based on their current state
+    #A method to allow a ghost to exit the pink gate at the start of the game or after they respawn
     def exiting_pink_gate(self, rect_copy):
-        #Exiting the gate (when starting the round or after respawn)
+        #Checks if the ghost is in their chase or scatter state
         if(self.chase_state or self.scatter_state):
             if(rect_copy.centerx > 240):
                 range_x = 240 / rect_copy.centerx
@@ -709,7 +710,8 @@ class Ghost(ABC):
             else: 
                 range_y = rect_copy.centery / 272
 
-            if(range_x > 0.93 and range_y > 0.93):
+            #If the range between the ghost and the gate meets this requirement, the ghost is allowed to pass through
+            if(range_x > 0.95 and range_y > 0.93):
                 return True
             
         #Debug code
@@ -717,30 +719,32 @@ class Ghost(ABC):
                 # print('range_x: ' + str(range_x))
                 # print('\nrange_y: ' + str(range_y) + '\n')
 
-            # if(self.name == 'Pinky (Pink)'):
-            #     print(range_x > 0.90 and range_y > 0.90)
+                # print(range_x > 0.90 and range_y > 0.90)
     
-    #A method to allow the ghost to enter the pink gate when they are in an eaten state (so that they can respawn)
+    #A method to allow a ghost to enter the pink gate in their eaten state so that they can respawn
     def entering_pink_gate(self, rect_copy):
+        #Checks if the ghost is in their eaten state
         if(self.eaten_state):
             if(rect_copy.centerx > 240):
                 range_x = 240 / rect_copy.centerx
             else:
                 range_x = rect_copy.centerx / 240
             
-            if(rect_copy.centery > 253):
-                range_y = 253 / rect_copy.centery
+            if(rect_copy.centery > 272):
+                range_y = 272 / rect_copy.centery
             else: 
-                range_y = rect_copy.centery / 253
+                range_y = rect_copy.centery / 272
+            
+            #If the range between the ghost and the gate meets this requirement, the ghost is allowed to pass through
+            if(range_x > 0.99 and range_y > 0.93):
+                return True
 
+        #Debug code
             # if(self.name == 'Pinky (Pink)'):
             #     print('range_x: ' + str(range_x))
             #     print('\nrange_y: ' + str(range_y) + '\n')
 
-            if(range_x > 0.99 and range_y > 0.99):
-                print('If statement is running')
-
-                return True
+            #     print(range_x > 0.90 and range_y > 0.90)
         
     #A method to cycle through the Ghost's movement based on their current state
     def movement_update(self, list_obstacles, target):
