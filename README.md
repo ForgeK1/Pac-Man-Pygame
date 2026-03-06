@@ -6,4 +6,6 @@ Using the same algorithmic concepts from the original game, I will be adding my 
 **Resources & Documents 📜**
 1. [Pac-Man Project Outline.pdf](https://github.com/user-attachments/files/24876816/Pac-Man.Project.Outline.pdf) (last updated 1/26/26)
 
-2. [Demo Video #2](https://drive.google.com/file/d/1wPrr2HnfcqDP6FlcJqEpDpUMPnqNshed/view?usp=sharing) (last updated 1/16/25) <-- Will be updated soon!
+2. [Demo Video #1](https://drive.google.com/file/d/1HhnCuW7Vb10CjlYAOaTl-eli2sP7hS7H/view?usp=sharing)
+   [Demo Video #2](https://drive.google.com/file/d/1wPrr2HnfcqDP6FlcJqEpDpUMPnqNshed/view?usp=sharing)
+   [Demo Video #3]() (last updated 03/05/2026)
