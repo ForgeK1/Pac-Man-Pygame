@@ -384,6 +384,12 @@ class GameplayScene:
                 self.inky.set_direction('Right')
                 self.clyde.set_direction('Left')
 
+                #Original direction positions when starting a new round
+                    # self.blinky.set_direction('Left')
+                    # self.pinky.set_direction('Down')
+                    # self.inky.set_direction('Up')
+                    # self.clyde.set_direction('Up')
+
                 #Resets the all ghosts' state, frame, and timers back to normal
                 for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
                     ghost.set_frame(0)
@@ -480,6 +486,12 @@ class GameplayScene:
                 self.pinky.set_direction('Up')
                 self.inky.set_direction('Right')
                 self.clyde.set_direction('Left')
+
+                #Original direction positions when starting a new round
+                    # self.blinky.set_direction('Left')
+                    # self.pinky.set_direction('Down')
+                    # self.inky.set_direction('Up')
+                    # self.clyde.set_direction('Up')
 
                 #Resets the all ghosts' state, frame, and timers back to normal
                 for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:

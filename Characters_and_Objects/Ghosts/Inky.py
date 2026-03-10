@@ -17,21 +17,33 @@ class Inky(Ghost):
                          movement, character_animation_speed,
                          level_counter, game_state_manager)
         
-        #An inherited method to update Blinky's chase state movement
+    #An inherited method to update Inky's stand by state movement
+    # def stand_by_state_movement_update(self):
+    #     if(self.rect.center == (206, 298)):
+
+    #     elif(206, 300):
+        
+    #     elif(self.rect.center == (206, 302) and self.): #Note to self: Try to create a loop given current direction, position, and state
+        
+    #     elif(206, 304):
+        
+    #     elif(206, 306):
+    
+    #An inherited method to update Inky's chase state movement
     def chase_state_movement_update(self, list_obstacles, target):
         #Debug code
             # print(self.ghost_name + " is in his chase state")
 
-        #Teleports Blinky to the other side of the tunnel
+        #Teleports Inky to the other side of the tunnel
         self.tunnel_edge_teleport()
 
-        #Returns the direction Blinky should take to chase Pac-Man
+        #Returns the direction Inky should take to chase Pac-Man
         self.direction = self.direction_update(list_obstacles, target)
 
         #Debug code
             # print(self.direction)
 
-        #Updates Blinky's movement based on the given direction
+        #Updates Inky's movement based on the given direction
         if self.direction == 'Up':
             self.rect.centery = self.rect.centery - 2
         elif self.direction == 'Left':
@@ -41,16 +53,16 @@ class Inky(Ghost):
         elif self.direction == 'Right': 
             self.rect.centerx = self.rect.centerx + 2
     
-    #An inherited method to update Blinky's scatter state movement
+    #An inherited method to update Inky's scatter state movement
     def scatter_state_movement_update(self, list_obstacles):
         #Debug code
             # print(self.ghost_name + " is in his scatter state")
 
-        #Teleports Blinky to the other side of the tunnel
+        #Teleports Inky to the other side of the tunnel
         self.tunnel_edge_teleport()
 
         '''
-        Returns the direction Blinky should take to be in a scatter loop
+        Returns the direction Inky should take to be in a scatter loop
             Ex) (479, 0) is top right of the display surface window
         '''
         self.direction = self.direction_update(list_obstacles, (479, 0))
@@ -58,7 +70,7 @@ class Inky(Ghost):
         #Debug code
             # print(self.direction)
 
-        #Updates Blinky's movement based on the given direction
+        #Updates Inky's movement based on the given direction
         if self.direction == 'Up':
             self.rect.centery = self.rect.centery - 2
         elif self.direction == 'Left':

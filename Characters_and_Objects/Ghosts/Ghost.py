@@ -41,7 +41,8 @@ class Ghost(ABC):
         self.game_state_manager = game_state_manager
 
         #Variables to check what state the ghost is in
-        self.chase_state = True #Ghost chasing Pac-Man
+        self.stand_by_state = True #Ghost waiting in the gate until Pac-Man eats enough dots
+        self.chase_state = False #Ghost chasing Pac-Man
         self.scatter_state = False #Ghost moving away from Pac-Man
         self.frightened_state_v1 = False #Blue skin 
         self.frightened_state_v2 = False #A pattern of repeating blue and white skin
@@ -408,16 +409,29 @@ class Ghost(ABC):
             #     print(self.ghost_scatter_timer)
 
     '''
-    A method that updates the Ghost's behavior based on the current state they're in during gameplay (this method is called in the GameplayScene class)
-        Ex. Chase, Scatter, Frightened, Eaten states
+    A method that updates the Ghost's behavior based on the current state they're in during gameplay
+        Ex. Stand By, Chase, Scatter, Frightened, and Eaten states
     '''
     def state_handler(self, siren_channel, ghost_return_channel, ghost_return, power_pellet_channel):
         #Debug code
-            # print("\nEaten state: " + str(self.eaten_state) + 
+            # print("\Stand by state: " + str(self.stand_by_state) + 
+            #       "\nEaten state: " + str(self.eaten_state) + 
             #       "\nFrightend state: " + str(self.frightened_state_v1 or self.frightened_state_v2) +
             #       "\nChase state: " + str(self.chase_state) + 
             #       "\nScatter state: " + str(self.scatter_state))
         
+        #Checks if the Ghost is in a standy by state (where the ghost is waiting to get out of the gate at the start of the round)
+        # if(self.stand_by_state):
+        #     #Inky leaves after Pac-Man eats 30 dots
+        #     if(self.name == "Inky (Cyan)" and dots_eaten == 30):
+        #         self.stand_by_state = False
+        #         self.chase_state = True
+
+        #     #Clyde leaves after Pac-Man eats 60 dots 
+        #     if(self.name == "Clyde (Orange)" and dots_eaten == 60):
+        #         self.stand_by_state = False
+        #         self.chase_state = True
+            
         #Checks if the ghost is in an eaten state
         if(self.eaten_state):
             #Debug code
@@ -748,6 +762,9 @@ class Ghost(ABC):
         
     #A method to cycle through the Ghost's movement based on their current state
     def movement_update(self, list_obstacles, target):
+        # if(self.stand_by_state):
+        #     self.stand_by_state_movement_update(list_obstacles)
+        
         if(self.chase_state):
             self.chase_state_movement_update(list_obstacles, target)
         elif(self.scatter_state):
@@ -756,6 +773,10 @@ class Ghost(ABC):
             self.frightened_state_movement_update(list_obstacles)
         elif(self.eaten_state):
             self.eaten_state_movement_update(list_obstacles)
+    
+    #An abstract method to update the Ghost's movement based on their stand by state
+    def stand_by_state_movement_update(self):
+        return None
     
     #An abstract method to update Ghost's movement based on their chase state
     def chase_state_movement_update(self, list_obstacles, target):
