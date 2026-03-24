@@ -53,7 +53,7 @@ class Pinky(Ghost):
         Returns the direction Blinky should take to be in a scatter loop
             Ex) (479, 0) is top right of the display surface window
         '''
-        self.direction = self.direction_update(list_obstacles, (479, 0))
+        self.direction = self.direction_update(list_obstacles, (0, 0))
 
         #Debug code
             # print(self.direction)

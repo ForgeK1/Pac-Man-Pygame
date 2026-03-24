@@ -16,23 +16,11 @@ class Inky(Ghost):
                          direction, x_position, y_position, 
                          movement, character_animation_speed,
                          level_counter, game_state_manager)
-        
-    #An inherited method to update Inky's stand by state movement
-    # def stand_by_state_movement_update(self):
-    #     if(self.rect.center == (206, 298)):
-
-    #     elif(206, 300):
-        
-    #     elif(self.rect.center == (206, 302) and self.): #Note to self: Try to create a loop given current direction, position, and state
-        
-    #     elif(206, 304):
-        
-    #     elif(206, 306):
     
     #An inherited method to update Inky's chase state movement
     def chase_state_movement_update(self, list_obstacles, target):
         #Debug code
-            # print(self.ghost_name + " is in his chase state")
+            # print(self.ghost_name + ' is in his chase state')
 
         #Teleports Inky to the other side of the tunnel
         self.tunnel_edge_teleport()
@@ -56,7 +44,7 @@ class Inky(Ghost):
     #An inherited method to update Inky's scatter state movement
     def scatter_state_movement_update(self, list_obstacles):
         #Debug code
-            # print(self.ghost_name + " is in his scatter state")
+            # print(self.ghost_name + ' is in his scatter state')
 
         #Teleports Inky to the other side of the tunnel
         self.tunnel_edge_teleport()
@@ -65,7 +53,7 @@ class Inky(Ghost):
         Returns the direction Inky should take to be in a scatter loop
             Ex) (479, 0) is top right of the display surface window
         '''
-        self.direction = self.direction_update(list_obstacles, (479, 0))
+        self.direction = self.direction_update(list_obstacles, (479, 585))
 
         #Debug code
             # print(self.direction)

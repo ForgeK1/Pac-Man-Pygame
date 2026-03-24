@@ -34,11 +34,11 @@ class GameplayScene:
         self.level_counter = 5
 
         #Initializes the character objects
-        self.pac_man = PacMan(30, 30, 'Left', self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138, True, 50)
-        self.blinky = Blinky(30, 30, "Left", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68, True, 100, self.level_counter, self.game_state_manager)
-        self.pinky = Pinky(30, 30, "Down", self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 18, True, 100, self.level_counter, self.game_state_manager)
-        self.inky = Inky(30, 30, "Up", self.WINDOW_WIDTH / 2 - 33, self.WINDOW_HEIGHT / 2 - 18, True, 100, self.level_counter, self.game_state_manager)
-        self.clyde = Clyde(30, 30, "Up", self.WINDOW_WIDTH / 2 + 33, self.WINDOW_HEIGHT / 2 - 18, True, 100, self.level_counter, self.game_state_manager)
+        self.pac_man = PacMan(30, 30, 'Left', 240, 458, True, 50)
+        self.blinky = Blinky(30, 30, "Left", 240, 252, True, 100, self.level_counter, self.game_state_manager)
+        self.pinky = Pinky(30, 30, "Down", 240, 302, True, 100, self.level_counter, self.game_state_manager)
+        self.inky = Inky(30, 30, "Up", 206, 302, True, 100, self.level_counter, self.game_state_manager)
+        self.clyde = Clyde(30, 30, "Up", 274, 302, True, 100, self.level_counter, self.game_state_manager)
 
         #Initializes two lists of obstacles for the game map
         self.list_blue_obstacles = None
@@ -309,19 +309,7 @@ class GameplayScene:
         self.gameplay_surface.fill('black')
 
         #Checks if the player is starting the game for the first time
-        if(self.fresh_start):
-            #Checks if the Pac-Man start theme is still playing. If the theme ends, then the Pac-Man & the ghosts start moving
-            if(pygame.mixer_music.get_busy() is False):
-                self.round_intro = False
-                self.fresh_start = False
-                pygame.mixer_music.unload()
-
-                #Resumes all character movements
-                self.pac_man.set_movement(True)
-
-                for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:  
-                    ghost.set_movement(True)
-            
+        if(self.fresh_start):            
             '''
             A section to set up the obstacles and pellets
             '''
@@ -371,7 +359,7 @@ class GameplayScene:
 
                     self.pac_man_life_deduct = False
 
-                #Sets Pac-Man's variables back to normal
+                #Resets Pac-Man's variables back to normal
                 self.pac_man.set_direction('Left')
                 self.pac_man.set_frame(0)
                 self.pac_man.set_CF()
@@ -380,38 +368,43 @@ class GameplayScene:
 
                 #Resets all ghosts to their default direction
                 self.blinky.set_direction('Left')
-                self.pinky.set_direction('Up')
-                self.inky.set_direction('Right')
-                self.clyde.set_direction('Left')
+                self.pinky.set_direction('Down')
+                self.inky.set_direction('Up')
+                self.clyde.set_direction('Up')
 
-                #Original direction positions when starting a new round
-                    # self.blinky.set_direction('Left')
-                    # self.pinky.set_direction('Down')
-                    # self.inky.set_direction('Up')
-                    # self.clyde.set_direction('Up')
+                '''
+                Resets all of the ghosts' states back to normal at the start of the round
+                '''
 
-                #Resets the all ghosts' state, frame, and timers back to normal
-                for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
-                    ghost.set_frame(0)
+                for ghost in [self.blinky, self.pinky]:
+                    ghost.set_stand_by_state(False)
                     ghost.set_chase_state(False)
-                    ghost.set_scatter_state(True) #The first phase ghosts will be in at the start of each round is Scatter phase
+                    ghost.set_scatter_state(True) #The first state Blinky & Pinky are in is the scatter state
                     ghost.set_frightened_state_v1(False)
                     ghost.set_frightened_state_v2(False)
                     ghost.set_eaten_state(False)
+
+                for ghost in [self.inky, self.clyde]:
+                    ghost.set_stand_by_state(True) #The first state Inky & Clyde are in is the stand by state
+                    ghost.set_chase_state(False)
+                    ghost.set_scatter_state(False) 
+                    ghost.set_frightened_state_v1(False)
+                    ghost.set_frightened_state_v2(False)
+                    ghost.set_eaten_state(False)
+
+                #Resets all of the ghost's frame, cycles, and timers back to normal
+                for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+                    ghost.set_frame(0)
                     ghost.reset_chase_and_scatter_cycle()
                     ghost.set_ghost_scatter_timer(0)
                     ghost.frame_update()
                 
                 #Resets the position of all characters
-                self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
-                self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
+                self.pac_man.get_rect().center = (240, 458)
+                self.blinky.get_rect().center = (240, 252)
                 self.pinky.get_rect().center = (240, 302)
                 self.inky.get_rect().center = (206, 302)
                 self.clyde.get_rect().center = (274, 302)
-
-                # self.pinky.get_rect().center = (0, 0)
-                # self.inky.get_rect().center = (0, 0)
-                # self.clyde.get_rect().center = (0, 0)
 
                 #Blits the characters onto the Gameplay surface
                 self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
@@ -424,6 +417,22 @@ class GameplayScene:
 
             #Blits the Gameplay Scene surface onto the display surface
             self.display_surface.blit(self.gameplay_surface, (0, 0))
+
+            #Checks if the Pac-Man start theme is still playing. If the theme ends, then the Pac-Man & the ghosts start moving
+            if(pygame.mixer_music.get_busy() is False):
+                self.round_intro = False
+                self.fresh_start = False
+                pygame.mixer_music.unload()
+
+                #Resumes all character movements
+                self.pac_man.set_movement(True)
+
+                for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:  
+                    ghost.set_movement(True)
+
+                #Sets Pinky's direction to 'Up' so that she doesn't collide with the wall below her
+                self.pinky.set_direction('Up')
+
         #Else, the program will start the next round with a short intro since Pac-Man ate all the pellets or got caught by a ghost
         else:
             #Debug code
@@ -483,31 +492,38 @@ class GameplayScene:
 
                 #Resets all ghosts to their default direction
                 self.blinky.set_direction('Left')
-                self.pinky.set_direction('Up')
-                self.inky.set_direction('Right')
-                self.clyde.set_direction('Left')
+                self.pinky.set_direction('Down')
+                self.inky.set_direction('Up')
+                self.clyde.set_direction('Up')
 
-                #Original direction positions when starting a new round
-                    # self.blinky.set_direction('Left')
-                    # self.pinky.set_direction('Down')
-                    # self.inky.set_direction('Up')
-                    # self.clyde.set_direction('Up')
+                '''
+                Resets all of the ghosts' states back to normal at the start of the round
+                '''
 
-                #Resets the all ghosts' state, frame, and timers back to normal
-                for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
-                    ghost.set_frame(0)
+                for ghost in [self.blinky, self.pinky]:
+                    ghost.set_stand_by_state(False)
                     ghost.set_chase_state(False)
-                    ghost.set_scatter_state(True) #The first phase ghosts will be in at the start of each round is Scatter phase
+                    ghost.set_scatter_state(True) #The first state Blinky & Pinky are in is the scatter state
                     ghost.set_frightened_state_v1(False)
                     ghost.set_frightened_state_v2(False)
                     ghost.set_eaten_state(False)
-                    ghost.reset_chase_and_scatter_cycle()
-                    ghost.set_ghost_scatter_timer(0)
+
+                for ghost in [self.inky, self.clyde]:
+                    ghost.set_stand_by_state(True) #The first state Inky & Clyde are in is the stand by state
+                    ghost.set_chase_state(False)
+                    ghost.set_scatter_state(False) 
+                    ghost.set_frightened_state_v1(False)
+                    ghost.set_frightened_state_v2(False)
+                    ghost.set_eaten_state(False)
+
+                #Resets all of the ghost's frame
+                for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+                    ghost.set_frame(0)
                     ghost.frame_update()
                 
                 #Resets the position of all characters
-                self.pac_man.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 138)
-                self.blinky.get_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
+                self.pac_man.get_rect().center = (240, 458)
+                self.blinky.get_rect().center = (240, 252)
                 self.pinky.get_rect().center = (240, 302)
                 self.inky.get_rect().center = (206, 302)
                 self.clyde.get_rect().center = (274, 302)
@@ -534,6 +550,9 @@ class GameplayScene:
 
                     for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:  
                         ghost.set_movement(True)
+
+                    #Sets Pinky's direction to 'Up' so that she doesn't collide with the wall below her
+                    self.pinky.set_direction('Up')
 
                     #Resets the timer when Pac-Man goes to the next round
                     self.transition_to_next_round_timer = 0
@@ -602,6 +621,15 @@ class GameplayScene:
 
                     #Resets ghost disappear timer
                     self.ghost_disappear_timer = 0
+
+                    '''
+                    Resets Pac-Man's dots eaten and Inky's & Clyde's stand by state exit condition since Pac-Man ate all of the pellets
+                    '''
+
+                    self.pac_man.set_dots_eaten(0)
+                    
+                    for ghost in [self.inky, self.clyde]:
+                        ghost.set_stand_by_state_exit_condition(False)
 
                     #A for loop to have all eaten pellets visible again
                     for i in range(len(self.list_pellets[0])):
@@ -702,6 +730,7 @@ class GameplayScene:
             
             #Debug code
                 #print(self.ghost_disappear_timer)
+                
         #An else statement for when Pac-Man gets caught and has no more lives
         else:
             #Stops the all relative sound channels
@@ -792,11 +821,20 @@ class GameplayScene:
                         #Resets variables for when Pac-Man gets caught again
                         self.pac_man.set_death_animation(False)
                         self.pac_man.set_death_animation_timer(0)
+                        self.pac_man.set_list_of_lives(3)
                         self.pac_man.set_score(0)
                         self.pac_man.set_is_caught(False)
-                        self.pac_man.set_list_of_lives(3)
                         self.ghost_disappear_timer = 0
                         self.pac_man_death_sound_is_playing = False
+
+                        '''
+                        Resets Pac-Man's dots eaten and Inky's & Clyde's stand by state exit condition since Pac-Man has no more lives
+                        '''
+
+                        self.pac_man.set_dots_eaten(0)
+
+                        for ghost in [self.inky, self.clyde]:
+                            ghost.set_stand_by_state_exit_condition(False)
 
                         #Resets the game over text timer for when Pac-Man loses all of his lives again
                         self.game_over_text_timer = 0
@@ -928,16 +966,14 @@ class GameplayScene:
                 #Resets Pac-Man's score streak (# of ghosts eaten in a row) when the power_pellet_channel ends
                 self.pac_man.set_score_streak(0)
 
-            #self.blinky,
-            for ghost in [self.pinky,self.inky, self.clyde]:                
-                ghost.state_handler(self.siren_channel, self.ghost_return_channel, self.ghost_return, self.power_pellet_channel)
+            #Updates each ghost's state and movement based on the current game events
+            for ghost in [self.blinky, self.pinky,self.inky, self.clyde]:                
+                ghost.state_handler(self.pac_man.get_dots_eaten(), self.siren_channel, self.ghost_return_channel, self.ghost_return, self.power_pellet_channel)
                 ghost.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
                 
                 #Debug code
                     # print("Pinky's center: " + str(self.pinky.get_rect().center))
                     # print("Inky's & Clyde's center: " + str(self.inky.get_rect().center))
-
-            # self.blinky.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
             
             self.pac_man.movement_update(event, self.list_blue_obstacles)
 

@@ -16,8 +16,8 @@ class Clyde(Ghost):
                          direction, x_position, y_position, 
                          movement, character_animation_speed,
                          level_counter, game_state_manager)
-        
-        #An inherited method to update Blinky's chase state movement
+    
+    #An inherited method to update Blinky's chase state movement
     def chase_state_movement_update(self, list_obstacles, target):
         #Debug code
             # print(self.ghost_name + " is in his chase state")
@@ -53,7 +53,7 @@ class Clyde(Ghost):
         Returns the direction Blinky should take to be in a scatter loop
             Ex) (479, 0) is top right of the display surface window
         '''
-        self.direction = self.direction_update(list_obstacles, (479, 0))
+        self.direction = self.direction_update(list_obstacles, (0, 585))
 
         #Debug code
             # print(self.direction)

@@ -28,8 +28,9 @@ class PacMan:
         self.movement = movement
         self.frame = 0
 
-        #Variables to keep track of Pac-Man's list of lives, high score, current score, and score streak (the number of ghosts eaten in a row)
-        self.list_of_lives = 3
+        #Variables to keep track of Pac-Man's list of lives, # of dots earen, high score, current score, score streak (the number of ghosts eaten in a row)
+        self.list_of_lives = 1
+        self.dots_eaten = 0
         self.high_score = 0
         self.score = 0
         self.score_streak = 0
@@ -134,6 +135,14 @@ class PacMan:
     #A method to set Pac-Man's list of lives
     def set_list_of_lives(self, new_list_of_lives):
         self.list_of_lives = new_list_of_lives
+
+    #A method to get Pac-Man's number of dots eaten in a single level
+    def get_dots_eaten(self):
+        return self.dots_eaten
+
+    #A method to set Pac-Man's number of dots eaten in a single level
+    def set_dots_eaten(self, new_number_dots_eaten):
+        self.dots_eaten = new_number_dots_eaten
     
     #A method to get Pac-Man's high score
     def get_high_score(self):
@@ -542,8 +551,8 @@ class PacMan:
                     pellet_channel.play(pellet_sound)
                 
                 list_pellets[1][pellet_index] = False
-                #list_pellets[3][pellet_index].center = (0, 0)
-
+                
+                self.dots_eaten += 1
                 self.score += 10
         
         '''
@@ -566,9 +575,9 @@ class PacMan:
             #Pac-Man eats a power-pellet
             if(range_x > 0.95 and range_y > 0.95):
                 '''
-                Updates the ghost's variables for the power pellet
+                Updates the ghost's state and variables for the power pellet
                     Note: These two states are not set to True once the power pellet channel is done because
-                          the state_handler in the abstract Ghost class automatically does that
+                          the state_handler method in the Ghost class automatically does so
                 '''
                 for ghost in list_ghosts:
                     #Checks if the ghost is in an eaten state. If so, the ghost will not change into a frightened state
@@ -585,6 +594,7 @@ class PacMan:
 
                 list_power_pellets[1][power_pellet_index] = False
 
+                self.dots_eaten += 1
                 self.score += 50
         
         #If Pac-Man's current score is higher than his high score, the high score value is updated
