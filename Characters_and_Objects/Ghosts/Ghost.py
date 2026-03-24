@@ -56,6 +56,10 @@ class Ghost(ABC):
         self.chase_and_scatter_cycle_real_timer = 0
         self.chase_and_scatter_cycle_curr_timer = None
 
+        #Variables to indicate that the ghost turns around 180 degrees once they go into their Chase state
+        self.chase_state_turn_around = False
+        self.chase_state_turn_around_occured_once = False
+
         #Initializes a variable timer to dynamically change ghost frightened state frame after Pac-Man eats a power pellet
         self.ghost_scatter_timer = 0
 
@@ -613,6 +617,9 @@ class Ghost(ABC):
                     if self.chase_and_scatter_cycle_phases[0] == "Chase":
                         self.chase_state = True
                         self.scatter_state = False
+
+                        #Enables the condition for the ghost to turn around 180 degrees once they go into their chase state
+                        self.chase_state_turn_around_condition()
                     else:
                         self.chase_state = False
                         self.scatter_state = True
@@ -631,7 +638,11 @@ class Ghost(ABC):
                 #     print("Chase State: " + str(self.chase_state))
                 #     print("Scatter State: " + str(self.scatter_state))
                 #     print("Number of seconds passed: " + str(round(num_seconds_passed)) + "\n")
-            
+
+        #This else statement resets the condition for the ghost to turn around again when transitioning to another state
+        else:
+            self.chase_state_turn_around_occured_once = False
+
     '''
     A method that sets the amount of time to cycle between the scatter and chase states
         Ex) Level 1 indicates
@@ -773,6 +784,60 @@ class Ghost(ABC):
             best_direction = min(directions, key=directions.get)
 
         return best_direction
+    
+    '''
+    A method that checks the following condition:
+        (1) Everytime the ghost switches to their chase state, they turn around 180 degrees
+        (2) This helper method helps the chase_state_movement_update to only turn around once
+            Ex) Blinky turns around when transitioning from scatter, frightened, eaten states to chase state
+    '''
+    def chase_state_turn_around_condition(self):
+        if(self.chase_state_turn_around is False and self.chase_state_turn_around_occured_once is False):
+            self.chase_state_turn_around = True
+
+    #A method that helps the ghost turns around 180 degrees based on the turn_around_condition method
+    def chase_state_turn_around_action(self):
+        '''
+        This section prevents the ghost from turning around when they are inside the gate region
+        '''
+
+        gate_region = (240, 302)
+
+        if(gate_region[0] > self.rect.centerx):
+            range_x = self.rect.centerx / gate_region[0]
+        else:
+            range_x = gate_region[0] / self.rect.centerx
+        
+        if(gate_region[1] > self.rect.centery):
+            range_y = self.rect.centery / gate_region[1]
+        else: 
+            range_y = gate_region[1] / self.rect.centery
+
+        #Debug code
+            # if(self.name == 'Blinky (Red)'):
+            #     print('\nrange_x: ' + str(range_x))
+            #     print('\nrange_y: ' + str(range_y))
+
+        if range_x > 0.80 and range_y > 0.80:
+            return
+
+        '''
+        This sections helps the ghost turn around
+        '''
+
+        if(self.chase_state_turn_around): 
+            if self.direction == 'Up':
+                self.direction = 'Down'
+            elif self.direction == 'Left':
+                self.direction = 'Right'
+            elif self.direction == 'Down':
+                self.direction = 'Up'
+            elif self.direction == 'Right': 
+                self.direction = 'Left'
+            
+            #The ghost can only turn around once
+            self.chase_state_turn_around = False
+            self.chase_state_turn_around_occured_once = True
 
     #A method to allow a ghost to exit the pink gate at the start of the game or after they respawn
     def exiting_pink_gate(self, rect_copy):
@@ -859,11 +924,11 @@ class Ghost(ABC):
               on multiple movement updates. In contrast, the state_handler is designed to have a ghost behave 
               in intertwining states (Ex. Inky can both be in a stand_by and frightened state)
     '''
-    def movement_update(self, list_obstacles, target):
+    def movement_update(self, list_obstacles, pac_man_direction, target):
         if(self.stand_by_state):
             self.stand_by_state_movement_update(list_obstacles)
         elif(self.chase_state):
-            self.chase_state_movement_update(list_obstacles, target)
+            self.chase_state_movement_update(list_obstacles, pac_man_direction, target)
         elif(self.scatter_state):
             self.scatter_state_movement_update(list_obstacles)
         elif(self.frightened_state_v1 or self.frightened_state_v2):

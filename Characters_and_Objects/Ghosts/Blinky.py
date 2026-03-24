@@ -18,12 +18,15 @@ class Blinky(Ghost):
                          level_counter, game_state_manager)
     
     #An inherited method to update Blinky's chase state movement
-    def chase_state_movement_update(self, list_obstacles, target):
+    def chase_state_movement_update(self, list_obstacles, pac_man_direction, target):
         #Debug code
             # print(self.ghost_name + " is in his chase state")
 
         #Teleports Blinky to the other side of the tunnel
         self.tunnel_edge_teleport()
+
+        #When entering chase state & dependent on the turn_around_condition, Blinky turns around 180 degrees
+        self.chase_state_turn_around_action()
 
         #Returns the direction Blinky should take to chase Pac-Man
         self.direction = self.direction_update(list_obstacles, target)

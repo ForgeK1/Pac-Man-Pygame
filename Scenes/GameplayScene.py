@@ -969,7 +969,7 @@ class GameplayScene:
             #Updates each ghost's state and movement based on the current game events
             for ghost in [self.blinky, self.pinky,self.inky, self.clyde]:                
                 ghost.state_handler(self.pac_man.get_dots_eaten(), self.siren_channel, self.ghost_return_channel, self.ghost_return, self.power_pellet_channel)
-                ghost.movement_update(self.list_blue_obstacles, self.pac_man.get_rect().center)
+                ghost.movement_update(self.list_blue_obstacles, self.pac_man.get_direction(), self.pac_man.get_rect().center)
                 
                 #Debug code
                     # print("Pinky's center: " + str(self.pinky.get_rect().center))
