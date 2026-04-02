@@ -34,11 +34,11 @@ class GameplayScene:
         self.level_counter = 5
 
         #Initializes the character objects
-        self.pac_man = PacMan(30, 30, 'Left', 240, 458, True, 50)
-        self.blinky = Blinky(30, 30, "Left", 240, 252, True, 100, self.level_counter, self.game_state_manager)
-        self.pinky = Pinky(30, 30, "Down", 240, 302, True, 100, self.level_counter, self.game_state_manager)
-        self.inky = Inky(30, 30, "Up", 206, 302, True, 100, self.level_counter, self.game_state_manager)
-        self.clyde = Clyde(30, 30, "Up", 274, 302, True, 100, self.level_counter, self.game_state_manager)
+        self.pac_man = PacMan(self.gameplay_surface, 30, 30, 'Left', 240, 458, True, 50)
+        self.blinky = Blinky(self.gameplay_surface, 30, 30, "Left", 240, 252, True, 100, self.level_counter, self.game_state_manager)
+        self.pinky = Pinky(self.gameplay_surface, 30, 30, "Down", 240, 302, True, 100, self.level_counter, self.game_state_manager)
+        self.inky = Inky(self.gameplay_surface, 30, 30, "Up", 206, 302, True, 100, self.level_counter, self.game_state_manager)
+        self.clyde = Clyde(self.gameplay_surface, 30, 30, "Up", 274, 302, True, 100, self.level_counter, self.game_state_manager)
 
         #Initializes two lists of obstacles for the game map
         self.list_blue_obstacles = None
@@ -964,12 +964,17 @@ class GameplayScene:
                     self.siren_channel.play(self.siren_v1_sound)
 
                 #Resets Pac-Man's score streak (# of ghosts eaten in a row) when the power_pellet_channel ends
-                self.pac_man.set_score_streak(0)
+                self.pac_man.set_score_streak(0)   
 
+            #Grabs the position of all of the ghosts for the movement_update
+            list_ghosts_positions = [self.blinky.get_rect().center, self.pinky.get_rect().center, self.inky.get_rect().center, self.clyde.get_rect().center]
+            
             #Updates each ghost's state and movement based on the current game events
             for ghost in [self.blinky, self.pinky,self.inky, self.clyde]:                
-                ghost.state_handler(self.pac_man.get_dots_eaten(), self.siren_channel, self.ghost_return_channel, self.ghost_return, self.power_pellet_channel)
-                ghost.movement_update(self.list_blue_obstacles, self.pac_man.get_direction(), self.pac_man.get_rect().center)
+                ghost.state_handler(self.pac_man.get_dots_eaten(), self.siren_channel, self.ghost_return_channel, self.ghost_return, self.power_pellet_channel) 
+                ghost.movement_update(self.list_blue_obstacles, self.pac_man.get_direction(), list_ghosts_positions, self.pac_man.get_rect().center)
+
+                # self.display_ghost_target_on_map(ghost.get_name(), ghost.get_target() = self.pac_man.get_rect().center)
                 
                 #Debug code
                     # print("Pinky's center: " + str(self.pinky.get_rect().center))

@@ -9,7 +9,10 @@ import math
 
 class PacMan:
     #A constructor to initialize an instance of Pac-Man
-    def __init__(self, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed):
+    def __init__(self, curr_surface, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed):
+        #A variable to point to the current surface Pac-Man is in (Ex. Gameplay Scene --> gameplay_surface)
+        self.curr_surface = curr_surface
+        
         #Variables to keep track the image and rect
         self.image = pygame.image.load('Images/Pac-Man/Movement/circle.png')
         self.image = pygame.transform.scale(self.image, (horizontal_scale, vertical_scale))
@@ -589,6 +592,9 @@ class PacMan:
                     ghost.set_frightened_state_v1(True)
                     ghost.set_frame(0)
                     ghost.set_ghost_scatter_timer(0)
+
+                    #This statement resets the condition for the ghost to turn around again when transitioning to their Frightened state
+                    ghost.set_turn_around_occured_once(False)
                 
                 power_pellet_channel.play(power_pellet_sound)
 

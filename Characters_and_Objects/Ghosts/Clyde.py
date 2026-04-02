@@ -9,24 +9,26 @@ from Characters_and_Objects.Ghosts.Ghost import Ghost
 
 class Clyde(Ghost):
     #A constructor to initialize an instance of Clyde
-    def __init__(self, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, level_counter, game_state_manager):
+    def __init__(self, scene_surface, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, level_counter, game_state_manager):
         #Initializes the Ghost parent class variables
-        super().__init__('Clyde (Orange)', 'Images/Ghosts/Clyde (Orange)/left_frame_1.png', 
+        super().__init__(scene_surface,
+                         'Clyde (Orange)', 'Images/Ghosts/Clyde (Orange)/left_frame_1.png', 
                          horizontal_scale, vertical_scale, 
-                         direction, x_position, y_position, 
-                         movement, character_animation_speed,
+                         direction, 
+                         x_position, y_position, 
+                         movement, character_animation_speed, 
                          level_counter, game_state_manager)
     
     #An inherited method to update Clyde's chase state movement
-    def chase_state_movement_update(self, list_obstacles, pac_man_direction, target):
+    def chase_state_movement_update(self, list_obstacles, pac_man_direction, list_ghosts_positions, target):
         #Debug code
             # print(self.ghost_name + " is in his chase state")
 
         #Teleports Clyde to the other side of the tunnel
         self.tunnel_edge_teleport()
 
-        #When entering chase state & dependent on the turn_around_condition, Clyde turns around 180 degrees
-        self.chase_state_turn_around_action()
+        #When entering Chase state & dependent on the turn_around_condition, Clyde turns around 180 degrees
+        self.turn_around_action()
 
         #Returns the direction Clyde should take to chase Pac-Man
         self.direction = self.direction_update(list_obstacles, target)
@@ -43,6 +45,9 @@ class Clyde(Ghost):
             self.rect.centery = self.rect.centery + 2
         elif self.direction == 'Right': 
             self.rect.centerx = self.rect.centerx + 2
+
+        #Debug code
+        self.display_ghost_target_on_map(target)
     
     #An inherited method to update Clyde's scatter state movement
     def scatter_state_movement_update(self, list_obstacles):
@@ -56,7 +61,7 @@ class Clyde(Ghost):
         Returns the direction Clyde should take to be in a scatter loop
             Ex) (479, 0) is top right of the display surface window
         '''
-        self.direction = self.direction_update(list_obstacles, (0, 585))
+        self.direction = self.direction_update(list_obstacles, (40, 585))
 
         #Debug code
             # print(self.direction)
@@ -70,3 +75,6 @@ class Clyde(Ghost):
             self.rect.centery = self.rect.centery + 2
         elif self.direction == 'Right': 
             self.rect.centerx = self.rect.centerx + 2
+        
+        #Debug code
+        self.display_ghost_target_on_map((40, 605))

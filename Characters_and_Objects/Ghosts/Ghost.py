@@ -10,7 +10,10 @@ from abc import ABC, abstractmethod
 
 class Ghost(ABC):
     #A constructor to initialize an instance of the Ghost
-    def __init__(self, name, starting_image_path, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, level_counter, game_state_manager):
+    def __init__(self, scene_surface, name, starting_image_path, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, level_counter, game_state_manager):
+        #Initializes the current surface the ghosts are being blitted on (Ex. Gameplay Scene --> gameplay_surface)
+        self.scene_surface = scene_surface
+        
         #Initializes a variable to assign the child ghost name (Blinky, Inky, Pinky, or Clyde)
         self.name = name
 
@@ -20,11 +23,10 @@ class Ghost(ABC):
         self.rect = self.image.get_rect()
         self.rect.center = (x_position, y_position)
 
-        #Initializes variables to keep track of the scale, direction, movement boolean, frame of the Ghost, and how many steps to take per frame (based on their current state)
+        #Initializes variables to keep track of the scale, direction, movement boolean, frame of the ghost, and how many steps to take per frame (based on their current state)
         self.horizontal_scale = horizontal_scale
         self.vertical_scale = vertical_scale
         self.direction = direction
-        self.opposite_direction = None
         self.movement = movement
         self.frame = 0
         self.stand_by_state_steps_per_frame = 0
@@ -49,16 +51,16 @@ class Ghost(ABC):
         self.frightened_state_v2 = False #A pattern of repeating blue and white skin
         self.eaten_state = False #A pair of floating eyes
 
+        #Variables to indicate that the ghost turns around 180 degrees once they go into their Frightened state or Chase state
+        self.turn_around = False
+        self.turn_around_occured_once = False
+
         #Variables to help the ghost cycle between the chase and scatter state
         self.chase_and_scatter_cycle_phases = ["Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase"]
         self.chase_and_scatter_cycle_phase_timers = self.set_up_ghost_chase_and_scatter_cycle_phase_timers()
 
         self.chase_and_scatter_cycle_real_timer = 0
         self.chase_and_scatter_cycle_curr_timer = None
-
-        #Variables to indicate that the ghost turns around 180 degrees once they go into their Chase state
-        self.chase_state_turn_around = False
-        self.chase_state_turn_around_occured_once = False
 
         #Initializes a variable timer to dynamically change ghost frightened state frame after Pac-Man eats a power pellet
         self.ghost_scatter_timer = 0
@@ -178,6 +180,14 @@ class Ghost(ABC):
     def set_eaten_state(self, new_eaten_state):
         self.eaten_state = new_eaten_state
 
+    #A method to get the boolean for the ghost's turn_around_occured_once condition
+    def get_turn_around_occured_once(self):
+        return self.turn_around_occured_once
+    
+    #A method to set a new boolean for the ghost's turn_around_occured_once condition
+    def set_turn_around_occured_once(self, new_turn_around_occured_once):
+        self.turn_around_occured_once = new_turn_around_occured_once
+
     #A method to return the ghost scatter timer
     def get_ghost_scatter_timer(self):
         return self.ghost_scatter_timer
@@ -193,17 +203,6 @@ class Ghost(ABC):
     #A method to set the boolean for Ghost's exit condition when their stand by state ends
     def set_stand_by_state_exit_condition(self, new_stand_by_state_exit_condition):
         self.stand_by_state_exit_condition = new_stand_by_state_exit_condition
-
-    '''
-    A method to reset the chase and scatter cycle for the Ghost 
-        Ex) At the end of a round, the timers for all ghosts need to be reset to transition
-            to the next level or to the Main Menu Scene
-    '''
-    def reset_chase_and_scatter_cycle(self):
-        self.chase_and_scatter_cycle_phases = ["Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase"]
-        self.chase_and_scatter_cycle_phase_timers = self.set_up_ghost_chase_and_scatter_cycle_phase_timers()
-        self.chase_and_scatter_cycle_real_timer = 0
-        self.chase_and_scatter_cycle_curr_timer = 0
 
     '''
     A series of methods to set the current frame of the Ghost in their normal state
@@ -296,6 +295,17 @@ class Ghost(ABC):
     def set_DEMF(self):
         self.image = pygame.image.load('Images/Ghosts/Eaten State/down.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
+
+    '''
+    A method to reset the chase and scatter cycle for the Ghost 
+        Ex) At the end of a round, the timers for all ghosts need to be reset to transition
+            to the next level or to the Main Menu Scene
+    '''
+    def reset_chase_and_scatter_cycle(self):
+        self.chase_and_scatter_cycle_phases = ["Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase"]
+        self.chase_and_scatter_cycle_phase_timers = self.set_up_ghost_chase_and_scatter_cycle_phase_timers()
+        self.chase_and_scatter_cycle_real_timer = 0
+        self.chase_and_scatter_cycle_curr_timer = 0
 
     #A method to check what movement frame and direction the ghost is in
     def frame_update(self):
@@ -440,13 +450,13 @@ class Ghost(ABC):
     '''
     def state_handler(self, dots_eaten, siren_channel, ghost_return_channel, ghost_return, power_pellet_channel):
         #Debug code
-            # if(self.name == 'Inky (Cyan)'):
+            # if(self.name == 'Pinky (Pink)'):
             #     print("\nStand by state: " + str(self.stand_by_state) + 
             #             "\nEaten state: " + str(self.eaten_state) + 
             #             "\nFrightend state: " + str(self.frightened_state_v1 or self.frightened_state_v2) +
             #             "\nChase state: " + str(self.chase_state) + 
             #             "\nScatter state: " + str(self.scatter_state) + '\n')
-        
+    
         '''
         Checks if the Ghost is in a stand by state (where the ghost is waiting for Pac-Man to eat enough dots 
         before leaving the gate at the start of the round)
@@ -536,12 +546,18 @@ class Ghost(ABC):
                 self.eaten_state = False
 
                 self.direction = 'Up'
+
+                #This statement resets the condition for the ghost to turn around again when transitioning to their Chase state
+                self.turn_around_occured_once = False
                 
         #Checks if the ghost is in a frightened state
         if(self.frightened_state_v1 or self.frightened_state_v2):
             #Debug code
                 # if(self.name == "Clyde (Orange)"):
                 #     print('The ghost is in a frightened state')
+
+            #Enables the condition for the ghost to turn around 180 degrees once they go into their Frightened state
+            self.turn_around_condition()
             
             #Increments the timer based on how long the power pellet lasts
             self.ghost_scatter_timer += 1
@@ -567,6 +583,9 @@ class Ghost(ABC):
 
                 self.frame = 0
                 self.ghost_scatter_timer = 0
+
+                #This statement resets the condition for the ghost to turn around again when transitioning to their Chase state
+                self.turn_around_occured_once = False
 
         #Else, the ghost cycles between the chase and scatter states
         if(self.stand_by_state is False and (self.frightened_state_v1 is False and self.frightened_state_v2 is False) and self.eaten_state is False):
@@ -618,8 +637,8 @@ class Ghost(ABC):
                         self.chase_state = True
                         self.scatter_state = False
 
-                        #Enables the condition for the ghost to turn around 180 degrees once they go into their chase state
-                        self.chase_state_turn_around_condition()
+                        #Enables the condition for the ghost to turn around 180 degrees once they go into their Chase state
+                        self.turn_around_condition()
                     else:
                         self.chase_state = False
                         self.scatter_state = True
@@ -638,10 +657,6 @@ class Ghost(ABC):
                 #     print("Chase State: " + str(self.chase_state))
                 #     print("Scatter State: " + str(self.scatter_state))
                 #     print("Number of seconds passed: " + str(round(num_seconds_passed)) + "\n")
-
-        #This else statement resets the condition for the ghost to turn around again when transitioning to another state
-        else:
-            self.chase_state_turn_around_occured_once = False
 
     '''
     A method that sets the amount of time to cycle between the scatter and chase states
@@ -706,6 +721,9 @@ class Ghost(ABC):
         elif(self.direction == 'Right'):
             directions.pop('Left')
 
+        # if(self.name == 'Pinky (Pink)'):
+        #     print('\n' + str(directions))
+
         #Cycles through the dictionary to assign each key a rect value that determines the future position of each direction
         for key in directions:
             #Copies the rect of the Ghost
@@ -740,29 +758,8 @@ class Ghost(ABC):
                 directions.pop(key)
         
         #Debug code
-            # if(self.name == 'Pinky (Pink)'):
-            #     print(directions)
-
-        '''
-        Calculates the distance between each rect and the target, then replaces the rect value to 
-        a distance value for each respective direction
-
-        Distance formula: d = √(x_2 - X_1)^2 + (y_2 - Y_1)^2
-        
-        Ex) Possible paths: {'Left': <rect(223, 237, 30, 30)>, 'Right': <rect(227, 237, 30, 30)>} 
-            Target:         (368, 458)
-
-            Result: {'Left': 243.6, 'Right': 241.5} <-- Right is the best direction to take
-        '''
-        for key in directions:
-            rect = directions[key]
-
-            difference_x = math.pow(target[0] - rect.centerx, 2) 
-            difference_y = math.pow(target[1] - rect.centery, 2)
-
-            distance = math.sqrt(difference_x + difference_y)
-
-            directions[key] = distance
+        # if(self.name == 'Pinky (Pink)'):
+        #     print(str(directions) + '\n')
 
         '''
         Checks if the Ghost is in a frightened state. If so, the Ghost will move in a random direction
@@ -777,6 +774,27 @@ class Ghost(ABC):
         #Else, the Ghost follows the direction closest to the target
         else:
             '''
+            Calculates the distance between each rect and the target, then replaces the rect value to 
+            a distance value for each respective direction
+
+            Distance formula: d = √(x_2 - X_1)^2 + (y_2 - Y_1)^2
+            
+            Ex) Possible paths: {'Left': <rect(223, 237, 30, 30)>, 'Right': <rect(227, 237, 30, 30)>} 
+                Target:         (368, 458)
+
+                Result: {'Left': 243.6, 'Right': 241.5} <-- Right is the best direction to take
+            '''
+            for key in directions:
+                rect = directions[key]
+
+                difference_x = math.pow(target[0] - rect.centerx, 2) 
+                difference_y = math.pow(target[1] - rect.centery, 2)
+
+                distance = math.sqrt(difference_x + difference_y)
+
+                directions[key] = distance
+
+            '''
             Selects the direction whose associated value (distance) is the smallest. The expression `key=directions.get` 
             tells `min()` to compare dictionary entries using their values (distances) instead of their keys (direction names). 
             If distances are equal, dictionary insertion order (Up → Left → Down → Right) is used as a deterministic tie-breaker
@@ -788,15 +806,20 @@ class Ghost(ABC):
     '''
     A method that checks the following condition:
         (1) Everytime the ghost switches to their chase state, they turn around 180 degrees
-        (2) This helper method helps the chase_state_movement_update to only turn around once
-            Ex) Blinky turns around when transitioning from scatter, frightened, eaten states to chase state
+        (2) Helps the chase_state_movement_update & frightened_state_movement_update methods to have the ghost turn around only once
+            Ex) Blinky turns around only once when transitioning into his Chase state or Frightened state
     '''
-    def chase_state_turn_around_condition(self):
-        if(self.chase_state_turn_around is False and self.chase_state_turn_around_occured_once is False):
-            self.chase_state_turn_around = True
+    def turn_around_condition(self):
+        #Debug code
+            # if(self.name == 'Blinky (Red)'):
+            #     print('turn_around: ' + str(self.turn_around) + 
+            #         '\nturn_around_occured_once: ' + str(self.turn_around_occured_once) + '\n')
+
+        if(self.turn_around is False and self.turn_around_occured_once is False):
+            self.turn_around = True
 
     #A method that helps the ghost turns around 180 degrees based on the turn_around_condition method
-    def chase_state_turn_around_action(self):
+    def turn_around_action(self):
         '''
         This section prevents the ghost from turning around when they are inside the gate region
         '''
@@ -822,10 +845,10 @@ class Ghost(ABC):
             return
 
         '''
-        This sections helps the ghost turn around
+        This section helps the ghost turn around
         '''
 
-        if(self.chase_state_turn_around): 
+        if(self.turn_around):
             if self.direction == 'Up':
                 self.direction = 'Down'
             elif self.direction == 'Left':
@@ -836,8 +859,13 @@ class Ghost(ABC):
                 self.direction = 'Left'
             
             #The ghost can only turn around once
-            self.chase_state_turn_around = False
-            self.chase_state_turn_around_occured_once = True
+            self.turn_around = False
+            self.turn_around_occured_once = True
+
+            #Debug code
+                # if(self.name == 'Blinky (Red)'):
+                #     print('turn_around: ' + str(self.turn_around) + 
+                #         '\nturn_around_occured_once: ' + str(self.turn_around_occured_once) + '\n')
 
     #A method to allow a ghost to exit the pink gate at the start of the game or after they respawn
     def exiting_pink_gate(self, rect_copy):
@@ -924,11 +952,11 @@ class Ghost(ABC):
               on multiple movement updates. In contrast, the state_handler is designed to have a ghost behave 
               in intertwining states (Ex. Inky can both be in a stand_by and frightened state)
     '''
-    def movement_update(self, list_obstacles, pac_man_direction, target):
+    def movement_update(self, list_obstacles, pac_man_direction, list_ghosts_positions, target):
         if(self.stand_by_state):
             self.stand_by_state_movement_update(list_obstacles)
         elif(self.chase_state):
-            self.chase_state_movement_update(list_obstacles, pac_man_direction, target)
+            self.chase_state_movement_update(list_obstacles, pac_man_direction, list_ghosts_positions, target)
         elif(self.scatter_state):
             self.scatter_state_movement_update(list_obstacles)
         elif(self.frightened_state_v1 or self.frightened_state_v2):
@@ -954,6 +982,9 @@ class Ghost(ABC):
                 self.rect.centery = self.rect.centery + 2
             elif self.direction == 'Right': 
                 self.rect.centerx = self.rect.centerx + 2
+
+            #Debug code
+            self.display_ghost_target_on_map((240, 252))
         
         #An else statement to help the ghost move up and down repeatadly (essentially standing by until Pac-Man eats a certain number of dots)
         else:
@@ -968,11 +999,11 @@ class Ghost(ABC):
                 self.rect.centery = self.rect.centery - 1
     
     #An abstract method to update Ghost's movement based on their chase state
-    def chase_state_movement_update(self, list_obstacles, target):
+    def chase_state_movement_update(self):
         return None
     
     #An abstract method to update the Ghost's movement based on their scatter state
-    def scatter_state_movement_update(self, list_obstacles, target):
+    def scatter_state_movement_update(self):
         return None
 
     #A method to update the Ghost's frightened state movement
@@ -983,11 +1014,14 @@ class Ghost(ABC):
         #Teleports Ghost to the other side of the tunnel
         self.tunnel_edge_teleport()
 
+        #When entering Frightened state & dependent on the turn_around_condition, the ghost turns around 180 degrees
+        self.turn_around_action()
+
         '''
         Returns the direction the Ghost should take to be in a scatter loop
-            Ex) (479, 0) is top right of the display surface window
+            Ex) (240, 302) will be the target for all ghosts, but they will be forced to take random directions
         '''
-        self.direction = self.direction_update(list_obstacles, (479, 0))
+        self.direction = self.direction_update(list_obstacles, (0, 0))
 
         #Debug code
             # print(self.direction)
@@ -1009,6 +1043,9 @@ class Ghost(ABC):
                 self.rect.centerx = self.rect.centerx + 2
             
             self.frightened_state_steps_per_frame = 0
+
+        #Debug code
+        self.display_ghost_target_on_map((240, 302))
     
     #A method to update the Ghost's eaten state movement
     def eaten_state_movement_update(self, list_obstacles):
@@ -1056,6 +1093,9 @@ class Ghost(ABC):
             self.eaten_state_steps_per_frame = 1
         else:
             self.eaten_state_steps_per_frame = 0
+
+        #Debug code
+        self.display_ghost_target_on_map((240, 303))
         
         #Debug code
             # print(self.steps_per_frame)
@@ -1063,8 +1103,38 @@ class Ghost(ABC):
     #A method to help the Ghost travel through the tunnel edge at the left or right side of the game map
     def tunnel_edge_teleport(self):
         if(self.rect.centerx == -2 and self.rect.centery == 304):
-            self.direction = 'Left'
             self.rect.center = (482, 304)
+            self.direction = 'Left'            
         elif(self.rect.centerx == 482 and self.rect.centery == 304):
-            self.direction = 'Right'
             self.rect.center = (-2, 304)
+            self.direction = 'Right'
+
+    #A debug method to visually display the ghost's current target on the surface they are currently on
+    def display_ghost_target_on_map(self, target):
+        #Creates font 
+        pixel_font = pygame.font.Font('Fonts/Pixel/DePixelHalbfett.ttf', 12)
+
+        if(self.name == 'Blinky (Red)'):
+            text_color = 'Red'
+        elif(self.name == 'Pinky (Pink)'):
+            text_color = 'Pink'
+        elif(self.name == 'Inky (Cyan)'):
+            text_color = 'Cyan'
+        elif(self.name == 'Clyde (Orange)'):
+            text_color = 'Orange'
+
+        #Sets up target text
+        x_text = pixel_font.render('X', True, text_color)
+        target_text = pixel_font.render('[TARGET]', True, text_color)
+
+        #Gets the rect of the text
+        x_text_rect = x_text.get_rect()
+        target_text_rect = target_text.get_rect()
+
+        #Applies the position the text should be blitted on
+        x_text_rect.center = (target[0], target[1])
+        target_text_rect.center = (target[0], target[1] + 20)
+
+        #Blits the text on the current surface
+        self.scene_surface.blit(x_text, x_text_rect)
+        self.scene_surface.blit(target_text, target_text_rect)

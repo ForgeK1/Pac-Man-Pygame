@@ -30,10 +30,10 @@ class GameStateManager:
     def set_running_state(self, new_running_state):
         self.running_state = new_running_state
 
-    #A method to set the delta time variable created from the clock when ticking 60 fps in the main game loop
-    def set_clock_delta_time(self, delta_time):
-        self.clock_delta_time = delta_time
-
-    #A method to get the delta time variable
+    #A method to get the delta time variable (Ticks 60 fps for every loop in main game loop)
     def get_clock_delta_time(self):
         return self.clock_delta_time
+
+    #A method to set the delta time variable (Ticks 60 fps for every loop in main game loop)
+    def set_clock_delta_time(self, delta_time):
+        self.clock_delta_time = delta_time
