@@ -29,7 +29,7 @@ clock = pygame.time.Clock()
 
 '''
 Sets up the game state manager to keep track of different scenes and running state during gameplay
-    Note: Runs the Splash Scene when opening the game for the first time
+    NOTE: Runs the Splash Scene when opening the game for the first time
 '''
 game_state_manager = GameStateManager('Splash Scene', True)
 
@@ -41,6 +41,9 @@ gameplay_scene = GameplayScene(display_surface, game_state_manager, WINDOW_WIDTH
 #A dictionary that matches keys with their respective scenes to help the game state manager switch between scenes of the game
 list_of_states = {'Splash Scene':splash_scene, 'Main Menu Scene':main_menu_scene, 'Gameplay Scene':gameplay_scene}
 
+#A variable to check if the player wants to check if the ghosts and Pac-Man mechanics are working
+debug_mode = False
+
 #A game loop to run the game
 while game_state_manager.get_running_state():
     #A for loop to catch all events done by the player or during gameplay and stores them in a queue to iterate through
@@ -49,14 +52,20 @@ while game_state_manager.get_running_state():
         if(event.type == pygame.QUIT):
             game_state_manager.set_running_state(False)
 
-    # print(event)
-    
+        #An if statement to check if the key 'D' or 'd' was clicked for debugging mode
+        if(event.type == pygame.KEYUP):
+            if(event.key == pygame.K_d):
+                if(debug_mode):
+                    debug_mode = False
+                else:
+                    debug_mode = True
+
     '''
     Continuously runs the current scene the game state manager focuses on based on current player events
-        Note: We pass in the event so that the run method can handle any events done by the player
+        NOTE: We pass in the event so that the run method can handle any events done by the player
               to perform specific tasks (Ex. clicking the play button in the Main Menu Scene)
     '''
-    list_of_states[game_state_manager.get_scene_state()].run(event)
+    list_of_states[game_state_manager.get_scene_state()].run(event, debug_mode)
 
     #Constantly updates the display surface for any changes in runtime (sounds, blitting of images and text, etc.)
     pygame.display.update()

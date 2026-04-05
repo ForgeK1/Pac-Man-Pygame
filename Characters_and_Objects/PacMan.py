@@ -415,7 +415,7 @@ class PacMan:
         
         '''
         A section to update Pac-Man's movement animation
-            Note: If True, then the program updates the frame of the character. 
+            NOTE: If True, then the program updates the frame of the character. 
                   If False, then the program uses the old frame in runtime
         '''
         if(change_frame and self.movement):
@@ -423,7 +423,7 @@ class PacMan:
 
         '''
         A section to update Pac-Man's death animation through an iteration timer
-            Note: This is a diffrent type of timer compared to the timer used to change the movement frames
+            NOTE: This is a diffrent type of timer compared to the timer used to change the movement frames
                   of the characters 
         '''
         if(self.death_animation):  
@@ -454,7 +454,7 @@ class PacMan:
         
         '''
         Applies a value to new direction if the player pressed any arrow keys 
-            Note: If the player didn't press any arrow keys, new & old direction 
+            NOTE: If the player didn't press any arrow keys, new & old direction 
                   will have same value
         '''
         if('key' in event.dict):
@@ -579,7 +579,7 @@ class PacMan:
             if(range_x > 0.95 and range_y > 0.95):
                 '''
                 Updates the ghost's state and variables for the power pellet
-                    Note: These two states are not set to True once the power pellet channel is done because
+                    NOTE: These two states are not set to True once the power pellet channel is done because
                           the state_handler method in the Ghost class automatically does so
                 '''
                 for ghost in list_ghosts:

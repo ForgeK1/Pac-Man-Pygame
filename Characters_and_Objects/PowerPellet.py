@@ -42,7 +42,7 @@ class PowerPellet:
         Third parameter:  Surface object of the image
         Fourth parameter: Rect of the image
 
-            Note: The reason why this variable is a list of lists instead of a tuple of lists (Ex. list_obstacles or list_pellets
+            NOTE: The reason why this variable is a list of lists instead of a tuple of lists (Ex. list_obstacles or list_pellets
                   in the Gameplay Scene class) is because the program uses the animation_update() method to assign a new image 
                   in the third index of this list. A tuple is immutable and cannot be assigned a new object if already assigned
         '''
@@ -74,7 +74,7 @@ class PowerPellet:
 
                 '''
                 A section to grab and record the updated rect position in the fourth list
-                    Note: Since all power pellets share the same image, the value has already been assigned in the third parameter
+                    NOTE: Since all power pellets share the same image, the value has already been assigned in the third parameter
                 '''
                 power_pellet_image_rect = self.image.get_rect()
                 power_pellet_image_rect.topleft = coordinates

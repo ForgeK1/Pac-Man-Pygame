@@ -79,7 +79,8 @@ class Inky(Ghost):
             self.rect.centerx = self.rect.centerx + 2
         
         #Debug code
-        self.display_ghost_target_on_map(target)
+        if(self.debug_mode):
+            self.display_ghost_target_on_map(target)
     
     '''
     A helper method for Inky's chase_movement_update
@@ -131,4 +132,5 @@ class Inky(Ghost):
             self.rect.centerx = self.rect.centerx + 2
 
         #Debug code
-        self.display_ghost_target_on_map((439, 605))
+        if(self.debug_mode):
+            self.display_ghost_target_on_map((439, 605))

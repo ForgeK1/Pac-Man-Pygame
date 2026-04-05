@@ -22,7 +22,7 @@ class MainMenuScene:
 
         '''
         Sets up the Main Menu Scene surface to continiously update and blit it onto the display surface
-            Note: pygame.SRCALPHA must be included to access the alpha channel so that the program
+            NOTE: pygame.SRCALPHA must be included to access the alpha channel so that the program
                   can change the transparency of the surface object below during runtime
         '''
         self.main_menu_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
@@ -42,7 +42,7 @@ class MainMenuScene:
                                   'Quit', "black", "black", "black", 'Fonts/Pixel/DePixelHalbfett.ttf', 24)
     
     #A method to run Main Menu Scene
-    def run(self, event): 
+    def run(self, event, debug_mode): 
         #Fills the background of the display surface
         self.display_surface.fill('black')
         

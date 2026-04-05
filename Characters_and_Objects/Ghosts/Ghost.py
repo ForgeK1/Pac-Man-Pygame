@@ -68,6 +68,9 @@ class Ghost(ABC):
         #Initializes a variable to help the Ghost exit the gate region once their stand by state ends
         self.stand_by_state_exit_condition = False
 
+        #Initializes a variable to allow a debug mode which shows the ghost's current target and any other parameters for debugging
+        self.debug_mode = False
+
     #A method to return Ghost's name
     def get_name(self):
         return self.name
@@ -203,6 +206,14 @@ class Ghost(ABC):
     #A method to set the boolean for Ghost's exit condition when their stand by state ends
     def set_stand_by_state_exit_condition(self, new_stand_by_state_exit_condition):
         self.stand_by_state_exit_condition = new_stand_by_state_exit_condition
+
+    #A method to return the boolean for debug mode
+    def get_debug_mode(self):
+        return self.debug_mode
+    
+    #A set the boolean for debug mode
+    def set_debug_mode(self, new_debug_mode):
+        self.debug_mode = new_debug_mode
 
     '''
     A series of methods to set the current frame of the Ghost in their normal state
@@ -701,7 +712,7 @@ class Ghost(ABC):
         1) Defines all possible paths the Ghost can take
         2) Uses the target to calculate the distance of each path
         3) Choose the path closest to the target
-            Note: If two paths are the same distance, then the priority order is ⬆️ ⬅️ ⬇️ ➡️
+            NOTE: If two paths are the same distance, then the priority order is ⬆️ ⬅️ ⬇️ ➡️
     '''
     def direction_update(self, list_obstacles, target):
         directions = {
@@ -763,7 +774,7 @@ class Ghost(ABC):
 
         '''
         Checks if the Ghost is in a frightened state. If so, the Ghost will move in a random direction
-            Note: The program is checking if the Ghost's stand_by_state is False so that the Ghost can 
+            NOTE: The program is checking if the Ghost's stand_by_state is False so that the Ghost can 
                   exit the gate region once Pac-Man eats enough dots
         '''
         if ((self.frightened_state_v1 or self.frightened_state_v2) and self.stand_by_state is False):
@@ -948,7 +959,7 @@ class Ghost(ABC):
         
     '''
     A method to cycle through the Ghost's movement based on their current state
-        Note: Unlike the state_handler method, this method must be an if-else chain so that the ghost does not take
+        NOTE: Unlike the state_handler method, this method must be an if-else chain so that the ghost does not take
               on multiple movement updates. In contrast, the state_handler is designed to have a ghost behave 
               in intertwining states (Ex. Inky can both be in a stand_by and frightened state)
     '''
@@ -984,7 +995,8 @@ class Ghost(ABC):
                 self.rect.centerx = self.rect.centerx + 2
 
             #Debug code
-            self.display_ghost_target_on_map((240, 252))
+            if(self.debug_mode):
+                self.display_ghost_target_on_map((240, 252))
         
         #An else statement to help the ghost move up and down repeatadly (essentially standing by until Pac-Man eats a certain number of dots)
         else:
@@ -1045,7 +1057,8 @@ class Ghost(ABC):
             self.frightened_state_steps_per_frame = 0
 
         #Debug code
-        self.display_ghost_target_on_map((240, 302))
+        if(self.debug_mode):
+            self.display_ghost_target_on_map((240, 302))
     
     #A method to update the Ghost's eaten state movement
     def eaten_state_movement_update(self, list_obstacles):
@@ -1070,7 +1083,7 @@ class Ghost(ABC):
         '''
         Because direction_update only checked if the first step was valid, the program needs to check if the 
         following step is also valid for the same direction
-            Note: Movement is twice as fast for the eaten state compared to the other states
+            NOTE: Movement is twice as fast for the eaten state compared to the other states
         '''
         if(self.eaten_state_steps_per_frame == 0):
             collision = pygame.Rect.copy(self.rect)
@@ -1095,7 +1108,8 @@ class Ghost(ABC):
             self.eaten_state_steps_per_frame = 0
 
         #Debug code
-        self.display_ghost_target_on_map((240, 303))
+        if(self.debug_mode):
+            self.display_ghost_target_on_map((240, 303))
         
         #Debug code
             # print(self.steps_per_frame)

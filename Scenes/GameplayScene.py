@@ -25,13 +25,13 @@ class GameplayScene:
 
         '''
         Sets up the Gameplay Scene surface to continiously update and blit it onto the display surface
-            Note: pygame.SRCALPHA must be included to access the alpha channel so that the program
+            NOTE: pygame.SRCALPHA must be included to access the alpha channel so that the program
                   can change the transparency of the surface object below during runtime
         '''
         self.gameplay_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
         #Initializes a variable current level
-        self.level_counter = 5
+        self.level_counter = 1
 
         #Initializes the character objects
         self.pac_man = PacMan(self.gameplay_surface, 30, 30, 'Left', 240, 458, True, 50)
@@ -89,7 +89,7 @@ class GameplayScene:
         self.one_up_text_timer = 0
 
     #A method to run the Gameplay Scene
-    def run(self, event):  
+    def run(self, event, debug_mode):  
         #Fills the background of the display surface
         self.display_surface.fill('black')
 
@@ -105,7 +105,7 @@ class GameplayScene:
             self.set_up_gameplay_surface()
 
             #A method to check player and game events for the Gameplay Scene
-            self.event_handler(event)            
+            self.event_handler(event, debug_mode)            
 
             #Blits the Gameplay Scene surface onto the display surface
             self.display_surface.blit(self.gameplay_surface, (0, 0))
@@ -118,7 +118,7 @@ class GameplayScene:
         '''
         Updates Pac-Man's animation based on his character_animation_speed variable, and blits each ghost's 
         images and rects onto the Gameplay Scene
-            Note: Pac-Man's section comes before blitting the pellets because the pellets would show up in his mouth. 
+            NOTE: Pac-Man's section comes before blitting the pellets because the pellets would show up in his mouth. 
                   Note that, the pellets dissapear once they reach Pac-Man's mouth. In contrast, the ghosts are blit 
                   after the pellets since the pellets do not dissapear when they interact with them
         '''
@@ -241,7 +241,7 @@ class GameplayScene:
         for filename in os.listdir('Images/Obstacles/Blue'):   
             '''
             A section to grab the top left X & Y coordinate of each file and store it in an array 
-                Note: The coordinates for the file are stored in the file name
+                NOTE: The coordinates for the file are stored in the file name
             '''
             coordinates = filename
             coordinates = coordinates.removeprefix('(')
@@ -279,7 +279,7 @@ class GameplayScene:
 
         '''
         Appends the pink gate image and rect after all other obstacle images have been added
-            Note: This is so that other images are not blitted on top of the pink gate image
+            NOTE: This is so that other images are not blitted on top of the pink gate image
         '''
         self.list_blue_obstacles[1].append(pink_gate_image)
         self.list_blue_obstacles[2].append(pink_gate_rect)
@@ -442,7 +442,7 @@ class GameplayScene:
             '''
             Sets a timer to pause for a 50 iterations before showcasing all of the obstacles, pellets, 
             and characters when starting the next round
-                Note: This is a diffrent type of timer compared to the timer used to change the movement frames
+                NOTE: This is a diffrent type of timer compared to the timer used to change the movement frames
                       of the characters
             '''
             if(self.transition_to_next_round_timer >= 50):
@@ -585,7 +585,7 @@ class GameplayScene:
 
             '''
             Sets a timer to pause for a 100 iterations before continuing with the end of the round
-                Note: This is a diffrent type of timer compared to the timer used to change the movement frames
+                NOTE: This is a diffrent type of timer compared to the timer used to change the movement frames
                       of the characters
             '''
             if(self.ghost_disappear_timer >= 100):
@@ -691,7 +691,7 @@ class GameplayScene:
 
             '''
             Sets a timer to pause for a 50 iterations before continuing with the end of the round
-                Note: This is a diffrent type of timer compared to the timer used to change the movement frames
+                NOTE: This is a diffrent type of timer compared to the timer used to change the movement frames
                       of the characters
             '''
             if(self.ghost_disappear_timer == 50):
@@ -747,7 +747,7 @@ class GameplayScene:
 
             '''
             Sets a timer to pause for a 50 iterations before continuing with the end of the round
-                Note: This is a diffrent type of timer compared to the timer used to change the movement frames
+                NOTE: This is a diffrent type of timer compared to the timer used to change the movement frames
                       of the characters
             '''
             if(self.ghost_disappear_timer == 50):
@@ -773,7 +773,7 @@ class GameplayScene:
 
             '''
             Sets up all objects onto the gameplay surface
-                Note: This occurs before the transition_to_main_menu if statement so that the "GAME OVER" 
+                NOTE: This occurs before the transition_to_main_menu if statement so that the "GAME OVER" 
                       text can overlay the gameplay surface
             '''
             self.set_up_gameplay_surface()
@@ -870,7 +870,7 @@ class GameplayScene:
                 self.display_surface.blit(self.gameplay_surface, (0, 0))
 
     #A method to handle player and game events for the Gameplay Scene
-    def event_handler(self, event):
+    def event_handler(self, event, debug_mode):
         #Checks if Pac-Man ate all of the pellets
         self.pac_man.check_ate_all_pellets(self.list_pellets, self.list_power_pellets)
 
@@ -879,9 +879,21 @@ class GameplayScene:
 
         #Checks if Pac-Man ate a ghost (while the ghost was in a frightened state)
         self.pac_man.check_if_ate_a_ghost(self.ghost_eaten_channel, self.pac_man_ate_ghost_sound, self.blinky, self.pinky, self.inky, self.clyde)
+        
+        #Checks if the player enabled debugging mode for the ghosts
+        self.ghosts_debug_mode(debug_mode)
 
         #A method to run gameplay and check a series of conditions
         self.gameplay_sequence(event)
+    
+    #A method to enable debugging mode for ghosts (which shows their current target and movement patterns)
+    def ghosts_debug_mode(self, debug_mode):
+        if(debug_mode):
+            for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+                ghost.set_debug_mode(True)
+        else:
+            for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+                ghost.set_debug_mode(False)
     
     #A method to run gameplay and check a series of conditions for the current round
     def gameplay_sequence(self, event):
@@ -893,7 +905,7 @@ class GameplayScene:
             for channel in [self.siren_channel, self.pellet_channel, self.ghost_eaten_channel, self.ghost_return_channel]:
                 channel.stop()
         
-        #An else-if statement to pause momentarily after Pac-Man eats a ghost (Note: get_ate_a_ghost is [ghost object, boolean])
+        #An else-if statement to pause momentarily after Pac-Man eats a ghost (NOTE: get_ate_a_ghost is [ghost object, boolean])
         elif(self.pac_man.get_ate_a_ghost()[1]):
             #Stops the ghost_return channel (if a ghost has been eaten beforehand)
             if(self.ghost_return_channel.get_busy()):
@@ -973,12 +985,6 @@ class GameplayScene:
             for ghost in [self.blinky, self.pinky,self.inky, self.clyde]:                
                 ghost.state_handler(self.pac_man.get_dots_eaten(), self.siren_channel, self.ghost_return_channel, self.ghost_return, self.power_pellet_channel) 
                 ghost.movement_update(self.list_blue_obstacles, self.pac_man.get_direction(), list_ghosts_positions, self.pac_man.get_rect().center)
-
-                # self.display_ghost_target_on_map(ghost.get_name(), ghost.get_target() = self.pac_man.get_rect().center)
-                
-                #Debug code
-                    # print("Pinky's center: " + str(self.pinky.get_rect().center))
-                    # print("Inky's & Clyde's center: " + str(self.inky.get_rect().center))
             
             self.pac_man.movement_update(event, self.list_blue_obstacles)
 

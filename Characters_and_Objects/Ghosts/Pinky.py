@@ -68,7 +68,8 @@ class Pinky(Ghost):
             self.rect.centerx = self.rect.centerx + 2
 
         #Debug code
-        self.display_ghost_target_on_map(target)
+        if(self.debug_mode):
+            self.display_ghost_target_on_map(target)
     
     #An inherited method to update Pinky's scatter state movement
     def scatter_state_movement_update(self, list_obstacles):
@@ -98,4 +99,5 @@ class Pinky(Ghost):
             self.rect.centerx = self.rect.centerx + 2
 
         #Debug code
-        self.display_ghost_target_on_map((40, 10))
+        if(self.debug_mode):
+            self.display_ghost_target_on_map((40, 10))

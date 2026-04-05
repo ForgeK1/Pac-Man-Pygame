@@ -67,7 +67,7 @@ class Pellet:
 
                 '''
                 A section to grab and record the updated rect position in the fourth list
-                    Note: Since all pellets share the same image, the value has already been assigned in the third parameter
+                    NOTE: Since all pellets share the same image, the value has already been assigned in the third parameter
                 '''
                 pellet_image_rect = pellet_image.get_rect().copy()
                 pellet_image_rect.topleft = coordinates

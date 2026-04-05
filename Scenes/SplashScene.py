@@ -16,7 +16,7 @@ class SplashScene:
 
         '''
         Sets up the the Splash Scene surface to continiously update and blit it onto the display surface
-            Note: pygame.SRCALPHA must be included to access the alpha channel so that the program
+            NOTE: pygame.SRCALPHA must be included to access the alpha channel so that the program
                   can change the transparency of the surface object below during runtime
         '''
         self.splash_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
@@ -26,7 +26,7 @@ class SplashScene:
         self.fully_transparent = False
     
     #A method to run the Splash Scene
-    def run(self, event):
+    def run(self, event, debug_mode):
         #Fills the background of the display surface
         self.display_surface.fill('black')
         
@@ -45,7 +45,7 @@ class SplashScene:
         '''
         An if statement that uses the game state manager to re-direct the player to the 
         Main Menu Scene after the splash scene disappears
-            Note: Although the initialized value of transparency is 0, the game doesn't 
+            NOTE: Although the initialized value of transparency is 0, the game doesn't 
                   switch scenes because the variable gets incremented before reaching
                   this if statement
         '''
