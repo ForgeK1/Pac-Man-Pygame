@@ -1,29 +1,26 @@
 '''
-Description: This hybrid-abstract class serves as a parent Ghost class for the four ghosts to derive from
+Description: This hybrid-abstract class serves as a parent ghost class for the four ghosts to derive from
 '''
 
-#Imports for the Ghost class to function
+#Imports for the ghost class to function
 import pygame
 import random
 import math
 from abc import ABC, abstractmethod
 
 class Ghost(ABC):
-    #A constructor to initialize an instance of the Ghost
-    def __init__(self, scene_surface, name, starting_image_path, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, level_counter, game_state_manager):
-        #Initializes the current surface the ghosts are being blitted on (Ex. Gameplay Scene --> gameplay_surface)
-        self.scene_surface = scene_surface
-        
-        #Initializes a variable to assign the child ghost name (Blinky, Inky, Pinky, or Clyde)
+    #A constructor to initialize an instance of a ghost
+    def __init__(self, name, starting_image_path, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, scene_surface, game_state_manager):        
+        #A variable to assign the child ghost name (Blinky, Inky, Pinky, or Clyde)
         self.name = name
 
-        #Initializes variables to keep track of the image and rect
+        #Variables to keep track of the image and rect
         self.image = pygame.image.load(starting_image_path)
         self.image = pygame.transform.scale(self.image, (horizontal_scale, vertical_scale))
         self.rect = self.image.get_rect()
         self.rect.center = (x_position, y_position)
 
-        #Initializes variables to keep track of the scale, direction, movement boolean, frame of the ghost, and how many steps to take per frame (based on their current state)
+        #Variables to keep track of the scale, direction, movement, frame, and how many steps to take per frame (based on their current state)
         self.horizontal_scale = horizontal_scale
         self.vertical_scale = vertical_scale
         self.direction = direction
@@ -33,190 +30,270 @@ class Ghost(ABC):
         self.frightened_state_steps_per_frame = 0
         self.eaten_state_steps_per_frame = 0
 
-        #Initializes variables to control character animation speed
+        #Variables to control character animation speed
         self.character_animation_speed = character_animation_speed #In miliseconds
         self.last_updated_time = 0 #In miliseconds
 
-        #Initializes a variable to keep track of current level from the Gameplay Scene
-        self.level_counter = level_counter
-
-        #Initializes the game state manager
-        self.game_state_manager = game_state_manager
-
         #Variables to check what state the ghost is in
-        self.stand_by_state = True #Ghost waiting in the gate until Pac-Man eats enough dots
-        self.chase_state = False #Ghost chasing Pac-Man
-        self.scatter_state = False #Ghost moving away from Pac-Man
-        self.frightened_state_v1 = False #Blue skin 
-        self.frightened_state_v2 = False #A pattern of repeating blue and white skin
-        self.eaten_state = False #A pair of floating eyes
+        self.stand_by_state = True       #Ghost is waiting in the gate until Pac-Man eats enough dots
+        self.chase_state = False         #Ghost is chasing Pac-Man
+        self.scatter_state = False       #Ghost is moving away from Pac-Man
+        self.frightened_state_v1 = False #Ghost is frightened (Blue skin)
+        self.frightened_state_v2 = False #Ghost is frightened (a pattern of repeating blue and white skin)
+        self.eaten_state = False         #Ghost has been eaten (a pair of floating eyes)
 
-        #Variables to indicate that the ghost turns around 180 degrees once they go into their Frightened state or Chase state
+        #Variables to indicate that the ghost turns around 180 degrees once they go into their Frightened State or Chase State
         self.turn_around = False
         self.turn_around_occured_once = False
 
-        #Variables to help the ghost cycle between the chase and scatter state
+        #Variables to help the ghost cycle between the chase and Scatter State
         self.chase_and_scatter_cycle_phases = ["Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase"]
-        self.chase_and_scatter_cycle_phase_timers = self.set_up_ghost_chase_and_scatter_cycle_phase_timers()
+        self.chase_and_scatter_cycle_phase_timers = self.set_up_ghost_chase_and_scatter_cycle_phase_timers(None)
 
         self.chase_and_scatter_cycle_real_timer = 0
         self.chase_and_scatter_cycle_curr_timer = None
 
-        #Initializes a variable timer to dynamically change ghost frightened state frame after Pac-Man eats a power pellet
+        #A variable timer to dynamically change the ghost's Frightened State frame after Pac-Man eats a power pellet
         self.ghost_scatter_timer = 0
 
-        #Initializes a variable to help the Ghost exit the gate region once their stand by state ends
-        self.stand_by_state_exit_condition = False
+        #A variable to help the ghost exit the gate region once their Stand By State ends
+        self.stand_by_state_exit_condition = False    
 
-        #Initializes a variable to allow a debug mode which shows the ghost's current target and any other parameters for debugging
-        self.debug_mode = False
+        #A variable to point to the current current surface the ghosts are being blitted on (ex. Gameplay Scene --> gameplay_surface)
+        self.scene_surface = scene_surface
 
-    #A method to return Ghost's name
+        #A variable to point to the Game State Manager
+        self.game_state_manager = game_state_manager
+
+        #A variable to allow a debug mode which shows the ghost's current target and any other parameters for debugging
+        self.debug_mode = False    
+
+    #A method to return ghost's name
     def get_name(self):
         return self.name
 
-    #A method to set a new name for Ghost
+    #A method to set a new name for the ghost
     def set_name(self, new_name):
         self.name = new_name
 
-    #A method to return Ghost's image
+    #A method to return ghost's image
     def get_image(self):
         return self.image
 
-    #A method to set a new image for Ghost
+    #A method to set a new image for the ghost
     def set_image(self, new_image):
         self.image = new_image
 
-    #A method to return the rect of Ghost's image
+    #A method to return the ghost's image rect
     def get_rect(self):
         return self.rect
     
-    #A method to set a new rect for Ghost
+    #A method to set a new rect for the ghost
     def set_rect(self, new_rect):
         self.rect = new_rect
     
-    #A method to return Ghost's horizontal_scale
+    #A method to return the ghost's horizontal_scale
     def get_horizontal_scale(self):
         return self.horizontal_scale
 
-    #A method to set a new horizontal_scale for Ghost
+    #A method to set a new horizontal_scale for the ghost
     def set_horizontal_scale(self, new_horizontal_scale):
         self.horizontal_scale = new_horizontal_scale
     
-    #A method to return Ghost's vertical_scale
+    #A method to return host's vertical_scale
     def get_vertical_scale(self):
         return self.vertical_scale
 
-    #A method to set a new vertical_scale for Ghost
+    #A method to set a new vertical_scale for the ghost
     def set_vertical_scale(self, new_vertical_scale):
         self.vertical_scale = new_vertical_scale
     
-    #A method to return Ghost's current direction
+    #A method to return ghost's direction
     def get_direction(self):
         return self.direction
     
-    #A method to set a new direction for Ghost
+    #A method to set a new direction for the ghost
     def set_direction(self, new_direction):
         self.direction = new_direction
     
-    #A method to return the boolean for Ghost's movement
+    #A method to return the ghost's movement boolean
     def get_movement(self):
         return self.movement
 
-    #A method to set a new boolean for Ghost's movement
+    #A method to set a new movement boolean for the ghost
     def set_movement(self, new_movement):
         self.movement = new_movement
 
-    #A method to return Ghost's current frame
+    #A method to return ghost's frame
     def get_frame(self):
         return self.frame
     
-    #A method to set a new frame for Ghost
+    #A method to set a new frame for the ghost
     def set_frame(self, new_frame):
         self.frame = new_frame
+
+    #A method to return the ghost's stand_by_state_steps_per_frame
+    def get_stand_by_state_steps_per_frame(self):
+        return self.stand_by_state_steps_per_frame
     
-    #A method to return the boolean for Ghost's stand by state
+    #A method to set a new stand_by_state_steps_per_frame for the ghost
+    def set_stand_by_state_steps_per_frame(self, new_stand_by_state_steps_per_frame):
+        self.stand_by_state_steps_per_frame = new_stand_by_state_steps_per_frame
+    
+    #A method to return the ghost's frightened_state_steps_per_frame
+    def get_frightened_state_steps_per_frame(self):
+        return self.frightened_state_steps_per_frame
+    
+    #A method to set a new frightened_state_steps_per_frame for the ghost
+    def set_frightened_state_steps_per_frame(self, new_frightened_state_steps_per_frame): 
+        self.frightened_state_steps_per_frame = new_frightened_state_steps_per_frame
+
+    #A method to return the ghost's eaten_state_steps_per_frame
+    def get_eaten_state_steps_per_frame(self): 
+        return self.eaten_state_steps_per_frame
+    
+    #A method to set a new eaten_state_steps_per_frame for the ghost
+    def set_eaten_state_steps_per_frame(self, new_eaten_state_steps_per_frame): 
+        self.eaten_state_steps_per_frame = new_eaten_state_steps_per_frame
+    
+    #A method to return the ghost's character_animation_speed
+    def get_character_animation_speed(self):
+        return self.character_animation_speed
+
+    #A method to set a new character_animation_speed for the ghost
+    def set_character_animation_speed(self, new_character_animation_speed):
+        self.character_animation_speed = new_character_animation_speed
+
+    #A method to return the ghost's last_updated_time (in miliseconds) to track his character_animation_speed
+    def get_last_updated_time(self):
+        return self.last_updated_time
+    
+    #A method to set a new last_updated_time for the ghost (in miliseconds) to track his character_animation_speed
+    def set_last_updated_time(self, new_last_updated_time):
+        self.last_updated_time = new_last_updated_time    
+    
+    #A method to return ghost's stand_by_state boolean
     def get_stand_by_state(self):
         return self.stand_by_state
     
-    #A method to set a new boolean for Ghost's stand by state
+    #A method to set a new stand_by_state boolean for the ghost
     def set_stand_by_state(self, new_stand_by_state):
         self.stand_by_state = new_stand_by_state
 
-    #A method to return the boolean for Ghost's chase state
+    #A method to return ghost's chase_state boolean
     def get_chase_state(self):
         return self.chase_state
     
-    #A method to set a new boolean for Ghost's chase state
+    #A method to set a new chase_state boolean for the ghost
     def set_chase_state(self, new_chase_state):
         self.chase_state = new_chase_state
 
-    #A method to return the boolean for Ghost's scatter state
+    #A method to return ghost's scatter_state boolean
     def get_scatter_state(self):
         return self.scatter_state
     
-    #A method to set a new boolean for Ghost's scatter state
+    #A method to set a new scatter_state boolean for the ghost
     def set_scatter_state(self, new_scatter_state):
         self.scatter_state = new_scatter_state
     
-    #A method to return the boolean for Ghost's frightened state version #1
+    #A method to return ghost's frightened_state_v1 boolean
     def get_frightened_state_v1(self):
         return self.frightened_state_v1
 
-    #A method to set a new boolean for Ghost's frightened state version #1
+    #A method to set a new new_frightened_state_v1 boolean for the ghost
     def set_frightened_state_v1(self, new_frightened_state_v1):
         self.frightened_state_v1 = new_frightened_state_v1
 
-    #A method to return the boolean for Ghost's frightened state version #2
+    #A method to return ghost's frightened_state_v2 boolean
     def get_frightened_state_v2(self):
         return self.frightened_state_v2
 
-    #A method to set a new boolean for Ghost's frightened state version #2
+    #A method to set a new new_frightened_state_v2 boolean for the ghost
     def set_frightened_state_v2(self, new_frightened_state_v2):
         self.frightened_state_v2 = new_frightened_state_v2
     
-    #A method to return the boolean for Ghost's eaten state
+    #A method to return ghost's eaten_state boolean
     def get_eaten_state(self):
         return self.eaten_state
 
-    #A method to set a new boolean for Ghost's eaten state
+    #A method to set a new eaten_state boolean for the ghost
     def set_eaten_state(self, new_eaten_state):
         self.eaten_state = new_eaten_state
 
-    #A method to get the boolean for the ghost's turn_around_occured_once condition
+    #A method to return the ghost's turn_around boolean
+    def get_turn_around(self):
+        return self.turn_around
+    
+    #A method to set a new turn_around boolean for the ghost
+    def set_turn_around(self, new_turn_around):
+        self.turn_around = new_turn_around
+
+    #A method to return the ghost's turn_around_occured_once boolean
     def get_turn_around_occured_once(self):
         return self.turn_around_occured_once
     
-    #A method to set a new boolean for the ghost's turn_around_occured_once condition
+    #A method to set a new turn_around_occured_once boolean for the ghost
     def set_turn_around_occured_once(self, new_turn_around_occured_once):
-        self.turn_around_occured_once = new_turn_around_occured_once
+        self.turn_around_occured_once = new_turn_around_occured_once 
 
-    #A method to return the ghost scatter timer
+    #A method to return the ghost's chase_and_scatter_cycle_phases
+    def get_chase_and_scatter_cycle_phases(self):
+        return self.chase_and_scatter_cycle_phases
+
+    #A method to set a new chase_and_scatter_cycle_phases for the ghost
+    def set_chase_and_scatter_cycle_phases(self, new_chase_and_scatter_cycle_phases):
+        self.chase_and_scatter_cycle_phases = new_chase_and_scatter_cycle_phases
+
+    #A method to return the ghost's chase_and_scatter_cycle_phase_timers
+    def get_chase_and_scatter_cycle_phase_timers(self):
+        return self.chase_and_scatter_cycle_phase_timers
+
+    #A method to set a new chase_and_scatter_cycle_phase_timers for the ghost
+    def set_chase_and_scatter_cycle_phase_timers(self, new_chase_and_scatter_cycle_phase_timers):
+        self.chase_and_scatter_cycle_phase_timers = new_chase_and_scatter_cycle_phase_timers
+
+    #A method to return the ghost's chase_and_scatter_cycle_real_timer
+    def get_chase_and_scatter_cycle_real_timer(self):
+        return self.chase_and_scatter_cycle_real_timer
+
+    #A method to set a new chase_and_scatter_cycle_real_timer for the ghost
+    def set_chase_and_scatter_cycle_real_timer(self, new_chase_and_scatter_cycle_real_timer):
+        self.chase_and_scatter_cycle_real_timer = new_chase_and_scatter_cycle_real_timer
+
+    #A method to return the ghost's chase_and_scatter_cycle_curr_timer
+    def get_chase_and_scatter_cycle_curr_timer(self):
+        return self.chase_and_scatter_cycle_curr_timer
+
+    #A method to set a new chase_and_scatter_cycle_curr_timer for the ghost
+    def set_chase_and_scatter_cycle_curr_timer(self, new_chase_and_scatter_cycle_curr_timer):
+        self.chase_and_scatter_cycle_curr_timer = new_chase_and_scatter_cycle_curr_timer    
+
+    #A method to return the ghost's ghost_scatter_timer
     def get_ghost_scatter_timer(self):
         return self.ghost_scatter_timer
     
-    #A method to set the ghost scatter timer
+    #A method to set a new ghost_scatter_timer for the ghost
     def set_ghost_scatter_timer(self, new_ghost_scatter_timer):
         self.ghost_scatter_timer = new_ghost_scatter_timer
     
-    #A method to return the boolean for Ghost's exit condition when their stand by state ends
+    #A method to return the ghost's get_stand_by_state_exit_condition boolean (for the ghost's exit condition when their Stand By State ends)
     def get_stand_by_state_exit_condition(self):
         return self.stand_by_state_exit_condition
     
-    #A method to set the boolean for Ghost's exit condition when their stand by state ends
+    #A method to set the new get_stand_by_state_exit_condition boolean for the ghost (when their Stand By State ends)
     def set_stand_by_state_exit_condition(self, new_stand_by_state_exit_condition):
         self.stand_by_state_exit_condition = new_stand_by_state_exit_condition
 
-    #A method to return the boolean for debug mode
+    #A method to return the ghost's debug_mode boolean
     def get_debug_mode(self):
         return self.debug_mode
     
-    #A set the boolean for debug mode
+    #A set a new debug_mode boolean for the ghost
     def set_debug_mode(self, new_debug_mode):
         self.debug_mode = new_debug_mode
 
     '''
-    A series of methods to set the current frame of the Ghost in their normal state
+    A series of methods to set the current frame of the ghost in their normal state
     '''
 
     #Right movement frame 1
@@ -260,7 +337,7 @@ class Ghost(ABC):
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     '''
-    A series of methods to set the current frame of the Ghost in their frightened state
+    A series of methods to set the current frame of the ghost in their Frightened State
     '''
 
     #Blue movement frame 1
@@ -284,7 +361,7 @@ class Ghost(ABC):
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
     '''
-    A series of methods to set the current frame of the Ghost in their eaten state
+    A series of methods to set the current frame of the ghost in their Eaten State
     '''
 
     #Right eaten movement frame
@@ -308,23 +385,23 @@ class Ghost(ABC):
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
     '''
-    A method to reset the chase and scatter cycle for the Ghost 
-        Ex) At the end of a round, the timers for all ghosts need to be reset to transition
+    A method to reset the chase and scatter cycle for the ghost 
+        ex) At the end of a round, the timers for all ghosts need to be reset to transition
             to the next level or to the Main Menu Scene
     '''
-    def reset_chase_and_scatter_cycle(self):
+    def reset_chase_and_scatter_cycle(self, level_counter):
         self.chase_and_scatter_cycle_phases = ["Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase", "Scatter", "Chase"]
-        self.chase_and_scatter_cycle_phase_timers = self.set_up_ghost_chase_and_scatter_cycle_phase_timers()
+        self.chase_and_scatter_cycle_phase_timers = self.set_up_ghost_chase_and_scatter_cycle_phase_timers(level_counter)
         self.chase_and_scatter_cycle_real_timer = 0
         self.chase_and_scatter_cycle_curr_timer = 0
 
     #A method to check what movement frame and direction the ghost is in
     def frame_update(self):
-        #Frightened state #1 (a blue version of the ghost)
+        #Frightened State #1 (a blue version of the ghost)
         if(self.frightened_state_v1):
             #Debug code
                 # if(self.name == 'Inky (Cyan)'):
-                #     print('The Ghost is in a frightened state #1')
+                #     print('The ghost is in a Frightened State #1')
 
             match self.frame:
                 case 0:
@@ -338,11 +415,11 @@ class Ghost(ABC):
             #Debug code for checking frame change speed
                 #print(self.get_frame())
 
-        #Frightened state #2 (a pattern of repeating blue and white version of the ghost)
+        #Frightened State #2 (a pattern of repeating blue and white version of the ghost)
         elif(self.frightened_state_v2):
             #Debug code
                 # if(self.name == 'Inky (Cyan)'):
-                #     print('The Ghost is in a frightened state #2')
+                #     print('The ghost is in a Frightened State #2')
 
             match self.frame:
                 case 0:
@@ -372,7 +449,7 @@ class Ghost(ABC):
         #A state where the ghost is a pair of floating eyes
         elif(self.eaten_state):
             #Debug code
-                #print('The Ghost is in an eaten state')
+                #print('The ghost is in an Eaten State')
 
             if(self.direction == 'Right'):
                 self.set_REMF()
@@ -383,14 +460,14 @@ class Ghost(ABC):
             elif(self.direction == 'Up'):
                 self.set_UEMF()
 
-        #Normal state
+        #Normal state or Stand By State
         else:
             #Debug code
-                #print('The Ghost is in a normal state')
+                #print('The ghost is in a normal state')
 
             '''
             To ensure that the normal state is not handed a frame greater than 1 (when coming out of
-            the frightened or eaten state), the frame is reset to 0
+            the frightened or Eaten State), the frame is reset to 0
             '''
             if(self.frame > 1):
                 self.frame = 0
@@ -420,7 +497,7 @@ class Ghost(ABC):
                     
                     self.frame = 0
         
-    #A method to update the animation speed for Ghost
+    #A method to update the animation speed for the ghost
     def animation_update(self):       
         #Gets the current time in miliseconds
         curr_time = pygame.time.get_ticks()
@@ -432,7 +509,7 @@ class Ghost(ABC):
 
         '''
         Updates the animation frame of each character if enough time has passed
-            Ex) 0 - 0 > 200     False
+            ex) 0 - 0 > 200     False
                 100 - 0 > 200   False
                 201 - 0 > 200   True  --> 
                 201 - 201 > 200 False
@@ -456,25 +533,25 @@ class Ghost(ABC):
             #     print(self.ghost_scatter_timer)
 
     '''
-    A method that updates the Ghost's behavior based on the current state they're in during gameplay
-        Ex. Stand By, Chase, Scatter, Frightened, and Eaten states
+    A method that updates the ghost's behavior based on the current state they're in during gameplay
+        ex. Stand By, Chase, Scatter, Frightened, and Eaten States
     '''
     def state_handler(self, dots_eaten, siren_channel, ghost_return_channel, ghost_return, power_pellet_channel):
         #Debug code
             # if(self.name == 'Pinky (Pink)'):
-            #     print("\nStand by state: " + str(self.stand_by_state) + 
-            #             "\nEaten state: " + str(self.eaten_state) + 
+            #     print("\nStand By State: " + str(self.stand_by_state) + 
+            #             "\nEaten State: " + str(self.eaten_state) + 
             #             "\nFrightend state: " + str(self.frightened_state_v1 or self.frightened_state_v2) +
-            #             "\nChase state: " + str(self.chase_state) + 
-            #             "\nScatter state: " + str(self.scatter_state) + '\n')
+            #             "\nChase State: " + str(self.chase_state) + 
+            #             "\nScatter State: " + str(self.scatter_state) + '\n')
     
         '''
-        Checks if the Ghost is in a stand by state (where the ghost is waiting for Pac-Man to eat enough dots 
+        Checks if the ghost is in a Stand By State (where the ghost is waiting for Pac-Man to eat enough dots 
         before leaving the gate at the start of the round)
         '''
         if(self.stand_by_state):
             #Debug code
-                # print('The ghost is in a stand by state')
+                # print('The ghost is in a Stand By State')
 
             #Inky leaves after Pac-Man eats 30 dots 
             if(self.name == "Inky (Cyan)" and dots_eaten >= 30 and self.rect.centery == 302): 
@@ -489,7 +566,7 @@ class Ghost(ABC):
                 #       '\nDots Eaten: ' + str(dots_eaten) + '\n')
 
             '''
-            Deactivates the ghost's stand by state once the ghost passes the front gate
+            Deactivates the ghost's Stand By State once the ghost passes the front gate
             '''
 
             gate_entrance = (240, 252)
@@ -514,10 +591,10 @@ class Ghost(ABC):
                 if(self.frightened_state_v1 is False and self.frightened_state_v2 is False):
                     self.chase_state = True
             
-        #Checks if the ghost is in an eaten state
+        #Checks if the ghost is in an Eaten State
         if(self.eaten_state):
             #Debug code
-                # print('The ghost is in an eaten state')
+                # print('The ghost is in an Eaten State')
 
             '''
             Plays the ghost return sound effect until the ghost respawns at the gate
@@ -530,7 +607,7 @@ class Ghost(ABC):
                 ghost_return_channel.play(ghost_return)
 
             '''
-            Deactivates the ghost's eaten state once the ghost respawns inside of the gate region
+            Deactivates the ghost's Eaten State once the ghost respawns inside of the gate region
             '''
 
             respawn_coordinates = (240, 310)
@@ -558,22 +635,22 @@ class Ghost(ABC):
 
                 self.direction = 'Up'
 
-                #This statement resets the condition for the ghost to turn around again when transitioning to their Chase state
+                #This statement resets the condition for the ghost to turn around again when transitioning to their Chase State
                 self.turn_around_occured_once = False
                 
-        #Checks if the ghost is in a frightened state
+        #Checks if the ghost is in a Frightened State
         if(self.frightened_state_v1 or self.frightened_state_v2):
             #Debug code
                 # if(self.name == "Clyde (Orange)"):
-                #     print('The ghost is in a frightened state')
+                #     print('The ghost is in a Frightened State')
 
-            #Enables the condition for the ghost to turn around 180 degrees once they go into their Frightened state
+            #Enables the condition for the ghost to turn around 180 degrees once they go into their Frightened State
             self.turn_around_condition()
             
             #Increments the timer based on how long the power pellet lasts
             self.ghost_scatter_timer += 1
 
-            #An if-else statement to switch from the frightened v1 to the v2 frame cycle
+            #An if-else chain to switch from the frightened v1 to the v2 frame cycle
             if(power_pellet_channel.get_busy()):
                 if(self.ghost_scatter_timer <= 300):
                     #Debug code
@@ -595,13 +672,13 @@ class Ghost(ABC):
                 self.frame = 0
                 self.ghost_scatter_timer = 0
 
-                #This statement resets the condition for the ghost to turn around again when transitioning to their Chase state
+                #This statement resets the condition for the ghost to turn around again when transitioning to their Chase State
                 self.turn_around_occured_once = False
 
-        #Else, the ghost cycles between the chase and scatter states
+        #Else, the ghost cycles between the chase and Scatter States
         if(self.stand_by_state is False and (self.frightened_state_v1 is False and self.frightened_state_v2 is False) and self.eaten_state is False):
             #Debug code
-                # print('The ghost is in a chase and scatter state cycle')
+                # print('The ghost is in a chase and Scatter State cycle')
 
             '''
             Delta time (the amount of real world time that passed since the previous frame)
@@ -622,7 +699,7 @@ class Ghost(ABC):
             '''
             If the current timer has not been defined, it is set to the same value as the real timer.
             This ensures that the time passed starts from a clean slate 
-                Ex. real time - curr time = 0 seconds have passed
+                ex. real time - curr time = 0 seconds have passed
             '''
             if(self.chase_and_scatter_cycle_curr_timer is None):
                 self.chase_and_scatter_cycle_curr_timer = self.chase_and_scatter_cycle_real_timer          
@@ -631,7 +708,7 @@ class Ghost(ABC):
 
             '''
             Checks if there is only one phase left in chase_and_scatter_cycle_phases
-                Ex) After 1 minute and 24 seconds have passed for level 1, all ghosts will be in the Chase state 
+                ex) After 1 minute and 24 seconds have passed for level 1, all ghosts will be in the Chase State 
                     until the round ends
             '''
             if len(self.chase_and_scatter_cycle_phases) == 1:
@@ -640,7 +717,8 @@ class Ghost(ABC):
 
                 #Debug code
                     #print("\n000000000000000000000000000This if statement is running000000000000000000000000000")
-            #If there is more than one phase left, the ghosts will cycle between chase and scatter states
+
+            #If there is more than one phase left, the ghosts will cycle between chase and Scatter States
             else:
                 #If the number of seconds passed hasn't reached the timer, the ghost will stay in the state at the beginning of the phase timers list
                 if num_seconds_passed < self.chase_and_scatter_cycle_phase_timers[0]:
@@ -648,11 +726,12 @@ class Ghost(ABC):
                         self.chase_state = True
                         self.scatter_state = False
 
-                        #Enables the condition for the ghost to turn around 180 degrees once they go into their Chase state
+                        #Enables the condition for the ghost to turn around 180 degrees once they go into their Chase State
                         self.turn_around_condition()
                     else:
                         self.chase_state = False
                         self.scatter_state = True
+
                 else:
                     #As soon as the number of seconds passes the phase timer, the phase string and phase timer gets popped out of their lists
                     self.chase_and_scatter_cycle_phases.pop(0)
@@ -670,20 +749,20 @@ class Ghost(ABC):
                 #     print("Number of seconds passed: " + str(round(num_seconds_passed)) + "\n")
 
     '''
-    A method that sets the amount of time to cycle between the scatter and chase states
-        Ex) Level 1 indicates
-            cycle_phase_timers: [7 seconds, 20 seconds, 7 seconds, 20 seconds, 5 seconds, 20 seconds, 5 seconds, -1 (Chase state until the round ends)]
+    A method that sets the amount of time to cycle between the scatter and Chase States
+        ex) Level 1 indicates
+            cycle_phase_timers: [7 seconds, 20 seconds, 7 seconds, 20 seconds, 5 seconds, 20 seconds, 5 seconds, -1 (Chase State until the round ends)]
             cycle_phase_timers: ["Scatter", "Chase",    "Scatter", "Chase",    "Scatter", "Chase",    "Scatter", "Chase"]
     '''
-    def set_up_ghost_chase_and_scatter_cycle_phase_timers(self):
+    def set_up_ghost_chase_and_scatter_cycle_phase_timers(self, level_counter):
         #Sets the timers to None if the ghost objects are created in the Main Menu Scene
-        if(self.level_counter is None):
+        if(level_counter is None):
             return None
         
-        elif(self.level_counter == 1):
+        elif(level_counter == 1):
             cycle_phase_timers = [7, 20, 7, 20, 5, 20, -1]
 
-        elif(2 <= self.level_counter and self.level_counter <= 4):
+        elif(2 <= level_counter and level_counter <= 4):
             #For the 6th timer: Red 17 sec / Pink 13 sec / Inky 14 sec / Clyde 14 sec
             if(self.name == "Blinky (Red)"):
                 cycle_phase_timers = [7, 20, 7, 20, 5, 17, 0.01, -1]
@@ -695,7 +774,7 @@ class Ghost(ABC):
                 cycle_phase_timers = [7, 20, 7, 20, 5, 14, 0.01, -1]
 
         #Rounds 5 and up
-        elif(5 <= self.level_counter): 
+        elif(5 <= level_counter): 
             if(self.name == "Blinky (Red)"):
                 cycle_phase_timers = [5, 20, 5, 20, 5, 17, 0.01, -1]
             elif(self.name == "Pinky (Pink)"):
@@ -708,10 +787,10 @@ class Ghost(ABC):
         return cycle_phase_timers
     
     '''
-    A method to help the Ghost decide the direction they should take based on the Pac-Man's location (target) defined in movement_update
-        1) Defines all possible paths the Ghost can take
+    A method to help the ghost decide the direction they should take based on the Pac-Man's location (or a different target) defined in movement_update
+        1) Defines all possible paths the ghost can take
         2) Uses the target to calculate the distance of each path
-        3) Choose the path closest to the target
+        3) Chooses the path closest to the target
             NOTE: If two paths are the same distance, then the priority order is ⬆️ ⬅️ ⬇️ ➡️
     '''
     def direction_update(self, list_obstacles, target):
@@ -722,7 +801,7 @@ class Ghost(ABC):
             'Right': None
         }
 
-        #Prevents the Ghost from being able to turn around
+        #Prevents the ghost from being able to turn around
         if self.direction == 'Up':
             directions.pop('Down')
         elif(self.direction == 'Left'):
@@ -732,12 +811,9 @@ class Ghost(ABC):
         elif(self.direction == 'Right'):
             directions.pop('Left')
 
-        # if(self.name == 'Pinky (Pink)'):
-        #     print('\n' + str(directions))
-
         #Cycles through the dictionary to assign each key a rect value that determines the future position of each direction
         for key in directions:
-            #Copies the rect of the Ghost
+            #Copies the rect of the ghost
             rect_copy = pygame.Rect.copy(self.rect)
 
             if key == 'Up':
@@ -769,12 +845,12 @@ class Ghost(ABC):
                 directions.pop(key)
         
         #Debug code
-        # if(self.name == 'Pinky (Pink)'):
-        #     print(str(directions) + '\n')
+            # if(self.name == 'Pinky (Pink)'):
+            #     print(str(directions) + '\n')
 
         '''
-        Checks if the Ghost is in a frightened state. If so, the Ghost will move in a random direction
-            NOTE: The program is checking if the Ghost's stand_by_state is False so that the Ghost can 
+        Checks if the ghost is in a Frightened State. If so, the ghost will move in a random direction
+            NOTE: The program is checking if the ghost's stand_by_state is False so that the ghost can 
                   exit the gate region once Pac-Man eats enough dots
         '''
         if ((self.frightened_state_v1 or self.frightened_state_v2) and self.stand_by_state is False):
@@ -782,7 +858,7 @@ class Ghost(ABC):
             
             return list(directions.keys())[random_direction]
         
-        #Else, the Ghost follows the direction closest to the target
+        #Else, the ghost follows the direction closest to the target
         else:
             '''
             Calculates the distance between each rect and the target, then replaces the rect value to 
@@ -790,7 +866,7 @@ class Ghost(ABC):
 
             Distance formula: d = √(x_2 - X_1)^2 + (y_2 - Y_1)^2
             
-            Ex) Possible paths: {'Left': <rect(223, 237, 30, 30)>, 'Right': <rect(227, 237, 30, 30)>} 
+            ex) Possible paths: {'Left': <rect(223, 237, 30, 30)>, 'Right': <rect(227, 237, 30, 30)>} 
                 Target:         (368, 458)
 
                 Result: {'Left': 243.6, 'Right': 241.5} <-- Right is the best direction to take
@@ -816,9 +892,9 @@ class Ghost(ABC):
     
     '''
     A method that checks the following condition:
-        (1) Everytime the ghost switches to their chase state, they turn around 180 degrees
+        (1) Everytime the ghost switches to their Chase State, they turn around 180 degrees
         (2) Helps the chase_state_movement_update & frightened_state_movement_update methods to have the ghost turn around only once
-            Ex) Blinky turns around only once when transitioning into his Chase state or Frightened state
+            ex) Blinky turns around only once when transitioning into his Chase State or Frightened State
     '''
     def turn_around_condition(self):
         #Debug code
@@ -829,7 +905,7 @@ class Ghost(ABC):
         if(self.turn_around is False and self.turn_around_occured_once is False):
             self.turn_around = True
 
-    #A method that helps the ghost turns around 180 degrees based on the turn_around_condition method
+    #A method that helps the ghost turn around 180 degrees based on the turn_around_condition method
     def turn_around_action(self):
         '''
         This section prevents the ghost from turning around when they are inside the gate region
@@ -878,18 +954,18 @@ class Ghost(ABC):
                 #     print('turn_around: ' + str(self.turn_around) + 
                 #         '\nturn_around_occured_once: ' + str(self.turn_around_occured_once) + '\n')
 
-    #A method to allow a ghost to exit the pink gate at the start of the game or after they respawn
+    #A method to allow THE ghost to exit the pink gate at the start of the game or after they respawn
     def exiting_pink_gate(self, rect_copy):
-        #Checks if the ghost is in their chase or scatter state
+        #Checks if the ghost is in their chase or Scatter State
         if(self.chase_state or self.scatter_state or self.stand_by_state):
             '''
-            This section helps the Ghost change direction to 'Up' when they are at the middle point of the gate. 
+            This section helps the ghost change direction to 'Up' when they are at the middle point of the gate. 
             Examples include:
                 1) At the start of the round, Pinky needs to leave the gate
-                2) Inky's & Clyde's Stand By state just ended and they need to leave the gate
-                3) After Pac-Man respawns, all ghosts are still in their Chase state and their target is  
+                2) Inky's & Clyde's Stand By State just ended and they need to leave the gate
+                3) After Pac-Man respawns, all ghosts are still in their Chase State and their target is  
                    pointing in a direction that will make them collide with a wall inside the gate
-                        Ex. Inky is facing to the right, and if he doesn't turn up, then he will colide to the 
+                        ex) Inky is facing to the right, and if he doesn't turn up, then he will colide to the 
                             far right wall of the gate region
             '''
 
@@ -908,7 +984,7 @@ class Ghost(ABC):
                 return True
 
             '''
-            This section helps the Ghost to pass/phase through directly the pink gate wall 
+            This section helps the ghost to pass/phase through directly the pink gate wall 
             '''
 
             if(rect_copy.centerx > 240):
@@ -932,9 +1008,9 @@ class Ghost(ABC):
 
                 # print(range_x > 0.90 and range_y > 0.90)
     
-    #A method to allow a ghost to enter the pink gate in their eaten state so that they can respawn
+    #A method to allow a ghost to enter the pink gate in their Eaten State so that they can respawn
     def entering_pink_gate(self, rect_copy):
-        #Checks if the ghost is in their eaten state
+        #Checks if the ghost is in their Eaten State
         if(self.eaten_state):
             if(rect_copy.centerx > 240):
                 range_x = 240 / rect_copy.centerx
@@ -958,10 +1034,10 @@ class Ghost(ABC):
             #     print(range_x > 0.90 and range_y > 0.90)
         
     '''
-    A method to cycle through the Ghost's movement based on their current state
+    A method to cycle through the ghost's movement based on their current state
         NOTE: Unlike the state_handler method, this method must be an if-else chain so that the ghost does not take
               on multiple movement updates. In contrast, the state_handler is designed to have a ghost behave 
-              in intertwining states (Ex. Inky can both be in a stand_by and frightened state)
+              in intertwining states (ex. Inky can both be in a stand_by and Frightened State)
     '''
     def movement_update(self, list_obstacles, pac_man_direction, list_ghosts_positions, target):
         if(self.stand_by_state):
@@ -975,7 +1051,7 @@ class Ghost(ABC):
         elif(self.eaten_state):
             self.eaten_state_movement_update(list_obstacles)
     
-    #A method to update the Ghost's movement based on their stand by state
+    #A method to update the ghost's movement based on their Stand By State
     def stand_by_state_movement_update(self, list_obstacles):        
         #An if statement helps the ghost move out of the gate region once Pac-Man eats enough dots
         if(self.stand_by_state_exit_condition):            
@@ -1010,28 +1086,28 @@ class Ghost(ABC):
             elif(self.direction == 'Up'):
                 self.rect.centery = self.rect.centery - 1
     
-    #An abstract method to update Ghost's movement based on their chase state
+    #An abstract method to update ghost's movement based on their Chase State
     def chase_state_movement_update(self):
         return None
     
-    #An abstract method to update the Ghost's movement based on their scatter state
+    #An abstract method to update the ghost's movement based on their Scatter State
     def scatter_state_movement_update(self):
         return None
 
-    #A method to update the Ghost's frightened state movement
+    #A method to update the ghost's Frightened State movement
     def frightened_state_movement_update(self, list_obstacles):
         #Debug code
-            # print(self.name + " is in his frightened state")
+            # print(self.name + " is in his Frightened State")
 
-        #Teleports Ghost to the other side of the tunnel
+        #Teleports ghost to the other side of the tunnel
         self.tunnel_edge_teleport()
 
-        #When entering Frightened state & dependent on the turn_around_condition, the ghost turns around 180 degrees
+        #When entering Frightened State & dependent on the turn_around_condition, the ghost turns around 180 degrees
         self.turn_around_action()
 
         '''
-        Returns the direction the Ghost should take to be in a scatter loop
-            Ex) (240, 302) will be the target for all ghosts, but they will be forced to take random directions
+        Returns the direction the ghost should take to be in a scatter loop
+            ex) (240, 302) will be the target for all ghosts, but they will be forced to take random directions
         '''
         self.direction = self.direction_update(list_obstacles, (0, 0))
 
@@ -1039,12 +1115,12 @@ class Ghost(ABC):
             # print(self.direction)
         
         '''
-        Move counter helps the Ghost move half of his speed when in a frightened state
+        Move counter helps the ghost move half of his speed when in a Frightened State
         '''
         self.frightened_state_steps_per_frame += 1
 
         if self.frightened_state_steps_per_frame >= 2:
-            #Updates the Ghost's movement based on the given direction
+            #Updates the ghost's movement based on the given direction
             if self.direction == 'Up':
                 self.rect.centery = self.rect.centery - 2
             elif self.direction == 'Left':
@@ -1060,17 +1136,17 @@ class Ghost(ABC):
         if(self.debug_mode):
             self.display_ghost_target_on_map((240, 302))
     
-    #A method to update the Ghost's eaten state movement
+    #A method to update the ghost's Eaten State movement
     def eaten_state_movement_update(self, list_obstacles):
-        #print(self.name + " is in his eaten state")
+        #print(self.name + " is in his Eaten State")
 
-        #Teleports Ghost to the other side of the tunnel
+        #Teleports ghost to the other side of the tunnel
         self.tunnel_edge_teleport()
 
-        #Returns the direction the Ghost should take to get back to the ghost gate so that they can respawn
+        #Returns the direction the ghost should take to get back to the ghost gate so that they can respawn
         self.direction = self.direction_update(list_obstacles, (240, 303))
 
-        #Updates the Ghost's movement based on the given direction
+        #Updates the ghost's movement based on the given direction
         if self.direction == 'Up':
             self.rect.centery = self.rect.centery - 2
         elif self.direction == 'Left':
@@ -1083,7 +1159,7 @@ class Ghost(ABC):
         '''
         Because direction_update only checked if the first step was valid, the program needs to check if the 
         following step is also valid for the same direction
-            NOTE: Movement is twice as fast for the eaten state compared to the other states
+            NOTE: Movement is twice as fast for the Eaten State compared to the other states
         '''
         if(self.eaten_state_steps_per_frame == 0):
             collision = pygame.Rect.copy(self.rect)
@@ -1114,7 +1190,7 @@ class Ghost(ABC):
         #Debug code
             # print(self.steps_per_frame)
     
-    #A method to help the Ghost travel through the tunnel edge at the left or right side of the game map
+    #A method to help the ghost travel through the tunnel edge at the left or right side of the game map
     def tunnel_edge_teleport(self):
         if(self.rect.centerx == -2 and self.rect.centery == 304):
             self.rect.center = (482, 304)

@@ -1,6 +1,5 @@
 '''
-Description: This class contains methods for animations and interactable events for the 
-             Inky (Cyan) ghost object
+Description: This class contains methods for how Inky (Cyan) functions
 '''
 
 #Imports pygame libraries
@@ -9,21 +8,20 @@ import math
 from Characters_and_Objects.Ghosts.Ghost import Ghost
 
 class Inky(Ghost):
-    #A constructor to initialize an instance of Inky
-    def __init__(self, scene_surface, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, level_counter, game_state_manager):
-        #Initializes the Ghost parent class variables
-        super().__init__(scene_surface, 
-                         'Inky (Cyan)', 'Images/Ghosts/Inky (Cyan)/left_frame_1.png', 
+    #A constructor to initialize an instance of Inky (Cyan)
+    def __init__(self, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, scene_surface, game_state_manager):
+        #Initializes the ghost parent class variables
+        super().__init__('Inky (Cyan)', 'Images/Ghosts/Inky (Cyan)/left_frame_1.png', 
                          horizontal_scale, vertical_scale, 
                          direction, 
                          x_position, y_position, 
                          movement, character_animation_speed, 
-                         level_counter, game_state_manager)
+                         scene_surface, game_state_manager)
     
-    #An inherited method to update Inky's chase state movement
+    #An inherited method to update Inky's Chase State movement
     def chase_state_movement_update(self, list_obstacles, pac_man_direction, list_ghosts_positions, target):
         #Debug code
-            # print(self.name + " is in his chase state")
+            # print(self.name + " is in his Chase State")
 
         #Teleports Inky to the other side of the tunnel
         self.tunnel_edge_teleport()
@@ -104,17 +102,17 @@ class Inky(Ghost):
 
         return (result_x, result_y)
 
-    #An inherited method to update Inky's scatter state movement
+    #An inherited method to update Inky's Scatter State movement
     def scatter_state_movement_update(self, list_obstacles):
         #Debug code
-            # print(self.ghost_name + ' is in his scatter state')
+            # print(self.ghost_name + ' is in his Scatter State')
 
         #Teleports Inky to the other side of the tunnel
         self.tunnel_edge_teleport()
 
         '''
         Returns the direction Inky should take to be in a scatter loop
-            Ex) (479, 0) is top right of the display surface window
+            ex) (479, 0) is top right of the display surface window
         '''
         self.direction = self.direction_update(list_obstacles, (479, 585))
 

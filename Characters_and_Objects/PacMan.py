@@ -1,6 +1,5 @@
 '''
-Description: This class contains methods for animations and interactable events for the 
-             Pac-Man object
+Description: This class contains methods for how Pac-Man functions
 '''
 
 #Imports pygame libraries
@@ -9,17 +8,14 @@ import math
 
 class PacMan:
     #A constructor to initialize an instance of Pac-Man
-    def __init__(self, curr_surface, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed):
-        #A variable to point to the current surface Pac-Man is in (Ex. Gameplay Scene --> gameplay_surface)
-        self.curr_surface = curr_surface
-        
+    def __init__(self, horizontal_scale, vertical_scale, direction, x_position, y_position, movement, character_animation_speed, scene_surface):        
         #Variables to keep track the image and rect
         self.image = pygame.image.load('Images/Pac-Man/Movement/circle.png')
         self.image = pygame.transform.scale(self.image, (horizontal_scale, vertical_scale))
         self.rect = self.image.get_rect()
         self.rect.center = (x_position, y_position)
 
-        #Variables to lower hitbox detection for eating pellets
+        #Variables to that create a lower hitbox detection for Pac-Man to eat pellets eating pellets
         self.minimized_image = pygame.transform.scale(self.image, (25, 25))
         self.minimized_rect = self.minimized_image.get_rect()
         self.minimized_rect.center = self.rect.center
@@ -31,14 +27,15 @@ class PacMan:
         self.movement = movement
         self.frame = 0
 
-        #Variables to keep track of Pac-Man's list of lives, # of dots earen, high score, current score, score streak (the number of ghosts eaten in a row)
+        #Variables to keep track of Pac-Man's list of lives, if he gained an extra life (when reaching 10,000 points), # of dots earen, high score, current score, score streak (the number of ghosts eaten in a row)
         self.list_of_lives = 3
+        self.gained_extra_life = False
         self.dots_eaten = 0
         self.high_score = 0
         self.score = 0
         self.score_streak = 0
 
-        #Variables to check if Pac-Man ate all pellets, is caught by a ghost, or ate a ghost while the ghost was in a frightened state
+        #Variables to check if Pac-Man ate all pellets, is caught by a ghost, or ate a ghost while they were in a Frightened State
         self.ate_all_pellets = False
         self.is_caught = False
         self.ate_a_ghost = [None, False]
@@ -51,6 +48,9 @@ class PacMan:
         self.death_animation = False
         self.death_animation_timer = 0
 
+        #A variable to point to the current surface Pac-Man is being blitted on (ex. Gameplay Scene --> gameplay_surface)
+        self.scene_surface = scene_surface
+
     #A method to return Pac-Man's image
     def get_image(self):
         return self.image
@@ -59,7 +59,7 @@ class PacMan:
     def set_image(self, new_image):
         self.image = new_image
 
-    #A method to return the rect of Pac-Man's image
+    #A method to return Pac-Man's image rect
     def get_rect(self):
         return self.rect
     
@@ -67,19 +67,19 @@ class PacMan:
     def set_rect(self, new_rect):
         self.rect = new_rect
     
-    #A method to return Pac-Man's image
+    #A method to return Pac-Man's minimized image
     def get_minimized_image(self):
         return self.minimized_image
 
-    #A method to set a new image for Pac-Man
+    #A method to set a new minimized image for Pac-Man
     def set_minimized_image(self, new_minimized_image):
         self.minimized_image = new_minimized_image
 
-    #A method to return the rect of Pac-Man's image
+    #A method to return the minimized rect of Pac-Man's image
     def get_minimized_rect(self):
         return self.minimized_rect
     
-    #A method to set a new rect for Pac-Man
+    #A method to set a new minimized rect for Pac-Man
     def set_minimized_rect(self, new_minimized_rect):
         self.minimized_rect = new_minimized_rect
     
@@ -99,7 +99,7 @@ class PacMan:
     def set_vertical_scale(self, new_vertical_scale):
         self.vertical_scale = new_vertical_scale
     
-    #A method to return Pac-Man's current direction
+    #A method to return Pac-Man's direction
     def get_direction(self):
         return self.direction
     
@@ -107,145 +107,171 @@ class PacMan:
     def set_direction(self, new_direction):
         self.direction = new_direction
     
-    #A method to return a boolean for Pac-Man's movement
+    #A method to return Pac-Man's movement boolean
     def get_movement(self):
         return self.movement
 
-    #A method to set a new boolean for Pac-Man's movement
+    #A method to set a new movement boolean for Pac-Man
     def set_movement(self, new_movement):
         self.movement = new_movement
-    
-    #A method to return Pac-Man's animation speed
-    def get_character_animation_speed(self):
-        return self.character_animation_speed
 
-    #A method to update Pac-Man's animation speed
-    def set_character_animation_speed(self, new_character_animation_speed):
-        self.character_animation_speed = new_character_animation_speed
-
-    #A method to return Pac-Man's current frame
+    #A method to return Pac-Man's frame
     def get_frame(self):
         return self.frame
     
     #A method to set a new frame for Pac-Man
     def set_frame(self, new_frame):
         self.frame = new_frame
-    
-    #A method to get Pac-Man's list of lives
+
+    #A method to return Pac-Man's list of lives
     def get_list_of_lives(self):
         return self.list_of_lives
 
-    #A method to set Pac-Man's list of lives
+    #A method to set a new list_of_lives for Pac-Man
     def set_list_of_lives(self, new_list_of_lives):
         self.list_of_lives = new_list_of_lives
 
-    #A method to get Pac-Man's number of dots eaten in a single level
+    #A method to return Pac-Man's gained_extra_life boolean
+    def get_gained_extra_life(self):
+        return self.gained_extra_life
+
+    #A method to set a new gained_extra_life boolean Pac-Man
+    def set_gained_extra_life(self, new_gained_extra_life):
+        self.gained_extra_life = new_gained_extra_life
+
+    #A method to return Pac-Man's number of dots_eaten (in a single level)
     def get_dots_eaten(self):
         return self.dots_eaten
 
-    #A method to set Pac-Man's number of dots eaten in a single level
+    #A method to set a new number of dots_eaten (in a single level) for Pac-Man
     def set_dots_eaten(self, new_number_dots_eaten):
         self.dots_eaten = new_number_dots_eaten
     
-    #A method to get Pac-Man's high score
+    #A method to return Pac-Man's high_score
     def get_high_score(self):
         return self.high_score
     
-    #A method to set Pac-Man's high score
+    #A method to set a new high_score for Pac-Man
     def set_high_score(self, new_high_score):
         self.high_score = new_high_score
 
-    #A method to get Pac-Man's current score
+    #A method to return Pac-Man's score
     def get_score(self):
         return self.score
     
-    #A method to set Pac-Man's current score
+    #A method to set a new score for Pac-Man
     def set_score(self, new_score):
         self.score = new_score
 
-    #A method to get Pac-Man's current score_streak
+    #A method to return Pac-Man's score_streak
     def get_score_streak(self):
         return self.score_streak
     
-    #A method to set Pac-Man's score_streak
+    #A method to set new score_streak for Pac-Man
     def set_score_streak(self, new_score_streak):
         self.score_streak = new_score_streak
-
-    #A method to return a boolean for Pac-Man's is_caught
-    def get_is_caught(self):
-        return self.is_caught
     
-    #A method to set a new boolean for Pac-Man's is_caught
-    def set_is_caught(self, new_is_caught):
-        self.is_caught = new_is_caught
-
-    #A method to return a boolean for Pac-Man's ate_all_pellets
+    #A method to return Pac-Man's ate_all_pellets boolean
     def get_ate_all_pellets(self):
         return self.ate_all_pellets
     
-    #A method to set a new boolean for Pac-Man's ate_all_pellets
+    #A method to set a new ate_all_pellets boolean for Pac-Man
     def set_ate_all_pellets(self, new_ate_all_pellets):
         self.ate_all_pellets = new_ate_all_pellets
 
-    #A method to return a boolean for Pac-Man's ate_a_ghost --> [Ghost object, Boolean of ghost being eaten]
+    #A method to return Pac-Man's is_caught boolean
+    def get_is_caught(self):
+        return self.is_caught
+    
+    #A method to set a new is_caught boolean for Pac-Man
+    def set_is_caught(self, new_is_caught):
+        self.is_caught = new_is_caught
+
+    #A method to return Pac-Man's ate_a_ghost boolean
     def get_ate_a_ghost(self):
         return self.ate_a_ghost
     
-    #A method to set a new boolean for Pac-Man's ate_a_ghost --> [Ghost object, Boolean of ghost being eaten]
+    #A method to set a new ate_a_ghost boolean for Pac-Man
     def set_ate_a_ghost(self, new_ghost, ghost_eaten):
         self.ate_a_ghost = (new_ghost, ghost_eaten)
     
-    #A method to return a boolean for Pac-Man's death_animation
+    #A method to return Pac-Man's character_animation_speed
+    def get_character_animation_speed(self):
+        return self.character_animation_speed
+
+    #A method to set a new character_animation_speed Pac-Man
+    def set_character_animation_speed(self, new_character_animation_speed):
+        self.character_animation_speed = new_character_animation_speed
+
+    #A method to return Pac-Man's last_updated_time (in miliseconds) to track his character_animation_speed
+    def get_last_updated_time(self):
+        return self.last_updated_time
+    
+    #A method to set a new last_updated_time for Pac-Man (in miliseconds) to track his character_animation_speed
+    def set_last_updated_time(self, new_last_updated_time):
+        self.last_updated_time = new_last_updated_time
+    
+    #A method to return Pac-Man's death_animation boolean
     def get_death_animation(self):
         return self.death_animation
     
-    #A method to set a new boolean for Pac-Man's death_animation
+    #A method to set a new death_animation boolean for Pac-Man
     def set_death_animation(self, new_death_animation):
         self.death_animation = new_death_animation
     
-    #A method to return a boolean for Pac-Man's death_animation_timer
+    #A method to return Pac-Man's death_animation_timer
     def get_death_animation_timer(self):
         return self.death_animation_timer
     
-    #A method to set a new boolean for Pac-Man's death_animation_timer
+    #A method to set a new death_animation_timer for Pac-Man
     def set_death_animation_timer(self, new_death_animation_timer):
         self.death_animation_timer = new_death_animation_timer
 
     '''
-    A series of methods to set the current movement frame of the character 
+    A series of methods to set the current movement frame of Pac-Man
     '''
+
+    #Circle frame
     def set_CF(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/circle.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Right movement frame 1
     def set_RMF1(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/right_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Right movement frame 2
     def set_RMF2(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/right_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
+    #Left movement frame 1
     def set_LMF1(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/left_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Left movement frame 2
     def set_LMF2(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/left_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Up movement frame 1
     def set_UMF1(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/up_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Up movement frame 2
     def set_UMF2(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/up_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Down movement frame 1
     def set_DMF1(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/down_frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Down movement frame 2
     def set_DMF2(self):
         self.image = pygame.image.load('Images/Pac-Man/Movement/down_frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
@@ -253,50 +279,63 @@ class PacMan:
     '''
     A series of methods to set the current death frame of the character 
     '''
+
+    #Death Frame 1
     def set_DF1(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_1.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
+    #Death Frame 2
     def set_DF2(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_2.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Death Frame 3
     def set_DF3(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_3.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Death Frame 4
     def set_DF4(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_4.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
+    #Death Frame 5
     def set_DF5(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_5.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
+    #Death Frame 6
     def set_DF6(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_6.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
 
+    #Death Frame 7
     def set_DF7(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_7.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Death Frame 8
     def set_DF8(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_8.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Death Frame 9
     def set_DF9(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_9.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Death Frame 10
     def set_DF10(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_10.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Death Frame 11
     def set_DF11(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_11.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
     
+    #Death Frame 12
     def set_DF12(self):
         self.image = pygame.image.load('Images/Pac-Man/Death/frame_12.png')
         self.image = pygame.transform.scale(self.image, (self.horizontal_scale, self.vertical_scale))
@@ -332,6 +371,7 @@ class PacMan:
                         self.set_UMF2()
                     
                     self.frame = 0
+                    
         #Else, the program uses the death frames
         else: 
             match self.frame:
@@ -397,7 +437,7 @@ class PacMan:
 
         '''
         Updates the animation frame of each character if enough time has passed
-            Ex) 0 - 0 > 200     False
+            ex) 0 - 0 > 200     False
                 100 - 0 > 200   False
                 201 - 0 > 200   True  --> 
                 201 - 201 > 200 False
@@ -415,8 +455,8 @@ class PacMan:
         
         '''
         A section to update Pac-Man's movement animation
-            NOTE: If True, then the program updates the frame of the character. 
-                  If False, then the program uses the old frame in runtime
+            NOTE: If True, the program updates the frame of the character. 
+                  If False, the program uses the old frame in runtime
         '''
         if(change_frame and self.movement):
             self.frame_update()
@@ -438,7 +478,7 @@ class PacMan:
     #A method for the player to control Pac-Man's movement position in the Gameplay Scene
     def movement_update(self, event, list_obstacles):
         '''
-        An if-else statement to teleport Pac-Man when the player travels through the tunnel edge 
+        An if-else chain to teleport Pac-Man when the player travels through the tunnel edge 
         at the left or right side of the game map
         ''' 
         if(self.rect.centerx == -2 and self.rect.centery == 304):
@@ -511,7 +551,7 @@ class PacMan:
         else:
             self.movement = False
     
-    #A method for the player to eat pellets in the Gameplay Scene
+    #A method that allows Pac-Man to eat pellets in the Gameplay Scene
     def eat_pellets(self, list_ghosts, list_pellets, list_power_pellets, pellet_channel, power_pellet_channel, pellet_sound, power_pellet_sound): 
         '''
         Checks if the player's minimized hitbox is interacting with a pellet
@@ -580,10 +620,10 @@ class PacMan:
                 '''
                 Updates the ghost's state and variables for the power pellet
                     NOTE: These two states are not set to True once the power pellet channel is done because
-                          the state_handler method in the Ghost class automatically does so
+                          the state_handler method in the ghost class automatically does so
                 '''
                 for ghost in list_ghosts:
-                    #Checks if the ghost is in an eaten state. If so, the ghost will not change into a frightened state
+                    #Checks if the ghost is in an Eaten State. If so, the ghost will not change into a Frightened State
                     if(ghost.get_eaten_state()):
                         continue
 
@@ -606,6 +646,14 @@ class PacMan:
         #If Pac-Man's current score is higher than his high score, the high score value is updated
         if(self.score > self.high_score):
             self.high_score = self.score
+
+        #If Pac-Man reaches or gets past 10,000 points, he gains an extra life
+        if(self.high_score >= 10000 and self.gained_extra_life is False):
+            pygame.mixer_music.load('Audio/Sound Effects/Pac-Man Extra Life.wav')
+            pygame.mixer_music.play()
+
+            self.list_of_lives = self.list_of_lives + 1
+            self.gained_extra_life = True
     
     #A method to check if Pac-Man ate all of the pellets in the Gameplay Scene
     def check_ate_all_pellets(self, list_pellets, list_power_pellets):
@@ -658,7 +706,7 @@ class PacMan:
         if((range_x > 0.97 and range_y > 0.97) and (ghost.get_chase_state() is True or ghost.get_scatter_state() is True) and (ghost.eaten_state is False)):
             self.is_caught = True
     
-    #A method to check if Pac-Man ate a ghost while the ghost is in their frightened state in the Gameplay Scene
+    #A method to check if Pac-Man ate a ghost while the ghost is in their Frightened State in the Gameplay Scene
     def check_if_ate_a_ghost(self, ghost_eaten_channel, pac_man_ate_ghost_sound, blinky, pinky, inky, clyde):
         #Updates the position of Pac-Man's minimized rect hitbox
         self.minimized_rect.center = self.rect.center

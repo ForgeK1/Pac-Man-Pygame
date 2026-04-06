@@ -21,7 +21,7 @@ class Pellet:
     def set_image(self, new_image):
         self.image = new_image
     
-    #A method to get Pellet's rect
+    #A method to return Pellet's rect
     def get_rect(self):
         return self.rect
     
@@ -43,7 +43,7 @@ class Pellet:
         
         #Opens the power pellets CSV file 
         with open('Images/Pellets/pellets_coordinates.csv') as fileObject:
-            #next() is used so that we skip the header row Ex) ['X', 'Y', 'Hidden']
+            #next() is used so that we skip the header row ex) ['X', 'Y', 'Hidden']
             next(fileObject)
 
             #Creates a reader object by passing in the file

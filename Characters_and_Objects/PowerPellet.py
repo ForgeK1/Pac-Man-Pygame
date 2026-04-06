@@ -26,7 +26,7 @@ class PowerPellet:
     def set_image(self, new_image):
         self.image = new_image
     
-    #A method to get PowerPellet's rect
+    #A method to return PowerPellet's rect
     def get_rect(self):
         return self.rect
     
@@ -42,7 +42,7 @@ class PowerPellet:
         Third parameter:  Surface object of the image
         Fourth parameter: Rect of the image
 
-            NOTE: The reason why this variable is a list of lists instead of a tuple of lists (Ex. list_obstacles or list_pellets
+            NOTE: The reason why this variable is a list of lists instead of a tuple of lists (ex. list_obstacles or list_pellets
                   in the Gameplay Scene class) is because the program uses the animation_update() method to assign a new image 
                   in the third index of this list. A tuple is immutable and cannot be assigned a new object if already assigned
         '''
@@ -50,7 +50,7 @@ class PowerPellet:
 
         #Opens the power pellets CSV file 
         with open('Images/Pellets/power_pellets_coordinates.csv') as fileObject:
-            #next() is used so that we skip the header row Ex) ['X', 'Y', 'Hidden']
+            #next() is used so that we skip the header row ex) ['X', 'Y', 'Hidden']
             next(fileObject)
             
             #Creates a reader object by passing in the file
@@ -85,7 +85,7 @@ class PowerPellet:
             
             return list_power_pellets
     
-    #A method to update the animation of a power pellet that is present on the map by returning an image object
+    #A method to update the animation of a power pellet that on the map by returning an image object
     def animation_update(self, image):
         #Gets the current time in miliseconds
         curr_time = pygame.time.get_ticks()
@@ -95,7 +95,7 @@ class PowerPellet:
 
         '''
         Updates the animation frame of the power pellet if enough time has passed
-        Ex) 0 - 0 > 200     False
+        ex) 0 - 0 > 200     False
             100 - 0 > 200   False
             201 - 0 > 200   True  --> 
             201 - 201 > 200 False

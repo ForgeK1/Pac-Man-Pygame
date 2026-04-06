@@ -17,7 +17,7 @@ from Characters_and_Objects.PowerPellet import PowerPellet
 class GameplayScene:
     #A constructor to initialize an instance of Gameplay Scene
     def __init__(self, display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT):
-        #Initializes the display surface and game state manager
+        #Variables for the display surface and Game State Manager
         self.display_surface = display_surface
         self.game_state_manager = game_state_manager
         self.WINDOW_WIDTH = WINDOW_WIDTH
@@ -30,31 +30,31 @@ class GameplayScene:
         '''
         self.gameplay_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
-        #Initializes a variable current level
+        #A variable for the current level
         self.level_counter = 1
 
-        #Initializes the character objects
-        self.pac_man = PacMan(self.gameplay_surface, 30, 30, 'Left', 240, 458, True, 50)
-        self.blinky = Blinky(self.gameplay_surface, 30, 30, "Left", 240, 252, True, 100, self.level_counter, self.game_state_manager)
-        self.pinky = Pinky(self.gameplay_surface, 30, 30, "Down", 240, 302, True, 100, self.level_counter, self.game_state_manager)
-        self.inky = Inky(self.gameplay_surface, 30, 30, "Up", 206, 302, True, 100, self.level_counter, self.game_state_manager)
-        self.clyde = Clyde(self.gameplay_surface, 30, 30, "Up", 274, 302, True, 100, self.level_counter, self.game_state_manager)
+        #Variables for the character objects
+        self.pac_man = PacMan(30, 30, 'Left', 240, 458, True, 50, self.gameplay_surface)
+        self.blinky = Blinky(30, 30, "Left", 240, 252, True, 100, self.gameplay_surface, self.game_state_manager)
+        self.pinky = Pinky(30, 30, "Down", 240, 302, True, 100, self.gameplay_surface, self.game_state_manager)
+        self.inky = Inky(30, 30, "Up", 206, 302, True, 100, self.gameplay_surface, self.game_state_manager)
+        self.clyde = Clyde(30, 30, "Up", 274, 302, True, 100, self.gameplay_surface, self.game_state_manager)
 
-        #Initializes two lists of obstacles for the game map
+        #Variables for the two lists of obstacles for the game map
         self.list_blue_obstacles = None
         self.list_white_obstacles = None
         self.load_obstacles()
         self.default_obstacles = True #True = blue obstacles, False = white obstacles
 
-        #Initializes the pellet objects
+        #Variables for the pellet objects
         self.pellet = Pellet('Images/Pellets/pellet.png')
         self.power_pellet = PowerPellet(200)
 
-        #Initializes the list of pellets for the game map
+        #Variables for the list of pellets for the game map
         self.list_pellets = self.pellet.load_pellets()
         self.list_power_pellets = self.power_pellet.load_power_pellets()
 
-        #Initializes pygame mixer channels for utilizing music or sound effects
+        #Variables for the pygame mixer channels for utilizing music or sound effects
         self.end_round_channel = pygame.mixer.Channel(1)
         self.pellet_channel = pygame.mixer.Channel(2)
         self.power_pellet_channel = pygame.mixer.Channel(3)
@@ -62,7 +62,7 @@ class GameplayScene:
         self.ghost_eaten_channel = pygame.mixer.Channel(5)
         self.ghost_return_channel = pygame.mixer.Channel(6)
 
-        #Initializes music and sound effects
+        #Variables for the music and sound effects
         self.pac_man_death_sound = pygame.mixer.Sound('Audio/Sound Effects/Pac-Man Death.wav')
         self.pellet_sound = pygame.mixer.Sound('Audio/Sound Effects/Waka (Cut Version).wav')
         self.power_pellet_sound = pygame.mixer.Sound('Audio/Sound Effects/Power-Up.wav')
@@ -71,13 +71,13 @@ class GameplayScene:
         self.pac_man_ate_ghost_sound = pygame.mixer.Sound('Audio/Sound Effects/Pac-Man Eating A Ghost.wav')
         self.ghost_return = pygame.mixer.Sound('Audio/Sound Effects/Ghost Return.wav')
 
-        #Initializes variables to start a new round
+        #Variables to start a new round
         self.round_intro = True
         self.fresh_start = True
         self.pac_man_life_deduct = True
         self.transition_to_next_round_timer = 0
 
-        #Initializes variables to end the round
+        #Variables to end the round
         self.ghost_disappear_timer = 0
         self.game_over_text_timer = 0
         self.transition_to_main_menu_timer = 0
@@ -85,7 +85,7 @@ class GameplayScene:
         self.pac_man_death_sound_is_playing = False
         self.transition_to_main_menu = False
 
-        #Initializes a variable to showcase the "1UP" text for the Gameplay Scene UI
+        #A variable to showcase the "1UP" text for the Gameplay Scene UI
         self.one_up_text_timer = 0
 
     #A method to run the Gameplay Scene
@@ -96,16 +96,18 @@ class GameplayScene:
         #Checks if the player is starting a new round
         if(self.round_intro):
             self.start_round()
+
         #Checks if the the game is ending the round
         elif(self.round_end):
             self.end_round()
+
         #Else, the player is playing the game
         else:     
-            #A method to set up the updated Gameplay Scene surface during when the player controls Pac-Man
+            #A method to set up the updated Gameplay Scene surface
             self.set_up_gameplay_surface()
 
             #A method to check player and game events for the Gameplay Scene
-            self.event_handler(event, debug_mode)            
+            self.event_handler(event, debug_mode)
 
             #Blits the Gameplay Scene surface onto the display surface
             self.display_surface.blit(self.gameplay_surface, (0, 0))
@@ -303,7 +305,7 @@ class GameplayScene:
             self.list_white_obstacles[1].append(image)
             self.list_white_obstacles[2].append(image_rect)
 
-    #A method to showcase the start of the round to the player
+    #A method to start the round
     def start_round(self):       
         #Resets the Gameplay Scene background
         self.gameplay_surface.fill('black')
@@ -348,6 +350,7 @@ class GameplayScene:
                 player_one_text_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
 
                 self.gameplay_surface.blit(player_one_text, player_one_text_rect)
+
             #Else, the program displays the characters and their positions before the theme ends
             else:
                 '''
@@ -379,13 +382,13 @@ class GameplayScene:
                 for ghost in [self.blinky, self.pinky]:
                     ghost.set_stand_by_state(False)
                     ghost.set_chase_state(False)
-                    ghost.set_scatter_state(True) #The first state Blinky & Pinky are in is the scatter state
+                    ghost.set_scatter_state(True) #The first state Blinky & Pinky are in is the Scatter State
                     ghost.set_frightened_state_v1(False)
                     ghost.set_frightened_state_v2(False)
                     ghost.set_eaten_state(False)
 
                 for ghost in [self.inky, self.clyde]:
-                    ghost.set_stand_by_state(True) #The first state Inky & Clyde are in is the stand by state
+                    ghost.set_stand_by_state(True) #The first state Inky & Clyde are in is the Stand By State
                     ghost.set_chase_state(False)
                     ghost.set_scatter_state(False) 
                     ghost.set_frightened_state_v1(False)
@@ -395,7 +398,7 @@ class GameplayScene:
                 #Resets all of the ghost's frame, cycles, and timers back to normal
                 for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
                     ghost.set_frame(0)
-                    ghost.reset_chase_and_scatter_cycle()
+                    ghost.reset_chase_and_scatter_cycle(self.level_counter)
                     ghost.set_ghost_scatter_timer(0)
                     ghost.frame_update()
                 
@@ -406,7 +409,7 @@ class GameplayScene:
                 self.inky.get_rect().center = (206, 302)
                 self.clyde.get_rect().center = (274, 302)
 
-                #Blits the characters onto the Gameplay surface
+                #Blits the characters onto the Gameplay Scene surface
                 self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
 
                 for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
@@ -503,22 +506,24 @@ class GameplayScene:
                 for ghost in [self.blinky, self.pinky]:
                     ghost.set_stand_by_state(False)
                     ghost.set_chase_state(False)
-                    ghost.set_scatter_state(True) #The first state Blinky & Pinky are in is the scatter state
+                    ghost.set_scatter_state(True) #The first state Blinky & Pinky are in is the Scatter State
                     ghost.set_frightened_state_v1(False)
                     ghost.set_frightened_state_v2(False)
                     ghost.set_eaten_state(False)
 
                 for ghost in [self.inky, self.clyde]:
-                    ghost.set_stand_by_state(True) #The first state Inky & Clyde are in is the stand by state
+                    ghost.set_stand_by_state(True) #The first state Inky & Clyde are in is the Stand By State
                     ghost.set_chase_state(False)
                     ghost.set_scatter_state(False) 
                     ghost.set_frightened_state_v1(False)
                     ghost.set_frightened_state_v2(False)
                     ghost.set_eaten_state(False)
 
-                #Resets all of the ghost's frame
+                #Resets all of the ghost's frame, cycles, and timers back to normal
                 for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
                     ghost.set_frame(0)
+                    ghost.reset_chase_and_scatter_cycle(self.level_counter)
+                    ghost.set_ghost_scatter_timer(0)
                     ghost.frame_update()
                 
                 #Resets the position of all characters
@@ -528,7 +533,7 @@ class GameplayScene:
                 self.inky.get_rect().center = (206, 302)
                 self.clyde.get_rect().center = (274, 302)
 
-                #Blits the characters onto the Gameplay surface
+                #Blits the characters onto the Gameplay Scene surface
                 self.gameplay_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
 
                 for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
@@ -564,7 +569,7 @@ class GameplayScene:
         #Debug code
             #print(self.fresh_start)
 
-    #A method to end the round based on various events
+    #A method to end the round
     def end_round(self):
         #Resets the Gameplay Scene background
         self.gameplay_surface.fill('black')
@@ -619,11 +624,11 @@ class GameplayScene:
                     self.round_end = False
                     self.level_counter += 1
 
-                    #Resets ghost disappear timer
+                    #Resets the ghosts disappear timer
                     self.ghost_disappear_timer = 0
 
                     '''
-                    Resets Pac-Man's dots eaten and Inky's & Clyde's stand by state exit condition since Pac-Man ate all of the pellets
+                    Resets Pac-Man's dots eaten and Inky's & Clyde's Stand By State exit condition since Pac-Man ate all of the pellets
                     '''
 
                     self.pac_man.set_dots_eaten(0)
@@ -669,7 +674,7 @@ class GameplayScene:
                     #Conducts an interface update
                     self.interface_update()
 
-                #Blits the gameplay surface onto the display surface
+                #Blits the Gameplay Scene surface onto the display surface
                 self.display_surface.blit(self.gameplay_surface, (0, 0))
 
                 #Iterates ghost dissapear timer for the previous if statement
@@ -772,9 +777,9 @@ class GameplayScene:
                 self.ghost_disappear_timer += 1
 
             '''
-            Sets up all objects onto the gameplay surface
+            Sets up all objects onto the Gameplay Scene surface
                 NOTE: This occurs before the transition_to_main_menu if statement so that the "GAME OVER" 
-                      text can overlay the gameplay surface
+                      text can overlay the Gameplay Scene surface
             '''
             self.set_up_gameplay_surface()
 
@@ -822,13 +827,14 @@ class GameplayScene:
                         self.pac_man.set_death_animation(False)
                         self.pac_man.set_death_animation_timer(0)
                         self.pac_man.set_list_of_lives(3)
+                        self.pac_man.set_gained_extra_life(False)
                         self.pac_man.set_score(0)
                         self.pac_man.set_is_caught(False)
                         self.ghost_disappear_timer = 0
                         self.pac_man_death_sound_is_playing = False
 
                         '''
-                        Resets Pac-Man's dots eaten and Inky's & Clyde's stand by state exit condition since Pac-Man has no more lives
+                        Resets Pac-Man's dots eaten and Inky's & Clyde's Stand By State exit condition since Pac-Man has no more lives
                         '''
 
                         self.pac_man.set_dots_eaten(0)
@@ -877,7 +883,7 @@ class GameplayScene:
         #Checks if Pac-Man is caught by a ghost
         self.pac_man.check_is_caught(self.blinky, self.pinky, self.inky, self.clyde)
 
-        #Checks if Pac-Man ate a ghost (while the ghost was in a frightened state)
+        #Checks if Pac-Man ate a ghost (while the ghost was in a Frightened State)
         self.pac_man.check_if_ate_a_ghost(self.ghost_eaten_channel, self.pac_man_ate_ghost_sound, self.blinky, self.pinky, self.inky, self.clyde)
         
         #Checks if the player enabled debugging mode for the ghosts
@@ -886,7 +892,7 @@ class GameplayScene:
         #A method to run gameplay and check a series of conditions
         self.gameplay_sequence(event)
     
-    #A method to enable debugging mode for ghosts (which shows their current target and movement patterns)
+    #A method to enable debugging mode for the ghosts (which shows their current target and movement patterns)
     def ghosts_debug_mode(self, debug_mode):
         if(debug_mode):
             for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
@@ -917,7 +923,7 @@ class GameplayScene:
             #Momentarily pauses all characters after Pac-Man eats a ghost
             if self.ghost_eaten_channel.get_busy():
                 #Debug code
-                    # print(str(ghost.get_name()) + " Ghost has been eaten")
+                    # print(str(ghost.get_name()) + " ghost has been eaten")
                 
                 self.pac_man.set_movement(False)
                 self.blinky.set_movement(False)

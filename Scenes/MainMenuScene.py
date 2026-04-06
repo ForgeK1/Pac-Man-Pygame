@@ -14,7 +14,7 @@ from Functions.Button import Button
 class MainMenuScene:
     #A constructor to initialize an instance of Main Menu Scene
     def __init__(self, display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT):        
-        #Initializes the display surface and game state manager
+        #Variables for the display surface and Game State Manager
         self.display_surface = display_surface
         self.game_state_manager = game_state_manager
         self.WINDOW_WIDTH = WINDOW_WIDTH
@@ -27,15 +27,15 @@ class MainMenuScene:
         '''
         self.main_menu_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
-        #Initializes the character & power pellet objects
-        self.pac_man = PacMan(self.main_menu_surface, 70, 70, "Right", 320, 270, True, 100)
-        self.blinky = Blinky(self.main_menu_surface, 70, 70, "Right", 80, 220, True, 100, None, self.game_state_manager)
-        self.pinky = Pinky(self.main_menu_surface, 70, 70, "Right", 180, 220, True, 100, None, self.game_state_manager)
-        self.inky = Inky(self.main_menu_surface, 70, 70, "Right", 80, 320, True, 100, None, self.game_state_manager)
-        self.clyde = Clyde(self.main_menu_surface, 70, 70, "Right", 180, 320, True, 100, None, self.game_state_manager)
+        #Variables for the character & power pellet objects
+        self.pac_man = PacMan(70, 70, "Right", 320, 270, True, 100, self.main_menu_surface)
+        self.blinky = Blinky(70, 70, "Right", 80, 220, True, 100, self.main_menu_surface, self.game_state_manager)
+        self.pinky = Pinky(70, 70, "Right", 180, 220, True, 100, self.main_menu_surface, self.game_state_manager)
+        self.inky = Inky(70, 70, "Right", 80, 320, True, 100, self.main_menu_surface, self.game_state_manager)
+        self.clyde = Clyde(70, 70, "Right", 180, 320, True, 100, self.main_menu_surface, self.game_state_manager)
         self.power_pellet_image = pygame.image.load('Images/Dots/power_pellet.png')
 
-        #Initializes the interactable buttons
+        #Variables for the interactable buttons
         self.play_button = Button('Images/Button/non_highlighted.png', 'Images/Button/highlighted.png', 'Images/Button/pressed.png', 
                                   'Play', "black", "black", "black", 'Fonts/Pixel/DePixelHalbfett.ttf', 24)
         self.quit_button = Button('Images/Button/non_highlighted.png', 'Images/Button/highlighted.png', 'Images/Button/pressed.png', 
@@ -72,7 +72,7 @@ class MainMenuScene:
         pac_man_text_rect.centerx = self.WINDOW_WIDTH / 2
         pac_man_text_rect.centery = 100
 
-        #Blits the text onto the main menu surface using text's positioned rect
+        #Blits the text onto the Main Menu Scene surface using text's positioned rect
         self.main_menu_surface.blit(pac_man_text, pac_man_text_rect)
 
         #Updates all character animation based on the character_animation_speed variable
@@ -126,7 +126,7 @@ class MainMenuScene:
         mouse_let_go = False
         
         '''
-        Uses the event dictionary (Ex. 'pos', 'buttons', 'touch', 'window') to grab mouse position 
+        Uses the event dictionary (ex. 'pos', 'buttons', 'touch', 'window') to grab mouse position 
         (checks if 'pos' exists in the dictionary before grabbing the value)
         '''
         if('pos' in event.dict):

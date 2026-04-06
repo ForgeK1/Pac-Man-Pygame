@@ -1,14 +1,14 @@
 '''
-Description: The GameStateManager class manages and switches between different game states by tracking keys 
+Description: The Game State Manager class manages and switches between different game states by tracking keys 
              that correspond to the scene instances in the Game module. Using the list_of_states dictionary,   
-             the GameStateManager can dynamically transition between scenes based on specific events in the 
+             the Game State Manager can dynamically transition between scenes based on specific events in the 
              game
 
-             Note that, the game loop depends on what Boolean value "running_state" is for ensuring that the 
+             Note that, the game loop depends on what boolean value "running_state" is for ensuring that the 
              game is still running  and the running state is not tied to a specific sceneW
 '''
 class GameStateManager:
-    #A constructor to initialize an instance of GameStateManager
+    #A constructor to initialize an instance of Game State Manager
     def __init__(self, scene_state, running_state):
         self.scene_state = scene_state
         self.running_state = running_state

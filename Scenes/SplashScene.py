@@ -1,5 +1,5 @@
 '''
-Description: A Splash Scene class creates and showcases the splash screen of the game
+Description: The Splash Scene class creates and showcases the splash screen of the game
 '''
 
 #Imports pygame libraries
@@ -8,7 +8,7 @@ import pygame
 class SplashScene:
     #A constructor to initialize an instance of Splash Scene
     def __init__(self, display_surface, game_state_manager, window_width, window_height):
-        #Initializes the display surface and game state manager
+        #Variables for the display surface and Game State Manager
         self.display_surface = display_surface
         self.game_state_manager = game_state_manager
         self.WINDOW_WIDTH = window_width
@@ -21,7 +21,7 @@ class SplashScene:
         '''
         self.splash_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
-        #Initializes variables to keep track of the transparency of the Splash Scene
+        #Variables to keep track of the transparency of the Splash Scene
         self.transparency = 0
         self.fully_transparent = False
     
@@ -43,8 +43,8 @@ class SplashScene:
         self.display_surface.blit(self.splash_surface, (0, 0))
 
         '''
-        An if statement that uses the game state manager to re-direct the player to the 
-        Main Menu Scene after the splash scene disappears
+        An if statement that uses the  Game State Manager to re-direct the player to the 
+        Main Menu Scene after the Splash Scene disappears
             NOTE: Although the initialized value of transparency is 0, the game doesn't 
                   switch scenes because the variable gets incremented before reaching
                   this if statement
@@ -99,7 +99,7 @@ class SplashScene:
     #A method to dynamically update the transparency of the Splash Scene
     def update_transparency(self):
         '''
-        An if statement to check if the transparency has reached 250 to pause the splash scene (momentarily stops
+        An if statement to check if the transparency has reached 250 to pause the Splash Scene (momentarily stops
         changing the transparency of the Splash Scene)
         '''
         if self.transparency == 250:
@@ -109,7 +109,7 @@ class SplashScene:
             #Debug code
                 #print(str(self.transparency) + " First if statement ran \n")
         
-        #An if-else statement to dynamically change the value of the transparency variable for the Splash Scene
+        #An if-else chain to dynamically change the value of the transparency variable for the Splash Scene
         if self.fully_transparent == False:
             self.transparency += 10
             pygame.time.delay(50)
