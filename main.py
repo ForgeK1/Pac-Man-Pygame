@@ -13,6 +13,9 @@ from Scenes.GameplayScene import GameplayScene
 
 class Game():
     def __init__(self):
+        #Configures the audio mixer settings before pygame initializes to prevent audio crackling in the web environment
+        pygame.mixer.pre_init(44100, -16, 2, 2048)
+
         #Initializes all pygame modules
         pygame.init()
 

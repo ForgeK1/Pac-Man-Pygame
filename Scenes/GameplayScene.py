@@ -344,7 +344,7 @@ class GameplayScene:
             self.gameplay_surface.blit(ready_text, ready_text_rect)
 
             #Displays the "PLAYER ONE" text up to 3 seconds of the theme
-            if(pygame.mixer_music.get_pos() / 1000 >= 0.01 and pygame.mixer_music.get_pos() / 1000 <= 2.5):
+            if(pygame.mixer.music.get_pos() / 1000 >= 0.01 and pygame.mixer.music.get_pos() / 1000 <= 2.5):
                 player_one_text = pixel_font.render('PLAYER ONE', True, 'Cyan')
                 player_one_text_rect = player_one_text.get_rect()
                 player_one_text_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 - 68)
@@ -422,10 +422,10 @@ class GameplayScene:
             self.display_surface.blit(self.gameplay_surface, (0, 0))
 
             #Checks if the Pac-Man start theme is still playing. If the theme ends, then the Pac-Man & the ghosts start moving
-            if(pygame.mixer_music.get_busy() is False):
+            if(pygame.mixer.music.get_busy() is False):
                 self.round_intro = False
                 self.fresh_start = False
-                pygame.mixer_music.unload()
+                pygame.mixer.music.unload()
 
                 #Resumes all character movements
                 self.pac_man.set_movement(True)
@@ -860,8 +860,8 @@ class GameplayScene:
                             self.list_power_pellets[1][i] = True
 
                         #Loads and plays the Pac-Man Theme Remix when switching to the Main Menu Scene
-                        pygame.mixer_music.load('Audio/Music/Pac-Man Theme Remix.ogg')
-                        pygame.mixer_music.play(-1)
+                        pygame.mixer.music.load('Audio/Music/Pac-Man Theme Remix.ogg')
+                        pygame.mixer.music.play(-1)
 
                         #Transitions the player to the Main Menu Scene
                         self.game_state_manager.set_scene_state('Main Menu Scene')

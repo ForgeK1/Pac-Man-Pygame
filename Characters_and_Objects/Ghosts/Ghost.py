@@ -854,7 +854,10 @@ class Ghost(ABC):
                   exit the gate region once Pac-Man eats enough dots
         '''
         if ((self.frightened_state_v1 or self.frightened_state_v2) and self.stand_by_state is False):
-            random_direction = random.randint(0, len(directions) - 1)
+            if(len(directions) > 0):
+                random_direction = random.randint(0, len(directions) - 1)
+            else:
+                return self.direction
             
             return list(directions.keys())[random_direction]
         

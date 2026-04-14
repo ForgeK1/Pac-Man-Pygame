@@ -147,12 +147,12 @@ class MainMenuScene:
         #If the player clicked and let go of the play button, then they will be directed to the Gameplay Scene
         if(self.play_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
             #Stops playing and unloads the Pac-Man Theme Remix for the Main Menu Scene from the music_mixer
-            pygame.mixer_music.stop()
-            pygame.mixer_music.unload()
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
 
             #Loads and plays the Pac-Man Start Theme when switching to the Gameplay Scene
-            pygame.mixer_music.load('Audio/Music/Pac-Man Start Theme.ogg')
-            pygame.mixer_music.play()
+            pygame.mixer.music.load('Audio/Music/Pac-Man Start Theme.ogg')
+            pygame.mixer.music.play()
             
             self.game_state_manager.set_scene_state('Gameplay Scene')
 

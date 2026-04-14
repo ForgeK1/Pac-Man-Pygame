@@ -592,6 +592,8 @@ class PacMan:
             if(range_x >= 0.98 or range_y >= 0.98): 
                 if(pellet_channel.get_busy() is False):
                     pellet_channel.play(pellet_sound)
+                else:
+                    pellet_channel.queue(pellet_sound)
                 
                 list_pellets[1][pellet_index] = False
                 
@@ -649,8 +651,8 @@ class PacMan:
 
         #If Pac-Man reaches or gets past 10,000 points, he gains an extra life
         if(self.high_score >= 10000 and self.gained_extra_life is False):
-            pygame.mixer_music.load('Audio/Sound Effects/Pac-Man Extra Life.ogg')
-            pygame.mixer_music.play()
+            pygame.mixer.music.load('Audio/Sound Effects/Pac-Man Extra Life.ogg')
+            pygame.mixer.music.play()
 
             self.list_of_lives = self.list_of_lives + 1
             self.gained_extra_life = True
