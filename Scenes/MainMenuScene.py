@@ -151,7 +151,7 @@ class MainMenuScene:
             pygame.mixer_music.unload()
 
             #Loads and plays the Pac-Man Start Theme when switching to the Gameplay Scene
-            pygame.mixer_music.load('Audio/Music/Pac-Man Start Theme.wav')
+            pygame.mixer_music.load('Audio/Music/Pac-Man Start Theme.ogg')
             pygame.mixer_music.play()
             
             self.game_state_manager.set_scene_state('Gameplay Scene')

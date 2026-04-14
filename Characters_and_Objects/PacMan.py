@@ -497,7 +497,7 @@ class PacMan:
             NOTE: If the player didn't press any arrow keys, new & old direction 
                   will have same value
         '''
-        if('key' in event.dict):
+        if(event is not pygame.NOEVENT and 'key' in event.dict):
             direction_key = event.dict.get('key')
 
             if(direction_key == 1073741903):
@@ -649,7 +649,7 @@ class PacMan:
 
         #If Pac-Man reaches or gets past 10,000 points, he gains an extra life
         if(self.high_score >= 10000 and self.gained_extra_life is False):
-            pygame.mixer_music.load('Audio/Sound Effects/Pac-Man Extra Life.wav')
+            pygame.mixer_music.load('Audio/Sound Effects/Pac-Man Extra Life.ogg')
             pygame.mixer_music.play()
 
             self.list_of_lives = self.list_of_lives + 1

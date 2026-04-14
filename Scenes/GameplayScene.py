@@ -63,13 +63,13 @@ class GameplayScene:
         self.ghost_return_channel = pygame.mixer.Channel(6)
 
         #Variables for the music and sound effects
-        self.pac_man_death_sound = pygame.mixer.Sound('Audio/Sound Effects/Pac-Man Death.wav')
-        self.pellet_sound = pygame.mixer.Sound('Audio/Sound Effects/Waka (Cut Version).wav')
-        self.power_pellet_sound = pygame.mixer.Sound('Audio/Sound Effects/Power-Up.wav')
-        self.siren_v1_sound = pygame.mixer.Sound('Audio/Sound Effects/Ghost Siren V1.wav')
-        self.siren_v2_sound = pygame.mixer.Sound('Audio/Sound Effects/Ghost Siren V2.wav')
-        self.pac_man_ate_ghost_sound = pygame.mixer.Sound('Audio/Sound Effects/Pac-Man Eating A Ghost.wav')
-        self.ghost_return = pygame.mixer.Sound('Audio/Sound Effects/Ghost Return.wav')
+        self.pac_man_death_sound = pygame.mixer.Sound('Audio/Sound Effects/Pac-Man Death.ogg')
+        self.pellet_sound = pygame.mixer.Sound('Audio/Sound Effects/Waka (Cut Version).ogg')
+        self.power_pellet_sound = pygame.mixer.Sound('Audio/Sound Effects/Power-Up.ogg')
+        self.siren_v1_sound = pygame.mixer.Sound('Audio/Sound Effects/Ghost Siren V1.ogg')
+        self.siren_v2_sound = pygame.mixer.Sound('Audio/Sound Effects/Ghost Siren V2.ogg')
+        self.pac_man_ate_ghost_sound = pygame.mixer.Sound('Audio/Sound Effects/Pac-Man Eating A Ghost.ogg')
+        self.ghost_return = pygame.mixer.Sound('Audio/Sound Effects/Ghost Return.ogg')
 
         #Variables to start a new round
         self.round_intro = True
@@ -860,7 +860,7 @@ class GameplayScene:
                             self.list_power_pellets[1][i] = True
 
                         #Loads and plays the Pac-Man Theme Remix when switching to the Main Menu Scene
-                        pygame.mixer_music.load('Audio/Music/Pac-Man Theme Remix.wav')
+                        pygame.mixer_music.load('Audio/Music/Pac-Man Theme Remix.ogg')
                         pygame.mixer_music.play(-1)
 
                         #Transitions the player to the Main Menu Scene

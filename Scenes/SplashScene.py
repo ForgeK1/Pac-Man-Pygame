@@ -51,7 +51,7 @@ class SplashScene:
         '''
         if self.transparency == 0:
             #Loads and plays the Pac-Man Theme Remix when switching to the Main Menu Scene
-            pygame.mixer_music.load('Audio/Music/Pac-Man Theme Remix.wav')
+            pygame.mixer_music.load('Audio/Music/Pac-Man Theme Remix.ogg')
             pygame.mixer_music.play(-1)
             
             self.game_state_manager.set_scene_state('Main Menu Scene')
