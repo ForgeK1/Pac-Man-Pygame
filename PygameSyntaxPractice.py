@@ -5,14 +5,14 @@ import pygame
 pygame.init()
 
 #Create a display surface that will be visible on your game window and sets its caption
-WINDOW_WIDTH = 300
-WINDOW_HEIGHT = 600
+WINDOW_WIDTH = 600
+WINDOW_HEIGHT = 900
 display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
 pygame.display.set_caption("Pygame Syntax Practice")
 
 #Create a surface object image and set it as the game's icon
-game_icon_image = pygame.image.load('Images/Pac-Man/icon.png')
-pygame.display.set_icon(game_icon_image)
+icon_image = pygame.image.load('Images/Ghosts/Blinky (Red)/down_frame_1.png')
+pygame.display.set_icon(icon_image)
 
 #Create a framerate variable and a Clock object to keep track of the FPS
 FPS = 120
