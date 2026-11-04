@@ -8,21 +8,21 @@ import pygame
 class Button:
     #A constructor to create an instance of a Button
     def __init__(self, not_highlighted_file_path, highlighted_file_path, pressed_image_file_path, 
-                 text_input, non_hover_text_color, hover_text_color, pressed_text_color, 
-                 font_path, font_size):
+                 non_hover_text_color, hover_text_color, pressed_text_color, 
+                 text_input, font_path, font_size):
         #Variables to set up parameter variables
         self.non_hover_image_file_path = not_highlighted_file_path
         self.hover_image_file_path = highlighted_file_path
         self.pressed_image_file_path = pressed_image_file_path
 
-        self.text_input = text_input
         self.non_hover_text_color = non_hover_text_color
         self.hover_text_color = hover_text_color
         self.pressed_text_color = pressed_text_color
+        self.text_input = text_input
         self.font_path = font_path
         self.font_size = font_size
 
-        #Variables to set up image and image rect
+        #Variables to set up the button image and image rect
         self.image = pygame.image.load(self.non_hover_image_file_path)
         self.image_rect = self.image.get_rect()
 

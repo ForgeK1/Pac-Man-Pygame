@@ -28,18 +28,17 @@ class MainMenuScene:
         self.main_menu_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
         #Variables for the character & power pellet objects
-        self.pac_man = PacMan(70, 70, "Right", 320, 270, True, 100, self.main_menu_surface)
-        self.blinky = Blinky(70, 70, "Right", 80, 220, True, 100, self.main_menu_surface, self.game_state_manager)
-        self.pinky = Pinky(70, 70, "Right", 180, 220, True, 100, self.main_menu_surface, self.game_state_manager)
-        self.inky = Inky(70, 70, "Right", 80, 320, True, 100, self.main_menu_surface, self.game_state_manager)
-        self.clyde = Clyde(70, 70, "Right", 180, 320, True, 100, self.main_menu_surface, self.game_state_manager)
-        self.power_pellet_image = pygame.image.load('Images/Dots/power_pellet.png')
+        self.pac_man = PacMan(40, 40, "Right", 300, 425, True, 100, self.main_menu_surface)
+        self.blinky = Blinky(40, 40, "Right", 180, 395, True, 100, self.main_menu_surface, self.game_state_manager)
+        self.pinky = Pinky(40, 40, "Right", 240, 395, True, 100, self.main_menu_surface, self.game_state_manager)
+        self.inky = Inky(40, 40, "Right", 180, 455, True, 100, self.main_menu_surface, self.game_state_manager)
+        self.clyde = Clyde(40, 40, "Right", 240, 455, True, 100, self.main_menu_surface, self.game_state_manager)
 
         #Variables for the interactable buttons
         self.play_button = Button('Images/Button/non_highlighted.png', 'Images/Button/highlighted.png', 'Images/Button/pressed.png', 
-                                  'Play', "black", "black", "black", 'Fonts/Pixel/DePixelHalbfett.ttf', 24)
-        self.quit_button = Button('Images/Button/non_highlighted.png', 'Images/Button/highlighted.png', 'Images/Button/pressed.png', 
-                                  'Quit', "black", "black", "black", 'Fonts/Pixel/DePixelHalbfett.ttf', 24)
+                                  "black", "black", "black", 'Play', 'Fonts/Pixel/DePixelHalbfett.ttf', 22)
+        self.credits_button = Button('Images/Button/non_highlighted.png', 'Images/Button/highlighted.png', 'Images/Button/pressed.png', 
+                                     'black', 'black', 'black', 'Credits', 'Fonts/Pixel/DePixelHalbfett.ttf', 22)
     
     #A method to run Main Menu Scene
     def run(self, event, debug_mode): 
@@ -60,20 +59,16 @@ class MainMenuScene:
         #Fills the background color of the Main Menu Scene
         self.main_menu_surface.fill('black')
 
-        #Sets up the color for the scene borders and text
-        DARK_YELLOW = (241, 196, 15)
+        #Set up the background menu
+        background_menu = pygame.image.load('Images/Main Menu Background.png')
+        background_menu_rect = background_menu.get_rect()
+        background_menu_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2)
 
-        #Loads a custom font to use for the Main Menu Scene title
-        pacmania_font = pygame.font.Font('Fonts/Pacmania/Pacmania-Normal.ttf', 86)
+        #Blits the background menu
+        self.main_menu_surface.blit(background_menu, background_menu_rect)
 
-        #Sets up the screen title by creating a render (surface object) of the text through the custom font
-        pac_man_text = pacmania_font.render('Pac-Man', True, DARK_YELLOW)
-        pac_man_text_rect = pac_man_text.get_rect()
-        pac_man_text_rect.centerx = self.WINDOW_WIDTH / 2
-        pac_man_text_rect.centery = 100
-
-        #Blits the text onto the Main Menu Scene surface using text's positioned rect
-        self.main_menu_surface.blit(pac_man_text, pac_man_text_rect)
+        #Sets up the interactable play button
+        self.set_up_buttons()  
 
         #Updates all character animation based on the character_animation_speed variable
         self.pac_man.animation_update()
@@ -81,43 +76,34 @@ class MainMenuScene:
         self.pinky.animation_update()
         self.inky.animation_update()
         self.clyde.animation_update()
-
-        #Sets up the Power Pellet image
-        self.power_pellet_image = pygame.transform.scale(self.power_pellet_image, (40, 40))
-        self.power_pellet_image_rect = self.power_pellet_image.get_rect()
-        self.power_pellet_image_rect.center = (415, self.WINDOW_HEIGHT / 2 - 50)
         
         #Blits all character images and rects onto the Gameplay Scene
         self.main_menu_surface.blit(self.pac_man.get_image(), self.pac_man.get_rect())
         self.main_menu_surface.blit(self.blinky.get_image(), self.blinky.get_rect())
         self.main_menu_surface.blit(self.pinky.get_image(), self.pinky.get_rect())
         self.main_menu_surface.blit(self.inky.get_image(), self.inky.get_rect())
-        self.main_menu_surface.blit(self.clyde.get_image(), self.clyde.get_rect())
-        self.main_menu_surface.blit(self.power_pellet_image, self.power_pellet_image_rect)
-
-        #Sets up interactable buttons
-        self.set_up_buttons()        
+        self.main_menu_surface.blit(self.clyde.get_image(), self.clyde.get_rect())   
     
-    #A method to set up the play and quit buttons
+    #A method to set up the play and credits buttons
     def set_up_buttons(self):
-        self.play_button.scale_button(260, 74, 30)
-        self.play_button.get_image_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 120)
-        self.play_button.get_text_rect().center= (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 120)
+        self.play_button.scale_button(170, 54, 22)
+        self.play_button.get_image_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 200)
+        self.play_button.get_text_rect().center= (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 201)
         
         self.main_menu_surface.blit(self.play_button.get_image(), self.play_button.get_image_rect())
         self.main_menu_surface.blit(self.play_button.get_text(), self.play_button.get_text_rect())
 
-        self.quit_button.scale_button(260, 74, 30)
-        self.quit_button.get_image_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 220)
-        self.quit_button.get_text_rect().center= (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 220)
+        self.credits_button.scale_button(170, 54, 22)
+        self.credits_button.get_image_rect().center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 270)
+        self.credits_button.get_text_rect().center= (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 272)
         
-        self.main_menu_surface.blit(self.quit_button.get_image(), self.quit_button.get_image_rect())
-        self.main_menu_surface.blit(self.quit_button.get_text(), self.quit_button.get_text_rect())
+        self.main_menu_surface.blit(self.credits_button.get_image(), self.credits_button.get_image_rect())
+        self.main_menu_surface.blit(self.credits_button.get_text(), self.credits_button.get_text_rect())
     
     #A method to check and handle player events for the Main Menu Scene
     def event_handler(self, event):
         '''
-        A section to handle player events for interacting with the play & quit buttons
+        A section to handle player events for interacting with the play & credits buttons
         '''
         
         #Default values for the following variables
@@ -133,7 +119,7 @@ class MainMenuScene:
             mouse_pos = event.dict.get('pos') #Returns a tuple
 
         #Uses the event type to check if the player has clicked or let go of the left mouse button
-        if('button' in event.dict and                 #Checks if there is a button categrory in dict
+        if('button' in event.dict and                 #Checks if there is a button categrory in the dict
             event.type == pygame.MOUSEBUTTONDOWN and  #Checks if we're clicking down on a mouse button  
             event.dict.get('button') == 1):           #Checks if its the left mouse that were clicking
             mouse_click = True
@@ -157,10 +143,10 @@ class MainMenuScene:
             self.game_state_manager.set_scene_state('Gameplay Scene')
 
         '''
-        If the player clicked and let go of the quit button, the program will convert the running boolean to 
+        If the player clicked and let go of the credits button, the program will convert the running boolean to 
         False to stop the game loop in the Game class
         '''
-        if(self.quit_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
+        if(self.credits_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
             self.game_state_manager.set_running_state(False)
         
         #Debug code to ensure that the function contains all the events done by the player 
