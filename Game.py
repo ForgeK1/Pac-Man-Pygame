@@ -8,6 +8,7 @@ import pygame
 from GameStateManager import GameStateManager
 from Scenes.SplashScene import SplashScene
 from Scenes.MainMenuScene import MainMenuScene
+from Scenes.CreditsScene import CreditsScene
 from Scenes.GameplayScene import GameplayScene
 
 #Initializes all pygame modules
@@ -36,10 +37,11 @@ game_state_manager = GameStateManager('Main Menu Scene', True)
 #Sets up scenes of the game
 splash_scene = SplashScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
 main_menu_scene = MainMenuScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
+credits_scene = CreditsScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
 gameplay_scene = GameplayScene(display_surface, game_state_manager, WINDOW_WIDTH, WINDOW_HEIGHT)
 
 #A dictionary that matches keys with their respective scenes to help the Game State Manager switch between scenes of the game
-list_of_states = {'Splash Scene':splash_scene, 'Main Menu Scene':main_menu_scene, 'Gameplay Scene':gameplay_scene}
+list_of_states = {'Splash Scene':splash_scene, 'Main Menu Scene':main_menu_scene, 'Credits Scene':credits_scene, 'Gameplay Scene':gameplay_scene}
 
 #A variable to check if the player wants to enter debugging mode (by clicking 'D' or 'd' in on their keyboard)
 debug_mode = False

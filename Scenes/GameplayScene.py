@@ -35,10 +35,10 @@ class GameplayScene:
 
         #Variables for the character objects
         self.pac_man = PacMan(30, 30, 'Left', 240, 458, True, 50, self.gameplay_surface)
-        self.blinky = Blinky(30, 30, "Left", 240, 252, True, 100, self.gameplay_surface, self.game_state_manager)
-        self.pinky = Pinky(30, 30, "Down", 240, 302, True, 100, self.gameplay_surface, self.game_state_manager)
-        self.inky = Inky(30, 30, "Up", 206, 302, True, 100, self.gameplay_surface, self.game_state_manager)
-        self.clyde = Clyde(30, 30, "Up", 274, 302, True, 100, self.gameplay_surface, self.game_state_manager)
+        self.blinky = Blinky(30, 30, 'Left', 240, 252, True, 100, self.gameplay_surface, self.game_state_manager)
+        self.pinky = Pinky(30, 30, 'Down', 240, 302, True, 100, self.gameplay_surface, self.game_state_manager)
+        self.inky = Inky(30, 30, 'Up', 206, 302, True, 100, self.gameplay_surface, self.game_state_manager)
+        self.clyde = Clyde(30, 30, 'Up', 274, 302, True, 100, self.gameplay_surface, self.game_state_manager)
 
         #Variables for the two lists of obstacles for the game map
         self.list_blue_obstacles = None
@@ -85,7 +85,7 @@ class GameplayScene:
         self.pac_man_death_sound_is_playing = False
         self.transition_to_main_menu = False
 
-        #A variable to showcase the "1UP" text for the Gameplay Scene UI
+        #A variable to showcase the '1UP' text for the Gameplay Scene UI
         self.one_up_text_timer = 0
 
     #A method to run the Gameplay Scene
@@ -336,14 +336,14 @@ class GameplayScene:
 
             pixel_font = pygame.font.Font('Fonts/Pixel/DePixelHalbfett.ttf', 18)
 
-            #Displays the "READY!" text throughout the entire theme
+            #Displays the 'READY!' text throughout the entire theme
             ready_text = pixel_font.render('READY!', True, 'Yellow')
             ready_text_rect = ready_text.get_rect()
             ready_text_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 35)
 
             self.gameplay_surface.blit(ready_text, ready_text_rect)
 
-            #Displays the "PLAYER ONE" text up to 3 seconds of the theme
+            #Displays the 'PLAYER ONE' text up to 3 seconds of the theme
             if(pygame.mixer_music.get_pos() / 1000 >= 0.01 and pygame.mixer_music.get_pos() / 1000 <= 2.5):
                 player_one_text = pixel_font.render('PLAYER ONE', True, 'Cyan')
                 player_one_text_rect = player_one_text.get_rect()
@@ -455,7 +455,7 @@ class GameplayScene:
 
                 pixel_font = pygame.font.Font('Fonts/Pixel/DePixelHalbfett.ttf', 18)
 
-                #Displays the "READY!" text throughout the entire theme
+                #Displays the 'READY!' text throughout the entire theme
                 ready_text = pixel_font.render('READY!', True, 'Yellow')
                 ready_text_rect = ready_text.get_rect()
                 ready_text_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 35)
@@ -778,7 +778,7 @@ class GameplayScene:
 
             '''
             Sets up all objects onto the Gameplay Scene surface
-                NOTE: This occurs before the transition_to_main_menu if statement so that the "GAME OVER" 
+                NOTE: This occurs before the transition_to_main_menu if statement so that the 'GAME OVER' 
                       text can overlay the Gameplay Scene surface
             '''
             self.set_up_gameplay_surface()
@@ -789,7 +789,7 @@ class GameplayScene:
                 if(self.game_over_text_timer != 100):
                     pixel_font = pygame.font.Font('Fonts/Pixel/DePixelHalbfett.ttf', 18)
 
-                    #Displays the "GAME OVER" text
+                    #Displays the 'GAME OVER' text
                     game_text = pixel_font.render('GAME', True, 'Red')
                     game_text_rect = game_text.get_rect()
                     game_text_rect.center = (self.WINDOW_WIDTH / 2 - 50, self.WINDOW_HEIGHT / 2 + 35)
@@ -923,7 +923,7 @@ class GameplayScene:
             #Momentarily pauses all characters after Pac-Man eats a ghost
             if self.ghost_eaten_channel.get_busy():
                 #Debug code
-                    # print(str(ghost.get_name()) + " ghost has been eaten")
+                    # print(str(ghost.get_name()) + ' ghost has been eaten')
                 
                 self.pac_man.set_movement(False)
                 self.blinky.set_movement(False)

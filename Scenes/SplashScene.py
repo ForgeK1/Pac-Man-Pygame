@@ -107,7 +107,7 @@ class SplashScene:
             pygame.time.delay(5000)
 
             #Debug code
-                #print(str(self.transparency) + " First if statement ran \n")
+                #print(str(self.transparency) + ' First if statement ran \n')
         
         #An if-else chain to dynamically change the value of the transparency variable for the Splash Scene
         if self.fully_transparent == False:
@@ -115,11 +115,11 @@ class SplashScene:
             pygame.time.delay(50)
 
             #Debug code
-                #print(str(self.transparency) + " Second if statement ran \n")
+                #print(str(self.transparency) + ' Second if statement ran \n')
 
         elif(self.fully_transparent and self.transparency > 0):
             self.transparency -= 10
             pygame.time.delay(50)
 
             #Debug code
-                #print(str(self.transparency) + " Third if statement ran \n")
+                #print(str(self.transparency) + ' Third if statement ran \n')

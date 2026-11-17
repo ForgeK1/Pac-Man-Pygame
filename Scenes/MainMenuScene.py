@@ -28,15 +28,15 @@ class MainMenuScene:
         self.main_menu_surface = pygame.Surface((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.SRCALPHA)
 
         #Variables for the character & power pellet objects
-        self.pac_man = PacMan(40, 40, "Right", 300, 425, True, 100, self.main_menu_surface)
-        self.blinky = Blinky(40, 40, "Right", 180, 395, True, 100, self.main_menu_surface, self.game_state_manager)
-        self.pinky = Pinky(40, 40, "Right", 240, 395, True, 100, self.main_menu_surface, self.game_state_manager)
-        self.inky = Inky(40, 40, "Right", 180, 455, True, 100, self.main_menu_surface, self.game_state_manager)
-        self.clyde = Clyde(40, 40, "Right", 240, 455, True, 100, self.main_menu_surface, self.game_state_manager)
+        self.pac_man = PacMan(40, 40, 'Right', 300, 425, True, 100, self.main_menu_surface)
+        self.blinky = Blinky(40, 40, 'Right', 180, 395, True, 100, self.main_menu_surface, self.game_state_manager)
+        self.pinky = Pinky(40, 40, 'Right', 240, 395, True, 100, self.main_menu_surface, self.game_state_manager)
+        self.inky = Inky(40, 40, 'Right', 180, 455, True, 100, self.main_menu_surface, self.game_state_manager)
+        self.clyde = Clyde(40, 40, 'Right', 240, 455, True, 100, self.main_menu_surface, self.game_state_manager)
 
         #Variables for the interactable buttons
         self.play_button = Button('Images/Button/non_highlighted.png', 'Images/Button/highlighted.png', 'Images/Button/pressed.png', 
-                                  "black", "black", "black", 'Play', 'Fonts/Pixel/DePixelHalbfett.ttf', 22)
+                                  'black', 'black', 'black', 'Play', 'Fonts/Pixel/DePixelHalbfett.ttf', 22)
         self.credits_button = Button('Images/Button/non_highlighted.png', 'Images/Button/highlighted.png', 'Images/Button/pressed.png', 
                                      'black', 'black', 'black', 'Credits', 'Fonts/Pixel/DePixelHalbfett.ttf', 22)
     
@@ -147,7 +147,7 @@ class MainMenuScene:
         False to stop the game loop in the Game class
         '''
         if(self.credits_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
-            self.game_state_manager.set_running_state(False)
+            self.game_state_manager.set_scene_state('Credits Scene')
         
         #Debug code to ensure that the function contains all the events done by the player 
             #print(event.dict)
