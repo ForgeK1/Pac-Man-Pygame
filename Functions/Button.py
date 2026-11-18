@@ -116,7 +116,10 @@ class Button:
             self.text_rect = self.text.get_rect()
 
             #Debug code
-                #print("Second statement ran")
+            # print("Second statement ran")
+            # print("Mouse position: " + str(mouse_pos))
+            # print("Mouse click: " + str(mouse_click))
+            # print("Mouse let go: " + str(mouse_let_go) + "\n")
 
             return True
         

@@ -105,6 +105,9 @@ class MainMenuScene:
         '''
         A section to handle player events for interacting with the play & credits buttons
         '''
+
+        if(self.check_if_button_has_been_pressed(event)):
+            return
         
         #Default values for the following variables
         mouse_pos = (0, 0)
@@ -148,7 +151,33 @@ class MainMenuScene:
         '''
         if(self.credits_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
             self.game_state_manager.set_scene_state('Credits Scene')
+
+        # if(self.game_state_manager.get_scene_state() == 'Credits Scene'):
+        #     print("Scene has changed!")
+
+        # mouse_pos = (0, 0)
+        # mouse_click = False
+        # mouse_let_go = False
+
+        # print("Mouse position: " + str(mouse_pos))
+        # print("Mouse click: " + str(mouse_click))
+        # print("Mouse let go: " + str(mouse_let_go) + "\n")
         
         #Debug code to ensure that the function contains all the events done by the player 
             #print(event.dict)
             #print(mouse_pos)
+
+    '''
+    The method below checks for the following:
+        (1) Checks if there is a button category in the dict
+        (2) Checks if its the left mouse that were clicking
+        (3) Checks mouse click and mouse let go are opposites (False-True or True-False). To make
+            sure that a button hasn't been clicked, they both need to be False
+    '''
+    def check_if_button_has_been_pressed(self, event):
+        if('button' in event.dict and    
+            event.dict.get('button') == 1 and             
+            (event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP)): 
+            print("If statement 1 ran")
+            
+            return True

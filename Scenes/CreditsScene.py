@@ -22,9 +22,13 @@ class CreditsScene:
         '''
         self.credits_scene = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
 
-        #Creates a back button for the player to return to the main menu
+        #A back button variable for the player to return to the main menu
         self.back_button = Button('Images/Button/non_highlighted.png', 'Images/Button/highlighted.png', 'Images/Button/pressed.png', 
                                   'black', 'black', 'black', 'Back', 'Fonts/Pixel/DePixelHalbfett.ttf', 12)
+
+        #Variables to ensure the back button has been pressed only once
+        self.previous_button_event = None
+        self.back_button_has_been_pressed = False
 
     #A method to run the Credts Scene
     def run(self, event, debug_mode):
@@ -55,8 +59,9 @@ class CreditsScene:
 
         #Sets up the GitHub profile picture of pygame's author (which is me :D)
         author_image = pygame.image.load('Images/other/GitHub pfp.png')
+        author_image = pygame.transform.scale(author_image, (100, 100))
         author_image_rect = author_image.get_rect()
-        author_image_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2)
+        author_image_rect.center = (self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2 + 80)
 
         #Blits the profile image onto the Credits Scene surface
         self.credits_scene.blit(author_image, author_image_rect)
@@ -80,6 +85,10 @@ class CreditsScene:
         '''
         A section to handle player events for interacting with the play & credits buttons
         '''
+
+        #Ensures the back button has been pressed only once
+        if(self.validate_button(event)):
+            return
         
         #Default values for the following variables
         mouse_pos = (0, 0)
@@ -100,11 +109,34 @@ class CreditsScene:
             mouse_click = True
             mouse_let_go = False
         elif('button' in event.dict and                 
-                event.type == pygame.MOUSEBUTTONUP and   
-                event.dict.get('button') == 1):           
-                mouse_click = False
-                mouse_let_go = True
+            event.type == pygame.MOUSEBUTTONUP and   
+            event.dict.get('button') == 1):           
+            mouse_click = False
+            mouse_let_go = True
 
         #If the player clicked and let go of the play button, then they will be directed to the Main Menu Scene
         if(self.back_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
             self.game_state_manager.set_scene_state('Main Menu Scene')
+
+        # mouse_pos = (0, 0)
+        # mouse_click = False
+        # mouse_let_go = False
+
+        # print("Mouse position: " + str(mouse_pos))
+        # print("Mouse click: " + str(mouse_click))
+        # print("Mouse let go: " + str(mouse_let_go) + "\n")
+    
+    '''
+    The method below checks for the following:
+        (1) Checks if there is a button category in the dict
+        (2) Checks if its the left mouse that were clicking
+        (3) Checks mouse click and mouse let go are opposites (False-True or True-False). To make
+            sure that a button hasn't been clicked, they both need to be False
+    '''
+    def validate_button(self, event):
+        if('button' in event.dict and    
+           event.dict.get('button') == 1 and             
+           (event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP)): 
+           print("If statement 2 ran")
+           
+           return True
