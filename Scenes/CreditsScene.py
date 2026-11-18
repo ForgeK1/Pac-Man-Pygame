@@ -127,11 +127,20 @@ class CreditsScene:
         # print("Mouse let go: " + str(mouse_let_go) + "\n")
     
     '''
-    The method below checks for the following:
-        (1) Checks if there is a button category in the dict
-        (2) Checks if its the left mouse that were clicking
-        (3) Checks mouse click and mouse let go are opposites (False-True or True-False). To make
-            sure that a button hasn't been clicked, they both need to be False
+    What's the problem?
+    - The event dictionary always returns the last thing the player did - unless they
+        decide to put another input
+    
+    - I used this mechanic to make Pac-Man continiously move in one direction until
+        the player clicked a different arrow key
+
+    - Solution: Create a function to check if the button had already been pressed 
+        (1) Create a new variable called previous_button_event
+        (2) Create a new variable called back_button_has_been_pressed
+        (3) Record the last event in previous_button_event
+        (4) When a button has been pressed, change back_button_... to True
+        (5) If the curr & previous_button_event are the same, and back_button_... is True, nothing happens
+        (6) If the events are different, previous_button_event = event & back_button_... = False
     '''
     def validate_button(self, event):
         if('button' in event.dict and    
