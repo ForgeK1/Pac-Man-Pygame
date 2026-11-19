@@ -39,7 +39,11 @@ class MainMenuScene:
                                   'black', 'black', 'black', 'Play', 'Fonts/Pixel/DePixelHalbfett.ttf', 22)
         self.credits_button = Button('Images/Button/non_highlighted.png', 'Images/Button/highlighted.png', 'Images/Button/pressed.png', 
                                      'black', 'black', 'black', 'Credits', 'Fonts/Pixel/DePixelHalbfett.ttf', 22)
-    
+
+        #Variables to ensure the credits button has been pressed only once
+        self.previous_button_event = None
+        self.credits_button_has_been_pressed = False
+
     #A method to run Main Menu Scene
     def run(self, event, debug_mode): 
         #Fills the background of the display surface
@@ -106,8 +110,8 @@ class MainMenuScene:
         A section to handle player events for interacting with the play & credits buttons
         '''
 
-        if(self.check_if_button_has_been_pressed(event)):
-            return
+        #Ensures the credits button has been pressed only once
+        self.validate_credits_button(event)
         
         #Default values for the following variables
         mouse_pos = (0, 0)
@@ -146,38 +150,38 @@ class MainMenuScene:
             self.game_state_manager.set_scene_state('Gameplay Scene')
 
         '''
-        If the player clicked and let go of the credits button, the program will convert the running boolean to 
-        False to stop the game loop in the Game class
+        If (1) the player clicked and let go of the play button and
+           (2) the button hasn't been pressed before
+        
+        They will be directed to the Credits Scene
         '''
-        if(self.credits_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
+        if(self.credits_button.check_input(mouse_pos, mouse_click, mouse_let_go) and
+           self.credits_button_has_been_pressed is False):
             self.game_state_manager.set_scene_state('Credits Scene')
-
-        # if(self.game_state_manager.get_scene_state() == 'Credits Scene'):
-        #     print("Scene has changed!")
-
-        # mouse_pos = (0, 0)
-        # mouse_click = False
-        # mouse_let_go = False
-
-        # print("Mouse position: " + str(mouse_pos))
-        # print("Mouse click: " + str(mouse_click))
-        # print("Mouse let go: " + str(mouse_let_go) + "\n")
         
         #Debug code to ensure that the function contains all the events done by the player 
-            #print(event.dict)
-            #print(mouse_pos)
+            # print(event.dict)
+            # print(mouse_pos)
 
     '''
-    The method below checks for the following:
-        (1) Checks if there is a button category in the dict
-        (2) Checks if its the left mouse that were clicking
-        (3) Checks mouse click and mouse let go are opposites (False-True or True-False). To make
-            sure that a button hasn't been clicked, they both need to be False
+    Why does this method exist?:
+    - The event dictionary always returns the last thing the player did, unless they
+        decide to put another input
+    
+    - I used this mechanic to make Pac-Man continiously move in one direction until
+        the player clicked a different arrow key (which updated the event variable)
+
+    - Solution: I created a function to make sure that the button is pressed only once
+                and accounted for the event updating or staying the same
     '''
-    def check_if_button_has_been_pressed(self, event):
-        if('button' in event.dict and    
-            event.dict.get('button') == 1 and             
-            (event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP)): 
-            print("If statement 1 ran")
-            
-            return True
+    def validate_credits_button(self, event):
+        #Checks if the button has been already pressed
+        if(self.credits_button_has_been_pressed is False):
+            #If not, the event is copied and the button pressed has been recorded
+            self.previous_button_event = event
+            self.credits_button_has_been_pressed = True
+        #Checks if the event is different (ex. moving the mouse to click the button again)
+        else:
+            #If so, the button pressed is False so that the user can switch scenes
+            if(event != self.previous_button_event):
+                self.credits_button_has_been_pressed = False

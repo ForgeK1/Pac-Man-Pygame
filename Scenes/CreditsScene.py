@@ -87,8 +87,7 @@ class CreditsScene:
         '''
 
         #Ensures the back button has been pressed only once
-        if(self.validate_button(event)):
-            return
+        self.validate_back_button(event)
         
         #Default values for the following variables
         mouse_pos = (0, 0)
@@ -114,38 +113,39 @@ class CreditsScene:
             mouse_click = False
             mouse_let_go = True
 
-        #If the player clicked and let go of the play button, then they will be directed to the Main Menu Scene
-        if(self.back_button.check_input(mouse_pos, mouse_click, mouse_let_go)):
+        '''
+        If (1) the player clicked and let go of the play button and
+           (2) the button hasn't been pressed before
+        
+        They will be directed to the Main Menu Scene
+        '''
+        if(self.back_button.check_input(mouse_pos, mouse_click, mouse_let_go) and
+           self.back_button_has_been_pressed is False):
             self.game_state_manager.set_scene_state('Main Menu Scene')
 
-        # mouse_pos = (0, 0)
-        # mouse_click = False
-        # mouse_let_go = False
-
-        # print("Mouse position: " + str(mouse_pos))
-        # print("Mouse click: " + str(mouse_click))
-        # print("Mouse let go: " + str(mouse_let_go) + "\n")
+        #Debug code to ensure that the function contains all the events done by the player 
+            # print(event.dict)
+            # print(mouse_pos)
     
     '''
-    What's the problem?
-    - The event dictionary always returns the last thing the player did - unless they
-        decide to put another input
+    Why does this method exist?:
+    - The event dictionary always returns the last thing the player did, unless they
+      decide to put another input
     
     - I used this mechanic to make Pac-Man continiously move in one direction until
-        the player clicked a different arrow key
+      the player clicked a different arrow key (which updated the event variable)
 
-    - Solution: Create a function to check if the button had already been pressed 
-        (1) Create a new variable called previous_button_event
-        (2) Create a new variable called back_button_has_been_pressed
-        (3) Record the last event in previous_button_event
-        (4) When a button has been pressed, change back_button_... to True
-        (5) If the curr & previous_button_event are the same, and back_button_... is True, nothing happens
-        (6) If the events are different, previous_button_event = event & back_button_... = False
+    - Solution: I created a function to make sure that the button is pressed only once
+                and accounted for the event updating or staying the same
     '''
-    def validate_button(self, event):
-        if('button' in event.dict and    
-           event.dict.get('button') == 1 and             
-           (event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP)): 
-           print("If statement 2 ran")
-           
-           return True
+    def validate_back_button(self, event):
+        #Checks if the button has been already pressed
+        if(self.back_button_has_been_pressed is False):
+            #If not, the event is copied and the button pressed has been recorded
+            self.previous_button_event = event
+            self.back_button_has_been_pressed = True
+        #Checks if the event is different (ex. moving the mouse to click the button again)
+        else:
+            #If so, the button pressed is False so that the user can switch scenes
+            if(event != self.previous_button_event):
+                self.back_button_has_been_pressed = False
